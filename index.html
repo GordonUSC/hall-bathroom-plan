@@ -84,7 +84,8 @@ h1{font-size:clamp(2.5rem,7vw,4.2rem);line-height:1.0;margin:16px 0 12px}
 .cmp .use{margin-top:7px;border:0;background:var(--sage);color:#fff;border-radius:8px;padding:7px 13px;font-weight:700;font-size:.76rem;cursor:pointer;font-family:Inter}
 .cmp.empty{display:grid;place-items:center;min-height:170px;color:var(--gray);font-style:italic;font-size:.9rem}
 .opt-group{margin-bottom:20px}
-.opt-group h4{font-family:Inter;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gray);margin-bottom:9px;font-weight:700}
+.opt-group h4{font-family:Inter;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gray);margin-bottom:4px;font-weight:700}
+.optip{font-size:.74rem;color:var(--oak-d);margin:0 0 9px;font-style:italic;opacity:.85}
 .chips{display:flex;gap:9px;flex-wrap:wrap}
 .chip{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:8px 13px;cursor:pointer;font-family:Inter;font-weight:600;font-size:.82rem;display:flex;align-items:center;gap:8px;transition:all .16s}
 .chip:hover{border-color:var(--oak-m)}
@@ -204,11 +205,11 @@ footer .eyebrow{color:var(--brass-l)}footer p{max-width:540px;margin:14px auto 0
     <div class="config-grid">
       <div class="preview day" id="preview"><div id="preview-svg" style="position:absolute;inset:0"></div><div class="lightfx"></div><div class="lightglow"></div><div class="hotspots" id="hotspots"></div><div class="popinfo" id="popinfo"></div></div>
       <div>
-        <div class="opt-group"><h4>Wall color</h4><div class="chips" id="opt-wall"></div></div>
-        <div class="opt-group"><h4>Floor</h4><div class="chips" id="opt-floor"></div></div>
-        <div class="opt-group"><h4>Accent metal</h4><div class="chips" id="opt-metal"></div></div>
-        <div class="opt-group"><h4>Towels &amp; the green thing</h4><div class="chips" id="opt-towel"></div></div>
-        <div class="opt-group"><h4>Lighting &mdash; feel the spa</h4><div class="chips light-pick" id="opt-light"></div></div>
+        <div class="opt-group"><h4>Wall color</h4><p class="optip">Warm whites make a small room feel bigger, and read 2026, not clinical.</p><div class="chips" id="opt-wall"></div></div>
+        <div class="opt-group"><h4>Floor</h4><p class="optip">Wood-look LVP is warm and DIY-friendly; marble-look reads more luxe but cooler.</p><div class="chips" id="opt-floor"></div></div>
+        <div class="opt-group"><h4>Accent metal</h4><p class="optip">Your faucet is chrome, so brass works as a deliberate accent, not a clash.</p><div class="chips" id="opt-metal"></div></div>
+        <div class="opt-group"><h4>Towels &amp; the green thing</h4><p class="optip">One sage or terracotta note plus a plant lands the 2026 spa palette.</p><div class="chips" id="opt-towel"></div></div>
+        <div class="opt-group"><h4>Lighting &mdash; feel the spa</h4><p class="optip">2700–3000K warm light is the spa secret; cool white reads hospital.</p><div class="chips light-pick" id="opt-light"></div></div>
         <div class="lockbar">
           <span class="locktag">🔒 Tile: <b>reglazed white</b></span>
           <span class="locktag">🔒 Tub: <b>reglazed white</b></span>
