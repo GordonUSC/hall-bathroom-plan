@@ -69,6 +69,20 @@ h1{font-size:clamp(2.5rem,7vw,4.2rem);line-height:1.0;margin:16px 0 12px}
 .preview.eve .lightglow{opacity:.5}.preview.spa .lightglow{opacity:.95}
 .light-pick{display:flex;gap:8px}
 .light-pick .chip{flex:1;justify-content:center}
+/* compare two looks */
+.compare{margin-top:30px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:0 4px 20px var(--sh)}
+.compare-head{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.compare-head strong{font-family:Fraunces,serif;font-size:1.12rem;margin-right:auto}
+.compare-head button{border:0;border-radius:9px;padding:9px 15px;background:var(--brass);color:#fff;font-family:Inter;font-weight:700;font-size:.82rem;cursor:pointer;transition:transform .12s}
+.compare-head button:active{transform:scale(.96)}
+.compare-head button.b{background:var(--oak-d)}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:600px){.compare-grid{grid-template-columns:1fr}}
+.cmp{border:1px solid var(--line);border-radius:11px;overflow:hidden}
+.cmp .preview{border-radius:0;box-shadow:none;margin:0}
+.cmp .lab{padding:11px 14px;font-size:.82rem;line-height:1.45}
+.cmp .use{margin-top:7px;border:0;background:var(--sage);color:#fff;border-radius:8px;padding:7px 13px;font-weight:700;font-size:.76rem;cursor:pointer;font-family:Inter}
+.cmp.empty{display:grid;place-items:center;min-height:170px;color:var(--gray);font-style:italic;font-size:.9rem}
 .opt-group{margin-bottom:20px}
 .opt-group h4{font-family:Inter;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gray);margin-bottom:9px;font-weight:700}
 .chips{display:flex;gap:9px;flex-wrap:wrap}
@@ -190,6 +204,17 @@ footer .eyebrow{color:var(--brass-l)}footer p{max-width:540px;margin:14px auto 0
         </div>
       </div>
     </div>
+    <div class="compare">
+      <div class="compare-head">
+        <strong>Torn between two? Pin and compare.</strong>
+        <button id="pinA">📌 Pin current as A</button>
+        <button class="b" id="pinB">📌 Pin current as B</button>
+      </div>
+      <div class="compare-grid">
+        <div class="cmp empty" id="cmpA">Set a look above, then "Pin as A"</div>
+        <div class="cmp empty" id="cmpB">Set another, then "Pin as B"</div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -295,9 +320,9 @@ function floorFill(t){
       <g stroke="#6B5B45" stroke-width="1.4" opacity=".55">${[455,485,515,548,582].map(y=>`<line x1="0" y1="${y}" x2="1000" y2="${y}"/>`).join('')}
       ${[150,420,700,930].map(x=>`<line x1="${x}" y1="430" x2="${x}" y2="600"/>`).join('')}</g>`;
 }
-function afterSVG(){
-  const wall=PAL.wall[cfg.wall].c, towel=PAL.towel[cfg.towel].c, metal='url(#metalg)';
-  const mg = cfg.metal==='brass'
+function afterSVG(c,uid){c=c||cfg;uid=uid||'';
+  const wall=PAL.wall[c.wall].c, towel=PAL.towel[c.towel].c, metal='url(#metalg'+uid+')';
+  const mg = c.metal==='brass'
     ? '<stop offset="0" stop-color="#E6CD92"/><stop offset=".34" stop-color="#A88A56"/><stop offset=".52" stop-color="#D2B074"/><stop offset=".72" stop-color="#8A6F3E"/><stop offset="1" stop-color="#6f5832"/>'
     : '<stop offset="0" stop-color="#EEF1F3"/><stop offset=".38" stop-color="#9aa1a6"/><stop offset=".53" stop-color="#D2D6D9"/><stop offset=".72" stop-color="#7d8488"/><stop offset="1" stop-color="#6a7074"/>';
   return `<svg viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
@@ -305,7 +330,7 @@ function afterSVG(){
      <linearGradient id="oak" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9B89A"/><stop offset=".5" stop-color="#A89472"/><stop offset="1" stop-color="#7A6850"/></linearGradient>
      <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF6E2"/><stop offset="1" stop-color="#F4D58A" stop-opacity=".2"/></linearGradient>
      <radialGradient id="amb" cx="50%" cy="20%" r="80%"><stop offset="0" stop-color="#fff" stop-opacity=".25"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
-     <linearGradient id="metalg" x1="0" y1="0" x2="0" y2="1">${mg}</linearGradient>
+     <linearGradient id="metalg${uid}" x1="0" y1="0" x2="0" y2="1">${mg}</linearGradient>
      <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/></linearGradient>
      <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope="0.05"/></feComponentTransfer><feComposite operator="over" in2="SourceGraphic"/></filter>
    </defs>
@@ -317,7 +342,7 @@ function afterSVG(){
    <rect x="0" y="300" width="1000" height="130" fill="url(#sheen)" opacity=".22"/>
    <g stroke="#E6E0D4" stroke-width="1.1" opacity=".8">${[336,372,408].map(y=>`<line x1="0" y1="${y}" x2="1000" y2="${y}"/>`).join('')}${Array.from({length:26},(_,i)=>`<line x1="${i*40}" y1="300" x2="${i*40}" y2="430"/>`).join('')}</g>
    <line x1="0" y1="300" x2="1000" y2="300" stroke="${metal}" stroke-width="2.5"/>
-   ${floorFill(cfg.floor)}
+   ${floorFill(c.floor)}
    <!-- window with cellular shade, right -->
    <rect x="820" y="70" width="150" height="150" fill="#EDE7DA" stroke="${metal}" stroke-width="4" rx="3"/>
    <g stroke="#D8CFBE" stroke-width="1">${[92,114,136,158,180,202].map(y=>`<line x1="824" y1="${y}" x2="966" y2="${y}"/>`).join('')}</g>
@@ -366,8 +391,8 @@ function beforeSVG(){
 }
 /* render configurator preview + before/after layers */
 function paint(){
-  document.getElementById('preview-svg').innerHTML=afterSVG();
-  document.getElementById('ba-after').innerHTML=afterSVG();
+  document.getElementById('preview-svg').innerHTML=afterSVG(cfg,'p');
+  document.getElementById('ba-after').innerHTML=afterSVG(cfg,'h');
   document.getElementById('ba-before').innerHTML=beforeSVG();
 }
 /* shop-the-room hotspots */
@@ -446,6 +471,19 @@ document.getElementById('btn-share').onclick=async()=>{
   catch(e){msg('Copy this: '+txt);}
 };
 function msg(t){const m=document.getElementById('save-msg');m.textContent=t;clearTimeout(window._mt);window._mt=setTimeout(()=>m.textContent='',4000);}
+/* compare two looks */
+let pin={A:null,B:null};
+function pinSlot(s){pin[s]={cfg:{...cfg},light:curLight};renderCmp(s);}
+function renderCmp(s){
+  const el=document.getElementById('cmp'+s),p=pin[s];
+  if(!p){el.className='cmp empty';el.textContent='Pin look '+s;return;}
+  el.className='cmp';
+  const d=`${PAL.wall[p.cfg.wall].n} · ${PAL.floor[p.cfg.floor].n} · ${PAL.metal[p.cfg.metal].n} metal · ${LIGHTS.find(l=>l[0]===p.light)[1]}`;
+  el.innerHTML=`<div class="preview ${p.light}"><div style="position:absolute;inset:0">${afterSVG(p.cfg,s.toLowerCase()+'c')}</div><div class="lightfx"></div><div class="lightglow"></div></div><div class="lab"><b>Look ${s}</b> &mdash; ${d}<br><button class="use">Use Look ${s}</button></div>`;
+  el.querySelector('.use').onclick=()=>{cfg={...p.cfg};curLight=p.light;['wall','floor','metal','towel'].forEach(g=>buildChips(g));buildLights();buildPresets();document.getElementById('preview').className='preview '+curLight;paint();updateState();document.getElementById('preview').scrollIntoView({behavior:'smooth',block:'center'});};
+}
+document.getElementById('pinA').onclick=()=>pinSlot('A');
+document.getElementById('pinB').onclick=()=>pinSlot('B');
 
 /* ================= BEFORE/AFTER DRAG ================= */
 (function(){
