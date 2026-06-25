@@ -3,950 +3,427 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hall Bathroom — Contemporary Spa Refresh</title>
+<title>Joe's Hall Bathroom — Design Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600;700&display=swap">
 <style>
-  :root {
-    --warm-white: #F4EFE9;
-    --swiss-coffee: #E8E1D4;
-    --reglazed-white: #FAFAF7;
-    --gray-oak-light: #C9B89A;
-    --gray-oak-mid: #A89472;
-    --gray-oak-dark: #7A6850;
-    --chrome: #C8CCCF;
-    --chrome-shine: #E8EBED;
-    --brass-light: #C9A876;
-    --brass-mid: #A88A56;
-    --lvp-floor: #8F7D63;
-    --lvp-floor-dark: #5E4F3D;
-    --charcoal: #2A2A2A;
-    --soft-gray: #6F6F6F;
-    --accent-line: #B8A88A;
-    --shadow: rgba(0,0,0,0.08);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body {
-    font-family: 'Georgia', 'Times New Roman', serif;
-    background: var(--warm-white);
-    color: var(--charcoal);
-    line-height: 1.6;
-  }
-  .container { max-width: 1200px; margin: 0 auto; padding: 60px 40px; }
+:root{
+  --warm-white:#F4EFE9; --swiss:#E8E1D4; --reglazed:#FAFAF7;
+  --oak-l:#C9B89A; --oak-m:#A89472; --oak-d:#7A6850;
+  --chrome:#C8CCCF; --chrome-sh:#E8EBED; --brass-l:#C9A876; --brass-m:#A88A56;
+  --sage:#8FA38C; --lvp:#8F7D63; --lvp-d:#5E4F3D; --pink:#E7B8C0; --pink-d:#9C5C68;
+  --ink:#2A2A2A; --gray:#6F6F6F; --line:rgba(184,168,138,.35); --sh:rgba(0,0,0,.08);
+  --accent:var(--brass-m);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Inter,system-ui,sans-serif;background:var(--warm-white);color:var(--ink);line-height:1.6}
+.wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+h1,h2,h3,.disp{font-family:Fraunces,Georgia,serif;font-weight:400;letter-spacing:-.01em}
+em{color:var(--oak-d);font-style:italic}
+.eyebrow{font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--oak-d)}
+section{padding:64px 0;border-bottom:1px solid var(--line)}
+h2{font-size:clamp(1.9rem,4vw,2.6rem);margin:8px 0 10px}
+.sub{color:var(--gray);font-style:italic;max-width:640px;margin-bottom:30px}
+.progress-top{position:fixed;top:0;left:0;height:4px;width:0;z-index:50;background:linear-gradient(90deg,var(--sage),var(--brass-m),var(--oak-d))}
 
-  /* HERO */
-  .hero {
-    background: linear-gradient(135deg, var(--swiss-coffee) 0%, var(--warm-white) 100%);
-    padding: 100px 40px 80px;
-    border-bottom: 1px solid var(--accent-line);
-  }
-  .hero-inner { max-width: 1200px; margin: 0 auto; text-align: center; }
-  .eyebrow {
-    text-transform: uppercase;
-    letter-spacing: 0.3em;
-    font-size: 0.75rem;
-    color: var(--gray-oak-dark);
-    margin-bottom: 24px;
-    font-family: 'Helvetica Neue', sans-serif;
-  }
-  h1 {
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    font-weight: 400;
-    letter-spacing: -0.02em;
-    margin-bottom: 24px;
-    color: var(--charcoal);
-  }
-  h1 em { font-style: italic; color: var(--gray-oak-dark); }
-  .tagline {
-    font-size: 1.25rem;
-    color: var(--soft-gray);
-    max-width: 700px;
-    margin: 0 auto 40px;
-    font-style: italic;
-  }
-  .hero-stats {
-    display: flex;
-    justify-content: center;
-    gap: 60px;
-    margin-top: 50px;
-    flex-wrap: wrap;
-  }
-  .stat { text-align: center; }
-  .stat-num {
-    font-size: 2.25rem;
-    color: var(--gray-oak-dark);
-    font-weight: 400;
-    display: block;
-    margin-bottom: 6px;
-  }
-  .stat-label {
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    font-size: 0.7rem;
-    color: var(--soft-gray);
-    font-family: 'Helvetica Neue', sans-serif;
-  }
+/* HERO with before/after toggle */
+.hero{position:relative;padding:96px 0 70px;background:linear-gradient(135deg,var(--swiss),var(--warm-white))}
+h1{font-size:clamp(2.6rem,6vw,4.4rem);line-height:1.02;margin:18px 0 14px}
+.tag{font-size:1.15rem;color:var(--gray);font-style:italic;max-width:600px}
+.ba-toggle{display:inline-flex;margin-top:28px;border:1px solid var(--oak-m);border-radius:999px;overflow:hidden;font-size:.85rem}
+.ba-toggle button{border:0;background:transparent;padding:9px 22px;cursor:pointer;font-family:Inter;font-weight:600;color:var(--oak-d)}
+.ba-toggle button.on{background:var(--oak-d);color:var(--warm-white)}
+.room{margin-top:32px;border-radius:12px;overflow:hidden;box-shadow:0 12px 40px var(--sh);transition:all .5s}
+.room svg{width:100%;height:auto;display:block}
+.hero-stats{display:flex;gap:42px;margin-top:34px;flex-wrap:wrap}
+.stat .n{font-family:Fraunces,serif;font-size:1.9rem;color:var(--oak-d)}
+.stat .l{font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gray)}
 
-  /* SECTIONS */
-  section { padding: 80px 0; border-bottom: 1px solid rgba(184, 168, 138, 0.3); }
-  h2 {
-    font-size: 2.25rem;
-    font-weight: 400;
-    margin-bottom: 12px;
-    letter-spacing: -0.01em;
-  }
-  h2 em { font-style: italic; color: var(--gray-oak-dark); }
-  .section-sub {
-    color: var(--soft-gray);
-    font-size: 1.05rem;
-    margin-bottom: 50px;
-    max-width: 700px;
-    font-style: italic;
-  }
+/* finish studio */
+.studio{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center}
+@media(max-width:780px){.studio{grid-template-columns:1fr}}
+.metal-pick{display:flex;gap:12px;margin:8px 0 18px}
+.metal-pick button{flex:1;border:1px solid var(--line);background:#fff;border-radius:8px;padding:14px;cursor:pointer;font-family:Inter;font-weight:600;text-align:left;transition:all .2s}
+.metal-pick button.on{border-color:var(--accent);box-shadow:0 4px 16px var(--sh)}
+.metal-pick .dot{display:inline-block;width:16px;height:16px;border-radius:50%;vertical-align:middle;margin-right:8px}
+.note{font-size:.85rem;color:var(--gray);background:rgba(143,163,140,.12);border-left:3px solid var(--sage);padding:12px 16px;border-radius:0 6px 6px 0}
+.palette{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:14px;margin-top:24px}
+.sw{text-align:center;font-size:.7rem}
+.sw .c{width:100%;aspect-ratio:1;border-radius:6px;box-shadow:0 3px 12px var(--sh);margin-bottom:6px;border:1px solid rgba(0,0,0,.05)}
 
-  /* PALETTE */
-  .palette-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 24px;
-    margin-top: 40px;
-  }
-  .swatch {
-    text-align: center;
-  }
-  .swatch-color {
-    width: 100%;
-    aspect-ratio: 1;
-    border-radius: 4px;
-    margin-bottom: 14px;
-    box-shadow: 0 4px 24px var(--shadow);
-    border: 1px solid rgba(0,0,0,0.05);
-  }
-  .swatch-name {
-    font-size: 0.95rem;
-    margin-bottom: 4px;
-    font-weight: 500;
-  }
-  .swatch-spec {
-    font-size: 0.75rem;
-    color: var(--soft-gray);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-family: 'Helvetica Neue', sans-serif;
-  }
-  .sw-warm-white { background: var(--warm-white); }
-  .sw-swiss-coffee { background: var(--swiss-coffee); }
-  .sw-reglazed { background: var(--reglazed-white); }
-  .sw-gray-oak {
-    background: linear-gradient(135deg, var(--gray-oak-light) 0%, var(--gray-oak-mid) 50%, var(--gray-oak-dark) 100%);
-    background-image:
-      repeating-linear-gradient(90deg, rgba(122,104,80,0.15) 0px, rgba(122,104,80,0) 1px, rgba(122,104,80,0) 3px, rgba(122,104,80,0.15) 4px),
-      linear-gradient(135deg, var(--gray-oak-light) 0%, var(--gray-oak-mid) 50%, var(--gray-oak-dark) 100%);
-  }
-  .sw-chrome {
-    background: linear-gradient(135deg, var(--chrome-shine) 0%, var(--chrome) 50%, #909498 100%);
-  }
-  .sw-brass {
-    background: linear-gradient(135deg, var(--brass-light) 0%, var(--brass-mid) 100%);
-  }
-  .sw-lvp {
-    background:
-      repeating-linear-gradient(0deg, var(--lvp-floor-dark) 0px, var(--lvp-floor) 2px, var(--lvp-floor) 12px, var(--lvp-floor-dark) 14px),
-      var(--lvp-floor);
-  }
+/* budget builder */
+.budget{background:#fff;border-radius:12px;box-shadow:0 4px 24px var(--sh);padding:8px 4px;border:1px solid var(--line)}
+.brow{display:grid;grid-template-columns:1fr auto auto;gap:14px;align-items:center;padding:13px 22px;border-bottom:1px solid var(--line);cursor:pointer}
+.brow:last-child{border-bottom:0}
+.brow .nm{font-weight:500}
+.brow .meta{font-size:.78rem;color:var(--gray)}
+.brow .amt{font-variant-numeric:tabular-nums;font-weight:600;min-width:64px;text-align:right}
+.brow .tk{width:22px;height:22px;border-radius:6px;border:2px solid var(--oak-m);display:grid;place-items:center;font-size:13px;color:#fff}
+.brow.on .tk{background:var(--oak-d);border-color:var(--oak-d)}
+.brow.off{opacity:.45}
+.brow.off .amt{text-decoration:line-through}
+.tier{font-size:.7rem;border:1px solid var(--brass-m);color:var(--brass-m);border-radius:999px;padding:2px 9px;margin-left:8px;cursor:pointer}
+.budget-foot{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;background:var(--swiss);border-radius:0 0 12px 12px;font-family:Fraunces,serif}
+.budget-foot .total{font-size:1.8rem}
+.budget-foot .total.over{color:#b5483a}
+.toggle-row{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.toggle-row button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 16px;cursor:pointer;font-family:Inter;font-size:.85rem;font-weight:600}
+.toggle-row button.on{background:var(--sage);color:#fff;border-color:var(--sage)}
 
-  /* VANITY WALL ELEVATION */
-  .elevation-wrap {
-    background: var(--swiss-coffee);
-    padding: 60px 40px;
-    border-radius: 8px;
-    margin-top: 40px;
-    box-shadow: 0 4px 32px var(--shadow);
-  }
-  .elevation-svg {
-    width: 100%;
-    height: auto;
-    max-width: 900px;
-    margin: 0 auto;
-    display: block;
-  }
-  .elevation-caption {
-    text-align: center;
-    margin-top: 24px;
-    color: var(--soft-gray);
-    font-size: 0.9rem;
-    font-style: italic;
-  }
+/* punch list */
+.punch{background:#fff;border-radius:12px;box-shadow:0 4px 24px var(--sh);overflow:hidden;border:1px solid var(--line)}
+.punch-bar{height:8px;background:var(--swiss)}
+.punch-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--sage),var(--oak-d));transition:width .4s}
+.task{display:flex;gap:14px;align-items:flex-start;padding:14px 22px;border-bottom:1px solid var(--line);cursor:pointer}
+.task:last-child{border-bottom:0}
+.task .box{flex:none;width:24px;height:24px;border-radius:7px;border:2px solid var(--oak-m);display:grid;place-items:center;color:#fff;margin-top:2px;font-size:14px}
+.task.done .box{background:var(--sage);border-color:var(--sage)}
+.task.done .t{text-decoration:line-through;color:var(--gray)}
+.task .t{font-weight:500}
+.task .d{font-size:.8rem;color:var(--gray)}
+.punch-msg{text-align:center;padding:16px;font-style:italic;color:var(--oak-d);font-family:Fraunces,serif}
 
-  /* PRODUCT GRID */
-  .product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 24px;
-    margin-top: 40px;
-  }
-  .product-card {
-    background: white;
-    padding: 28px;
-    border-radius: 4px;
-    box-shadow: 0 2px 16px var(--shadow);
-    border: 1px solid rgba(184, 168, 138, 0.3);
-    display: flex;
-    flex-direction: column;
-  }
-  .product-icon {
-    height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-  .product-icon svg { max-height: 100%; max-width: 100%; }
-  .product-category {
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    font-size: 0.7rem;
-    color: var(--gray-oak-dark);
-    margin-bottom: 8px;
-    font-family: 'Helvetica Neue', sans-serif;
-  }
-  .product-name {
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin-bottom: 6px;
-  }
-  .product-detail {
-    font-size: 0.85rem;
-    color: var(--soft-gray);
-    margin-bottom: 14px;
-    flex-grow: 1;
-  }
-  .product-price {
-    font-family: 'Helvetica Neue', sans-serif;
-    font-size: 1rem;
-    color: var(--charcoal);
-    font-weight: 500;
-    border-top: 1px solid rgba(184, 168, 138, 0.3);
-    padding-top: 12px;
-  }
-  .locked-tag {
-    display: inline-block;
-    background: var(--gray-oak-dark);
-    color: var(--warm-white);
-    padding: 2px 10px;
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    border-radius: 3px;
-    margin-left: 8px;
-    vertical-align: middle;
-    font-family: 'Helvetica Neue', sans-serif;
-  }
+/* product cards */
+.prods{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.pc{background:#fff;border-radius:10px;box-shadow:0 2px 14px var(--sh);border:1px solid var(--line);padding:20px;display:flex;flex-direction:column}
+.pc .cat{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--oak-d)}
+.pc .pn{font-weight:600;margin:5px 0 4px}
+.pc .pd{font-size:.83rem;color:var(--gray);flex-grow:1;margin-bottom:12px}
+.pc .pp{font-weight:700;font-variant-numeric:tabular-nums}
+.pc a{display:inline-block;margin-top:10px;font-size:.8rem;font-weight:600;color:var(--oak-d);text-decoration:none;border-bottom:1px solid var(--oak-m);padding-bottom:1px}
+.pc .badge{align-self:flex-start;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;background:var(--oak-d);color:var(--warm-white);padding:2px 9px;border-radius:4px;margin-bottom:8px}
+.pc .badge.fix{background:#b5483a}
 
-  /* FLOOR PLAN */
-  .plan-wrap {
-    background: white;
-    padding: 50px;
-    border-radius: 8px;
-    margin-top: 40px;
-    box-shadow: 0 2px 16px var(--shadow);
-  }
-  .plan-svg { width: 100%; max-width: 700px; height: auto; display: block; margin: 0 auto; }
-  .plan-legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
-    justify-content: center;
-    margin-top: 30px;
-    font-family: 'Helvetica Neue', sans-serif;
-    font-size: 0.8rem;
-    color: var(--soft-gray);
-  }
-  .legend-item { display: flex; align-items: center; gap: 8px; }
-  .legend-box { width: 14px; height: 14px; border-radius: 2px; border: 1px solid rgba(0,0,0,0.1); }
+/* wow + care */
+.cards2{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:8px}
+.mini{background:#fff;border:1px solid var(--line);border-radius:10px;padding:20px}
+.mini .ic{font-size:1.7rem}
+.mini h4{font-family:Fraunces,serif;font-weight:500;margin:8px 0 6px;font-size:1.1rem}
+.mini p{font-size:.85rem;color:var(--gray)}
+.do-dont{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:8px}
+@media(max-width:680px){.do-dont{grid-template-columns:1fr}}
+.dd{border-radius:10px;padding:22px}
+.dd.do{background:rgba(143,163,140,.14)}
+.dd.dont{background:rgba(181,72,58,.08)}
+.dd h4{font-family:Fraunces,serif;font-weight:500;margin-bottom:10px}
+.dd li{list-style:none;padding:5px 0;font-size:.9rem;border-bottom:1px solid rgba(0,0,0,.05)}
+.dd li:last-child{border:0}
 
-  /* BEFORE / AFTER */
-  .ba-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
-    margin-top: 40px;
-  }
-  .ba-card {
-    padding: 40px;
-    border-radius: 6px;
-    min-height: 320px;
-  }
-  .ba-before {
-    background: linear-gradient(135deg, #DBC4C4 0%, #C9B0B0 100%);
-    color: #5C3838;
-  }
-  .ba-after {
-    background: linear-gradient(135deg, var(--reglazed-white) 0%, var(--swiss-coffee) 100%);
-    color: var(--charcoal);
-  }
-  .ba-label {
-    text-transform: uppercase;
-    letter-spacing: 0.3em;
-    font-size: 0.75rem;
-    margin-bottom: 20px;
-    font-family: 'Helvetica Neue', sans-serif;
-  }
-  .ba-card h3 {
-    font-size: 1.5rem;
-    font-weight: 400;
-    margin-bottom: 16px;
-  }
-  .ba-card ul { list-style: none; }
-  .ba-card li {
-    padding: 6px 0;
-    font-size: 0.95rem;
-    border-bottom: 1px solid rgba(0,0,0,0.08);
-  }
-  .ba-card li:last-child { border-bottom: none; }
-  .ba-card li::before {
-    content: "—  ";
-    color: var(--gray-oak-dark);
-  }
-  .ba-before li::before { color: #8B5050; }
+/* easter egg */
+.egg{margin-top:24px;border:1px dashed var(--pink-d);background:linear-gradient(135deg,rgba(231,184,192,.18),transparent);border-radius:10px;padding:22px}
+.egg h4{font-family:Fraunces,serif;color:var(--pink-d);margin-bottom:8px}
+.egg p{font-size:.88rem;color:var(--gray)}
+.egg a{color:var(--pink-d)}
 
-  /* PHASE 2 */
-  .phase2-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-    margin-top: 40px;
-  }
-  .phase2-card {
-    background: transparent;
-    border: 1px dashed var(--accent-line);
-    padding: 24px;
-    border-radius: 4px;
-  }
-  .phase2-title {
-    font-size: 1rem;
-    margin-bottom: 8px;
-    font-weight: 500;
-  }
-  .phase2-desc {
-    font-size: 0.85rem;
-    color: var(--soft-gray);
-    margin-bottom: 12px;
-  }
-  .phase2-cost {
-    font-family: 'Helvetica Neue', sans-serif;
-    font-size: 0.8rem;
-    color: var(--gray-oak-dark);
-    letter-spacing: 0.05em;
-  }
-
-  /* FOOTER */
-  footer {
-    text-align: center;
-    padding: 50px 40px;
-    background: var(--charcoal);
-    color: var(--warm-white);
-  }
-  footer .eyebrow { color: var(--brass-light); }
-  footer p { max-width: 600px; margin: 0 auto; font-style: italic; opacity: 0.85; }
-
-  @media (max-width: 700px) {
-    .container { padding: 50px 24px; }
-    .hero { padding: 70px 24px 60px; }
-    .ba-grid { grid-template-columns: 1fr; }
-    .hero-stats { gap: 30px; }
-  }
+footer{background:var(--ink);color:var(--warm-white);text-align:center;padding:54px 28px}
+footer .eyebrow{color:var(--brass-l)}
+footer p{max-width:560px;margin:14px auto 0;font-style:italic;opacity:.9}
 </style>
 </head>
 <body>
+<div class="progress-top" id="ptop"></div>
 
-<div class="hero">
-  <div class="hero-inner">
-    <div class="eyebrow">Hall Bathroom · Design Visualization</div>
-    <h1>A <em>Contemporary Spa</em><br>in 40 Square Feet</h1>
-    <p class="tagline">A surgical refresh: reglaze, don't replace. Floating gray-oak vanity, warm white envelope, chrome and brass accents. Quiet, calm, classic.</p>
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Joe's Hall Bathroom · Design Studio</div>
+    <h1>Your room, <em>your call</em>.</h1>
+    <p class="tag">A contemporary-spa refresh you can actually play with. Flip the before/after, pick the metals, build the budget, and check off the work as it happens. Reglaze, don't replace.</p>
+    <div class="ba-toggle" role="group" aria-label="before after">
+      <button id="ba-before">Pink time capsule</button>
+      <button id="ba-after" class="on">Contemporary spa</button>
+    </div>
+    <div class="room" id="room"><!-- svg injected --></div>
     <div class="hero-stats">
-      <div class="stat">
-        <span class="stat-num">$5,000</span>
-        <span class="stat-label">Budget Locked</span>
-      </div>
-      <div class="stat">
-        <span class="stat-num">~3 weeks</span>
-        <span class="stat-label">Timeline</span>
-      </div>
-      <div class="stat">
-        <span class="stat-num">~40 sq ft</span>
-        <span class="stat-label">Footprint</span>
-      </div>
-      <div class="stat">
-        <span class="stat-num">0</span>
-        <span class="stat-label">Tile Demolished</span>
-      </div>
+      <div class="stat"><div class="n">$5,000</div><div class="l">Target budget</div></div>
+      <div class="stat"><div class="n">0</div><div class="l">Tiles demolished</div></div>
+      <div class="stat"><div class="n">~40</div><div class="l">Square feet</div></div>
+      <div class="stat"><div class="n">10–20<span style="font-size:1rem">yr</span></div><div class="l">Reglaze lifespan</div></div>
     </div>
   </div>
-</div>
+</header>
 
+<!-- FINISH STUDIO -->
 <section>
-  <div class="container">
-    <h2>The <em>Palette</em></h2>
-    <p class="section-sub">Six materials carry the whole room. Warm whites that flatter LA light, gray oak for warmth and grain, chrome for the daily-touch fixtures, brushed brass for the jewelry — mirror, hardware, sconces. Plus a wood-look LVP underfoot that hides everything.</p>
-    <div class="palette-grid">
-      <div class="swatch">
-        <div class="swatch-color sw-warm-white"></div>
-        <div class="swatch-name">Warm White</div>
-        <div class="swatch-spec">Walls · BM Swiss Coffee OC-45</div>
-      </div>
-      <div class="swatch">
-        <div class="swatch-color sw-reglazed"></div>
-        <div class="swatch-name">Reglazed White</div>
-        <div class="swatch-spec">Tile + tub interior</div>
-      </div>
-      <div class="swatch">
-        <div class="swatch-color sw-gray-oak"></div>
-        <div class="swatch-name">Gray Oak</div>
-        <div class="swatch-spec">Floating Vanity (locked)</div>
-      </div>
-      <div class="swatch">
-        <div class="swatch-color sw-chrome"></div>
-        <div class="swatch-name">Chrome</div>
-        <div class="swatch-spec">Faucet · TP holder · daily-touch</div>
-      </div>
-      <div class="swatch">
-        <div class="swatch-color sw-brass"></div>
-        <div class="swatch-name">Brushed Brass</div>
-        <div class="swatch-spec">Mirror · sconces · cabinet pulls</div>
-      </div>
-      <div class="swatch">
-        <div class="swatch-color sw-lvp"></div>
-        <div class="swatch-name">Sterling Oak LVP</div>
-        <div class="swatch-spec">Flooring · waterproof click-lock</div>
+  <div class="wrap">
+    <div class="eyebrow">Play designer</div>
+    <h2>The <em>Finish</em> Studio</h2>
+    <p class="sub">Your faucet is locked chrome and the shower frame is silver, both cool metals. So the pro move is chrome on everything you touch by water, and one warm metal as jewelry. Tap a metal and watch the vanity wall change.</p>
+    <div class="studio">
+      <div class="room" id="elev" style="margin-top:0"><!-- elevation injected --></div>
+      <div>
+        <div class="metal-pick">
+          <button id="m-chrome" onclick="setMetal('chrome')"><span class="dot" style="background:linear-gradient(135deg,#E8EBED,#909498)"></span>All chrome<br><span class="meta" style="font-size:.75rem;color:var(--gray)">cleanest, most cohesive</span></button>
+          <button id="m-brass" class="on" onclick="setMetal('brass')"><span class="dot" style="background:linear-gradient(135deg,#C9A876,#A88A56)"></span>Brass jewelry<br><span class="meta" style="font-size:.75rem;color:var(--gray)">warmth on mirror + sconces</span></button>
+        </div>
+        <div class="note" id="metal-note">Brass on the mirror, sconces, and pulls, chrome at the faucet and shower. One deliberate two-metal split reads designed, not accidental. This is the 2026-trend pick: warm metal as a deliberate accent.</div>
+        <div class="palette">
+          <div class="sw"><div class="c" style="background:#FAFAF7"></div>Reglazed white<br><span style="color:var(--gray)">tile + tub</span></div>
+          <div class="sw"><div class="c" style="background:#F4EFE9"></div>Swiss Coffee<br><span style="color:var(--gray)">walls</span></div>
+          <div class="sw"><div class="c" style="background:linear-gradient(135deg,#C9B89A,#7A6850)"></div>Gray oak<br><span style="color:var(--gray)">vanity</span></div>
+          <div class="sw" id="sw-accent"><div class="c" style="background:linear-gradient(135deg,#C9A876,#A88A56)"></div>Accent metal<br><span style="color:var(--gray)">jewelry</span></div>
+          <div class="sw"><div class="c" style="background:#8FA38C"></div>Sage<br><span style="color:var(--gray)">towels + plant</span></div>
+          <div class="sw"><div class="c" style="background:repeating-linear-gradient(0deg,#5E4F3D,#8F7D63 2px,#8F7D63 10px,#5E4F3D 12px)"></div>Sterling oak<br><span style="color:var(--gray)">floor (LVP)</span></div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
+<!-- BUDGET BUILDER -->
 <section>
-  <div class="container">
-    <h2>The <em>Vanity Wall</em></h2>
-    <p class="section-sub">Floor-mounted gray-oak floating vanity, fluted brass sconces flanking an arched brass mirror, chrome single-handle faucet centered, reglazed white wainscoting wraps the lower wall, warm white above. A spa moment without a single tile demolished.</p>
-    <div class="elevation-wrap">
-      <svg class="elevation-svg" viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg">
-        <!-- Wall background warm white above wainscot -->
-        <rect x="0" y="0" width="900" height="280" fill="#F4EFE9"/>
-        <!-- Reglazed white tile wainscot lower portion -->
-        <rect x="0" y="280" width="900" height="170" fill="#FAFAF7"/>
-        <!-- Wainscot grout lines (subtle 4x4 tile pattern) -->
-        <g stroke="#E8E1D4" stroke-width="0.8" opacity="0.7">
-          <line x1="0" y1="320" x2="900" y2="320"/>
-          <line x1="0" y1="360" x2="900" y2="360"/>
-          <line x1="0" y1="400" x2="900" y2="400"/>
-          <line x1="40" y1="280" x2="40" y2="450"/>
-          <line x1="80" y1="280" x2="80" y2="450"/>
-          <line x1="120" y1="280" x2="120" y2="450"/>
-          <line x1="160" y1="280" x2="160" y2="450"/>
-          <line x1="200" y1="280" x2="200" y2="450"/>
-          <line x1="240" y1="280" x2="240" y2="450"/>
-          <line x1="280" y1="280" x2="280" y2="450"/>
-          <line x1="320" y1="280" x2="320" y2="450"/>
-          <line x1="360" y1="280" x2="360" y2="450"/>
-          <line x1="400" y1="280" x2="400" y2="450"/>
-          <line x1="440" y1="280" x2="440" y2="450"/>
-          <line x1="480" y1="280" x2="480" y2="450"/>
-          <line x1="520" y1="280" x2="520" y2="450"/>
-          <line x1="560" y1="280" x2="560" y2="450"/>
-          <line x1="600" y1="280" x2="600" y2="450"/>
-          <line x1="640" y1="280" x2="640" y2="450"/>
-          <line x1="680" y1="280" x2="680" y2="450"/>
-          <line x1="720" y1="280" x2="720" y2="450"/>
-          <line x1="760" y1="280" x2="760" y2="450"/>
-          <line x1="800" y1="280" x2="800" y2="450"/>
-          <line x1="840" y1="280" x2="840" y2="450"/>
-        </g>
-        <!-- Chair rail line between wainscot and wall -->
-        <line x1="0" y1="280" x2="900" y2="280" stroke="#C9A876" stroke-width="2"/>
-        <!-- Floor (LVP) -->
-        <rect x="0" y="450" width="900" height="50" fill="#8F7D63"/>
-        <g stroke="#5E4F3D" stroke-width="0.6" opacity="0.6">
-          <line x1="0" y1="455" x2="900" y2="455"/>
-          <line x1="0" y1="465" x2="900" y2="465"/>
-          <line x1="0" y1="475" x2="900" y2="475"/>
-          <line x1="0" y1="485" x2="900" y2="485"/>
-        </g>
-        <line x1="0" y1="450" x2="900" y2="450" stroke="#3A3A3A" stroke-width="1.5"/>
-
-        <!-- Arched mirror with brass frame -->
-        <g>
-          <!-- Frame -->
-          <path d="M 360 60 Q 360 30 450 30 Q 540 30 540 60 L 540 200 L 360 200 Z"
-                fill="none" stroke="#A88A56" stroke-width="6"/>
-          <!-- Mirror surface -->
-          <path d="M 365 60 Q 365 35 450 35 Q 535 35 535 60 L 535 195 L 365 195 Z"
-                fill="url(#mirror-gradient)" stroke="#C9A876" stroke-width="1"/>
-        </g>
-        <defs>
-          <linearGradient id="mirror-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#E8E1D4" stop-opacity="0.8"/>
-            <stop offset="50%" stop-color="#D4CCBC" stop-opacity="0.6"/>
-            <stop offset="100%" stop-color="#C9B89A" stop-opacity="0.5"/>
-          </linearGradient>
-          <linearGradient id="vanity-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#C9B89A"/>
-            <stop offset="50%" stop-color="#A89472"/>
-            <stop offset="100%" stop-color="#7A6850"/>
-          </linearGradient>
-          <linearGradient id="chrome-faucet" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#E8EBED"/>
-            <stop offset="100%" stop-color="#909498"/>
-          </linearGradient>
-        </defs>
-
-        <!-- Sconces flanking mirror -->
-        <g transform="translate(280, 80)">
-          <rect x="-4" y="0" width="8" height="40" fill="#A88A56"/>
-          <ellipse cx="0" cy="55" rx="14" ry="22" fill="#FFF8E7" opacity="0.85" stroke="#A88A56" stroke-width="2"/>
-          <ellipse cx="0" cy="55" rx="14" ry="22" fill="none" stroke="#FFF8E7" stroke-width="1"/>
-          <line x1="-10" y1="45" x2="-10" y2="65" stroke="#C9A876" stroke-width="0.5"/>
-          <line x1="-6" y1="40" x2="-6" y2="70" stroke="#C9A876" stroke-width="0.5"/>
-          <line x1="-2" y1="38" x2="-2" y2="72" stroke="#C9A876" stroke-width="0.5"/>
-          <line x1="2" y1="38" x2="2" y2="72" stroke="#C9A876" stroke-width="0.5"/>
-          <line x1="6" y1="40" x2="6" y2="70" stroke="#C9A876" stroke-width="0.5"/>
-          <line x1="10" y1="45" x2="10" y2="65" stroke="#C9A876" stroke-width="0.5"/>
-        </g>
-        <g transform="translate(620, 80)">
-          <rect x="-4" y="0" width="8" height="40" fill="#A88A56"/>
-          <ellipse cx="0" cy="55" rx="14" ry="22" fill="#FFF8E7" opacity="0.85" stroke="#A88A56" stroke-width="2"/>
-          <line x1="-10" y1="45" x2="-10" y2="65" stroke="#C9A876" stroke-width="0.5"/>
-          <line x1="-6" y1="40" x2="-6" y2="70" stroke="#C9A876" stroke-width="0.5"/>
-          <line x1="-2" y1="38" x2="-2" y2="72" stroke="#C9A876" stroke-width="0.5"/>
-          <line x1="2" y1="38" x2="2" y2="72" stroke="#C9A876" stroke-width="0.5"/>
-          <line x1="6" y1="40" x2="6" y2="70" stroke="#C9A876" stroke-width="0.5"/>
-          <line x1="10" y1="45" x2="10" y2="65" stroke="#C9A876" stroke-width="0.5"/>
-        </g>
-
-        <!-- Floating Vanity -->
-        <g>
-          <!-- Vanity cabinet body -->
-          <rect x="220" y="295" width="460" height="95" fill="url(#vanity-gradient)" stroke="#5E4838" stroke-width="1.5" rx="2"/>
-          <!-- Drawer divisions -->
-          <line x1="370" y1="295" x2="370" y2="390" stroke="#5E4838" stroke-width="1" opacity="0.5"/>
-          <line x1="530" y1="295" x2="530" y2="390" stroke="#5E4838" stroke-width="1" opacity="0.5"/>
-          <line x1="220" y1="342" x2="680" y2="342" stroke="#5E4838" stroke-width="0.8" opacity="0.4"/>
-          <!-- Wood grain texture -->
-          <g opacity="0.25">
-            <line x1="225" y1="310" x2="675" y2="310" stroke="#5E4838" stroke-width="0.5"/>
-            <line x1="225" y1="325" x2="675" y2="325" stroke="#5E4838" stroke-width="0.5"/>
-            <line x1="225" y1="355" x2="675" y2="355" stroke="#5E4838" stroke-width="0.5"/>
-            <line x1="225" y1="370" x2="675" y2="370" stroke="#5E4838" stroke-width="0.5"/>
-          </g>
-          <!-- Brass pulls -->
-          <rect x="285" y="316" width="20" height="3" fill="#A88A56"/>
-          <rect x="285" y="365" width="20" height="3" fill="#A88A56"/>
-          <rect x="440" y="316" width="20" height="3" fill="#A88A56"/>
-          <rect x="440" y="365" width="20" height="3" fill="#A88A56"/>
-          <rect x="595" y="316" width="20" height="3" fill="#A88A56"/>
-          <rect x="595" y="365" width="20" height="3" fill="#A88A56"/>
-          <!-- Countertop with integrated sink -->
-          <rect x="215" y="285" width="470" height="12" fill="#FAFAF7" stroke="#7A6850" stroke-width="0.8"/>
-          <!-- Sink basin -->
-          <ellipse cx="450" cy="291" rx="50" ry="3" fill="#E8E1D4"/>
-          <!-- Faucet -->
-          <g>
-            <rect x="447" y="240" width="6" height="50" fill="url(#chrome-faucet)" stroke="#909498" stroke-width="0.5"/>
-            <rect x="440" y="237" width="20" height="6" fill="url(#chrome-faucet)" rx="2"/>
-            <rect x="438" y="285" width="24" height="6" fill="url(#chrome-faucet)" rx="1"/>
-            <circle cx="450" cy="232" r="4" fill="#C8CCCF" stroke="#909498" stroke-width="0.5"/>
-          </g>
-          <!-- Shadow beneath floating vanity -->
-          <ellipse cx="450" cy="395" rx="240" ry="6" fill="#000" opacity="0.12"/>
-        </g>
-
-        <!-- Labels (subtle) -->
-        <text x="450" y="20" text-anchor="middle" fill="#7A6850" font-family="Helvetica Neue, sans-serif" font-size="9" letter-spacing="2" opacity="0.6">ELEVATION · VANITY WALL · NTS</text>
-      </svg>
-      <div class="elevation-caption">Illustrative elevation, not to scale. Wainscot grout lines shown for clarity.</div>
+  <div class="wrap">
+    <div class="eyebrow">Build it live</div>
+    <h2>The <em>Budget</em>, in your hands</h2>
+    <p class="sub">Tap a line to drop it. Tap "save" or "splurge" to swap the price. Add a Phase-2 dream and watch the total move. The bar at the bottom keeps you honest against $5,000.</p>
+    <div class="toggle-row" id="p2row">
+      <span style="align-self:center;font-size:.8rem;color:var(--gray);font-weight:600">Phase 2 dreams:</span>
+      <button onclick="togP2(this,800)">Frameless shower doors +$800</button>
+      <button onclick="togP2(this,400)">Toto Washlet bidet +$400</button>
+      <button onclick="togP2(this,400)">Heated towel bar +$400</button>
+    </div>
+    <div class="budget" id="budget"></div>
+    <div class="budget-foot">
+      <div><span class="eyebrow">Running total</span><br><span class="total" id="total">$0</span></div>
+      <div style="text-align:right;font-family:Inter;font-size:.85rem;color:var(--gray)" id="budget-msg"></div>
     </div>
   </div>
 </section>
+
+<!-- PUNCH LIST -->
 <section>
-  <div class="container">
+  <div class="wrap">
+    <div class="eyebrow">Your real to-do</div>
+    <h2>The <em>Punch-List</em></h2>
+    <p class="sub">The actual order of operations. Check things off as you go, your progress saves on this device, so it is here next time you open it. This is your remodel, tracked.</p>
+    <div class="punch">
+      <div class="punch-bar"><span id="pbar"></span></div>
+      <div id="tasks"></div>
+      <div class="punch-msg" id="pmsg"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SELECTIONS (shoppable) -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Ready to order</div>
     <h2>The <em>Selections</em></h2>
-    <p class="section-sub">Eleven products. Each one chosen, priced, and ready to order. Brand names where they matter (Toto, Panasonic, Delta), savings where they don't (Wayfair mirror, Amazon hardware).</p>
-    <div class="product-grid">
+    <p class="sub">Verified June 2026, real prices, real links. Two things changed since the first plan: IKEA discontinued GODMORGON, and the sconce I had wrong. Both fixed below.</p>
+    <div class="prods" id="prods"></div>
+  </div>
+</section>
 
-      <div class="product-card">
-        <div class="product-icon">
-          <svg viewBox="0 0 100 100" width="100" height="100">
-            <defs>
-              <linearGradient id="van-icon" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stop-color="#C9B89A"/>
-                <stop offset="100%" stop-color="#7A6850"/>
-              </linearGradient>
-            </defs>
-            <rect x="10" y="35" width="80" height="35" fill="url(#van-icon)" stroke="#5E4838"/>
-            <rect x="8" y="32" width="84" height="5" fill="#FAFAF7" stroke="#7A6850" stroke-width="0.5"/>
-            <ellipse cx="50" cy="34" rx="14" ry="1.5" fill="#E8E1D4"/>
-            <line x1="35" y1="35" x2="35" y2="70" stroke="#5E4838" stroke-width="0.5"/>
-            <line x1="65" y1="35" x2="65" y2="70" stroke="#5E4838" stroke-width="0.5"/>
-            <rect x="22" y="48" width="10" height="2" fill="#A88A56"/>
-            <rect x="45" y="48" width="10" height="2" fill="#A88A56"/>
-            <rect x="68" y="48" width="10" height="2" fill="#A88A56"/>
-            <ellipse cx="50" cy="75" rx="42" ry="2" fill="#000" opacity="0.15"/>
-          </svg>
-        </div>
-        <div class="product-category">Vanity <span class="locked-tag">Owned</span></div>
-        <div class="product-name">60" Floating Vanity</div>
-        <div class="product-detail">Gray-oak finish, single integrated basin, single-hole faucet cutout. Wall-mounted — plumbing will be relocated.</div>
-        <div class="product-price">Already purchased</div>
-      </div>
-
-      <div class="product-card">
-        <div class="product-icon">
-          <svg viewBox="0 0 100 100" width="100" height="100">
-            <defs>
-              <linearGradient id="fau-icon" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stop-color="#E8EBED"/>
-                <stop offset="100%" stop-color="#909498"/>
-              </linearGradient>
-            </defs>
-            <rect x="46" y="20" width="8" height="60" fill="url(#fau-icon)" stroke="#6F7378"/>
-            <rect x="36" y="16" width="28" height="8" fill="url(#fau-icon)" rx="3"/>
-            <rect x="32" y="76" width="36" height="8" fill="url(#fau-icon)" rx="2"/>
-            <circle cx="50" cy="12" r="6" fill="#C8CCCF" stroke="#6F7378"/>
-          </svg>
-        </div>
-        <div class="product-category">Faucet <span class="locked-tag">Locked</span></div>
-        <div class="product-name">Delta Trinsic — Chrome</div>
-        <div class="product-detail">Single-handle, single-hole, modern minimalist. Chrome finish locked to match vanity hardware.</div>
-        <div class="product-price">$140</div>
-      </div>
-
-      <div class="product-card">
-        <div class="product-icon">
-          <svg viewBox="0 0 100 100" width="100" height="100">
-            <ellipse cx="50" cy="35" rx="22" ry="14" fill="#FAFAF7" stroke="#A89472" stroke-width="1"/>
-            <rect x="35" y="35" width="30" height="38" fill="#FAFAF7" stroke="#A89472" stroke-width="1" rx="3"/>
-            <rect x="30" y="20" width="40" height="12" fill="#FAFAF7" stroke="#A89472" stroke-width="1" rx="2"/>
-            <circle cx="63" cy="22" r="2" fill="#C8CCCF"/>
-            <ellipse cx="50" cy="78" rx="20" ry="3" fill="#000" opacity="0.1"/>
-          </svg>
-        </div>
-        <div class="product-category">Toilet</div>
-        <div class="product-name">Toto Drake CST744SL</div>
-        <div class="product-detail">Elongated bowl, comfort height, two-piece. Industry standard for reliable flush + easy parts.</div>
-        <div class="product-price">$280 + ~$100-150 install</div>
-      </div>
-
-      <div class="product-card">
-        <div class="product-icon">
-          <svg viewBox="0 0 100 100" width="100" height="100">
-            <circle cx="50" cy="50" r="38" fill="#FAFAF7" stroke="#A89472"/>
-            <circle cx="50" cy="50" r="30" fill="#E8E1D4"/>
-            <g stroke="#7A6850" stroke-width="1.5" fill="none" stroke-linecap="round">
-              <path d="M 50 25 L 50 35"/>
-              <path d="M 50 65 L 50 75"/>
-              <path d="M 25 50 L 35 50"/>
-              <path d="M 65 50 L 75 50"/>
-              <circle cx="50" cy="50" r="8" fill="#7A6850" opacity="0.3"/>
-            </g>
-            <text x="50" y="92" text-anchor="middle" font-family="Helvetica Neue" font-size="8" fill="#7A6850">0.3 sones</text>
-          </svg>
-        </div>
-        <div class="product-category">Vent Fan</div>
-        <div class="product-name">Panasonic WhisperCeiling</div>
-        <div class="product-detail">FV-0511VQ1. Quietest in class at 0.3 sones — you'll forget it's running. Energy Star.</div>
-        <div class="product-price">$130 + electrician trip</div>
-      </div>
-
-      <div class="product-card">
-        <div class="product-icon">
-          <svg viewBox="0 0 100 100" width="100" height="100">
-            <rect x="46" y="20" width="8" height="20" fill="#A88A56"/>
-            <ellipse cx="50" cy="55" rx="20" ry="28" fill="#FFF8E7" opacity="0.9" stroke="#A88A56" stroke-width="2"/>
-            <g stroke="#C9A876" stroke-width="0.6">
-              <line x1="36" y1="42" x2="36" y2="68"/>
-              <line x1="42" y1="36" x2="42" y2="74"/>
-              <line x1="48" y1="34" x2="48" y2="76"/>
-              <line x1="54" y1="34" x2="54" y2="76"/>
-              <line x1="60" y1="36" x2="60" y2="74"/>
-              <line x1="64" y1="42" x2="64" y2="68"/>
-            </g>
-          </svg>
-        </div>
-        <div class="product-category">Sconces (×2)</div>
-        <div class="product-name">Fluted Brass Sconces</div>
-        <div class="product-detail">Mitzi Cyrus or West Elm fluted glass with brushed brass arm. Warm 2700K bulbs. Flank the mirror.</div>
-        <div class="product-price">$120-180 each</div>
-      </div>
-
-      <div class="product-card">
-        <div class="product-icon">
-          <svg viewBox="0 0 100 100" width="100" height="100">
-            <path d="M 30 20 Q 30 10 50 10 Q 70 10 70 20 L 70 80 L 30 80 Z" fill="none" stroke="#A88A56" stroke-width="3"/>
-            <path d="M 32 20 Q 32 13 50 13 Q 68 13 68 20 L 68 78 L 32 78 Z" fill="url(#mirror-grad-icon)"/>
-            <defs>
-              <linearGradient id="mirror-grad-icon" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#E8E1D4"/>
-                <stop offset="100%" stop-color="#C9B89A"/>
-              </linearGradient>
-            </defs>
-          </svg>
-        </div>
-        <div class="product-category">Mirror</div>
-        <div class="product-name">Arched Brass Mirror</div>
-        <div class="product-detail">24"×36" arched, brushed brass frame. Wayfair or Anthropologie sources. The room's jewelry.</div>
-        <div class="product-price">$120-180</div>
-      </div>
-
-      <div class="product-card">
-        <div class="product-icon">
-          <svg viewBox="0 0 100 100" width="100" height="100">
-            <rect x="10" y="20" width="80" height="60" fill="#8F7D63"/>
-            <g stroke="#5E4F3D" stroke-width="0.6">
-              <line x1="10" y1="32" x2="90" y2="32"/>
-              <line x1="10" y1="44" x2="90" y2="44"/>
-              <line x1="10" y1="56" x2="90" y2="56"/>
-              <line x1="10" y1="68" x2="90" y2="68"/>
-              <line x1="30" y1="20" x2="30" y2="80"/>
-              <line x1="55" y1="20" x2="55" y2="80"/>
-              <line x1="75" y1="20" x2="75" y2="80"/>
-            </g>
-            <g opacity="0.4" stroke="#5E4F3D" stroke-width="0.3">
-              <line x1="15" y1="22" x2="25" y2="30"/>
-              <line x1="35" y1="35" x2="50" y2="42"/>
-              <line x1="60" y1="48" x2="72" y2="55"/>
-              <line x1="18" y1="60" x2="28" y2="68"/>
-            </g>
-          </svg>
-        </div>
-        <div class="product-category">Flooring</div>
-        <div class="product-name">Lifeproof LVP — Sterling Oak</div>
-        <div class="product-detail">Waterproof click-lock luxury vinyl plank. Looks like wood, lives like tile. DIY weekend install.</div>
-        <div class="product-price">$120 material + tools</div>
-      </div>
-
-      <div class="product-card">
-        <div class="product-icon">
-          <svg viewBox="0 0 100 100" width="100" height="100">
-            <rect x="20" y="20" width="60" height="60" fill="#FAFAF7" stroke="#A89472" rx="3"/>
-            <rect x="50" y="50" width="22" height="22" fill="#F4EFE9"/>
-            <text x="50" y="44" text-anchor="middle" font-family="Georgia, serif" font-size="7" fill="#7A6850" font-style="italic">Swiss Coffee</text>
-            <text x="50" y="92" text-anchor="middle" font-family="Helvetica Neue" font-size="6" fill="#7A6850" letter-spacing="1">OC-45</text>
-          </svg>
-        </div>
-        <div class="product-category">Paint</div>
-        <div class="product-name">BM Swiss Coffee OC-45</div>
-        <div class="product-detail">Warm white that flatters the reglazed tile and gray oak vanity. 1 gallon covers the room twice.</div>
-        <div class="product-price">$80 paint + supplies</div>
-      </div>
-
-      <div class="product-card">
-        <div class="product-icon">
-          <svg viewBox="0 0 100 100" width="100" height="100">
-            <rect x="15" y="50" width="30" height="3" fill="#A88A56"/>
-            <rect x="22" y="40" width="3" height="20" fill="#A88A56"/>
-            <rect x="35" y="40" width="3" height="20" fill="#A88A56"/>
-            <rect x="55" y="50" width="30" height="3" fill="#A88A56"/>
-            <rect x="62" y="40" width="3" height="20" fill="#A88A56"/>
-            <rect x="75" y="40" width="3" height="20" fill="#A88A56"/>
-            <text x="50" y="80" text-anchor="middle" font-family="Helvetica Neue" font-size="7" fill="#7A6850" letter-spacing="1">BRASS</text>
-          </svg>
-        </div>
-        <div class="product-category">Hardware</div>
-        <div class="product-name">TP holder · towel bar · hooks</div>
-        <div class="product-detail">Brushed brass throughout — one finish, head to toe. Amazon or Build.com.</div>
-        <div class="product-price">$120 total</div>
-      </div>
-
-      <div class="product-card">
-        <div class="product-icon">
-          <svg viewBox="0 0 100 100" width="100" height="100">
-            <rect x="20" y="20" width="60" height="60" fill="#E8E1D4" stroke="#A89472" stroke-width="0.5"/>
-            <g stroke="#C9B89A" stroke-width="0.4">
-              <line x1="20" y1="32" x2="80" y2="32"/>
-              <line x1="20" y1="44" x2="80" y2="44"/>
-              <line x1="20" y1="56" x2="80" y2="56"/>
-              <line x1="20" y1="68" x2="80" y2="68"/>
-            </g>
-            <text x="50" y="92" text-anchor="middle" font-family="Helvetica Neue" font-size="6" fill="#7A6850">LINEN</text>
-          </svg>
-        </div>
-        <div class="product-category">Window Treatment</div>
-        <div class="product-name">Cordless Cellular Shade</div>
-        <div class="product-detail">Levolor ivory linen, cordless cellular. Replaces the existing vertical blinds.</div>
-        <div class="product-price">~$60</div>
-      </div>
-
-      <div class="product-card">
-        <div class="product-icon">
-          <svg viewBox="0 0 100 100" width="100" height="100">
-            <rect x="20" y="20" width="60" height="60" fill="rgba(232,235,237,0.4)" stroke="#C8CCCF" stroke-width="1"/>
-            <rect x="50" y="20" width="2" height="60" fill="#C8CCCF"/>
-            <line x1="20" y1="20" x2="20" y2="80" stroke="#909498" stroke-width="2"/>
-            <line x1="80" y1="20" x2="80" y2="80" stroke="#909498" stroke-width="2"/>
-            <circle cx="48" cy="50" r="1.5" fill="#909498"/>
-            <circle cx="54" cy="50" r="1.5" fill="#909498"/>
-          </svg>
-        </div>
-        <div class="product-category">Shower Doors <span class="locked-tag">Keep</span></div>
-        <div class="product-name">Existing Silver Sliders</div>
-        <div class="product-detail">Keeping existing frosted-glass silver-frame sliders. Frameless upgrade is Phase 2 ($400-800).</div>
-        <div class="product-price">$0</div>
-      </div>
-
+<!-- WOW TOUCHES -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Boutique-hotel for pennies</div>
+    <h2>The <em>Wow</em>, under budget</h2>
+    <p class="sub">The cheapest upgrades carry the most spa. None of these need a contractor.</p>
+    <div class="cards2">
+      <div class="mini"><div class="ic">🤍</div><h4>Plush towels</h4><p>The single fastest upgrade. Two bath, two hand, two wash, rolled in a basket. Sage to tie the palette together.</p></div>
+      <div class="mini"><div class="ic">🌿</div><h4>One green thing</h4><p>A sage or jade plant softens all that hard tile and lands the 2026 "renewal" palette. Even a faux one in good light.</p></div>
+      <div class="mini"><div class="ic">🕯️</div><h4>A signature scent</h4><p>Pick one and keep it. Eucalyptus by the shower is the classic spa move. Instant elevation, almost free.</p></div>
+      <div class="mini"><div class="ic">💡</div><h4>Light the face, not the ceiling</h4><p>Sconces beside the mirror beat an overhead bar. 2700K for mood, 3000K at the mirror for grooming, CRI 90+.</p></div>
     </div>
   </div>
 </section>
 
+<!-- REGLAZE CARE -->
 <section>
-  <div class="container">
-    <h2>The <em>Floor Plan</em></h2>
-    <p class="section-sub">~40 square feet. Top-down. The wall-mount vanity frees the floor visually — the eye reads the room as larger than the footprint suggests.</p>
-    <div class="plan-wrap">
-      <svg class="plan-svg" viewBox="0 0 700 500" xmlns="http://www.w3.org/2000/svg">
-        <!-- Floor (LVP) -->
-        <rect x="40" y="40" width="620" height="420" fill="#A89472" stroke="#2A2A2A" stroke-width="3"/>
-        <g stroke="#7A6850" stroke-width="0.4" opacity="0.5">
-          <line x1="40" y1="100" x2="660" y2="100"/>
-          <line x1="40" y1="160" x2="660" y2="160"/>
-          <line x1="40" y1="220" x2="660" y2="220"/>
-          <line x1="40" y1="280" x2="660" y2="280"/>
-          <line x1="40" y1="340" x2="660" y2="340"/>
-          <line x1="40" y1="400" x2="660" y2="400"/>
-        </g>
-
-        <!-- Bathtub (left wall) -->
-        <rect x="40" y="60" width="180" height="100" fill="#FAFAF7" stroke="#2A2A2A" stroke-width="2" rx="8"/>
-        <rect x="55" y="75" width="150" height="70" fill="#E8E1D4" stroke="#A89472" stroke-width="1" rx="6"/>
-        <circle cx="70" cy="110" r="4" fill="#C8CCCF"/>
-        <text x="130" y="115" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="10" fill="#5E4838" letter-spacing="1">TUB · REGLAZED</text>
-
-        <!-- Toilet (top right) -->
-        <ellipse cx="560" cy="120" rx="28" ry="22" fill="#FAFAF7" stroke="#2A2A2A" stroke-width="2"/>
-        <rect x="540" y="80" width="40" height="20" fill="#FAFAF7" stroke="#2A2A2A" stroke-width="2" rx="2"/>
-        <text x="560" y="170" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="10" fill="#5E4838" letter-spacing="1">TOTO DRAKE</text>
-
-        <!-- Floating Vanity (bottom wall) -->
-        <rect x="180" y="380" width="340" height="60" fill="url(#vanity-gradient)" stroke="#5E4838" stroke-width="2"/>
-        <rect x="175" y="378" width="350" height="6" fill="#FAFAF7" stroke="#7A6850" stroke-width="0.5"/>
-        <ellipse cx="350" cy="383" rx="35" ry="3" fill="#E8E1D4"/>
-        <circle cx="350" cy="383" r="2" fill="#C8CCCF"/>
-        <line x1="270" y1="380" x2="270" y2="440" stroke="#5E4838" stroke-width="0.5"/>
-        <line x1="430" y1="380" x2="430" y2="440" stroke="#5E4838" stroke-width="0.5"/>
-        <text x="350" y="465" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="10" fill="#5E4838" letter-spacing="1">60" FLOATING VANITY · GRAY OAK</text>
-
-        <!-- Mirror indicator above vanity (dashed) -->
-        <rect x="290" y="378" width="120" height="3" fill="#A88A56" opacity="0.6"/>
-
-        <!-- Sconces (small circles flanking mirror position) -->
-        <circle cx="265" cy="380" r="5" fill="#FFF8E7" stroke="#A88A56" stroke-width="1.5"/>
-        <circle cx="435" cy="380" r="5" fill="#FFF8E7" stroke="#A88A56" stroke-width="1.5"/>
-
-        <!-- Door (top, swinging in) -->
-        <line x1="330" y1="40" x2="400" y2="40" stroke="#FAFAF7" stroke-width="8"/>
-        <line x1="330" y1="40" x2="330" y2="110" stroke="#5E4838" stroke-width="1.5" stroke-dasharray="3,3"/>
-        <path d="M 330 40 Q 380 60 380 100" fill="none" stroke="#5E4838" stroke-width="0.8" stroke-dasharray="2,2"/>
-        <text x="365" y="32" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="9" fill="#5E4838" letter-spacing="1">DOOR</text>
-
-        <!-- Window (right wall above toilet) -->
-        <rect x="660" y="220" width="6" height="80" fill="#E8E1D4"/>
-        <rect x="660" y="250" width="6" height="2" fill="#7A6850"/>
-        <text x="688" y="265" font-family="Helvetica Neue, sans-serif" font-size="9" fill="#5E4838" letter-spacing="1" transform="rotate(90 688 265)">WINDOW</text>
-
-        <!-- Vent fan in ceiling (center dotted circle) -->
-        <circle cx="350" cy="250" r="14" fill="none" stroke="#7A6850" stroke-width="0.8" stroke-dasharray="3,2"/>
-        <text x="350" y="254" text-anchor="middle" font-family="Helvetica Neue, sans-serif" font-size="7" fill="#7A6850">VENT</text>
-
-        <!-- Dimensions -->
-        <g font-family="Helvetica Neue, sans-serif" font-size="10" fill="#2A2A2A">
-          <line x1="40" y1="475" x2="660" y2="475" stroke="#2A2A2A" stroke-width="0.5"/>
-          <line x1="40" y1="470" x2="40" y2="480" stroke="#2A2A2A" stroke-width="0.5"/>
-          <line x1="660" y1="470" x2="660" y2="480" stroke="#2A2A2A" stroke-width="0.5"/>
-          <text x="350" y="490" text-anchor="middle">~8' wide</text>
-
-          <line x1="20" y1="40" x2="20" y2="460" stroke="#2A2A2A" stroke-width="0.5"/>
-          <line x1="15" y1="40" x2="25" y2="40" stroke="#2A2A2A" stroke-width="0.5"/>
-          <line x1="15" y1="460" x2="25" y2="460" stroke="#2A2A2A" stroke-width="0.5"/>
-          <text x="10" y="255" text-anchor="middle" transform="rotate(-90 10 255)">~5' deep</text>
-        </g>
-
-        <!-- Title -->
-        <text x="350" y="25" text-anchor="middle" fill="#7A6850" font-family="Helvetica Neue, sans-serif" font-size="9" letter-spacing="3">FLOOR PLAN · HALL BATH · NTS</text>
-      </svg>
-      <div class="plan-legend">
-        <div class="legend-item"><div class="legend-box" style="background:#FAFAF7;border:1px solid #A89472;"></div>Reglazed fixtures</div>
-        <div class="legend-item"><div class="legend-box" style="background:linear-gradient(135deg,#C9B89A,#7A6850);"></div>Gray oak vanity</div>
-        <div class="legend-item"><div class="legend-box" style="background:#A89472;"></div>LVP flooring</div>
-        <div class="legend-item"><div class="legend-box" style="background:#FFF8E7;border:1px solid #A88A56;"></div>Sconce</div>
-      </div>
+  <div class="wrap">
+    <div class="eyebrow">Protect the centerpiece</div>
+    <h2>Reglazing, <em>done right</em></h2>
+    <p class="sub">The reglaze is the make-or-break. Go pro on the tub and any in-shower wet wall (DIY epoxy fails most in wet zones). Then baby it for 30 days. That is the difference between a 5-year finish and a 15-year one.</p>
+    <div class="do-dont">
+      <div class="dd do"><h4>Do</h4><ul>
+        <li>Hire a real pro for the tub + wet walls (Miracle Method and LA refinishers, ~$1,100–2,300 for both)</li>
+        <li>Use only non-abrasive, non-acidic cleaners (mild dish soap, a soft sponge)</li>
+        <li>Wipe surfaces dry after use</li>
+        <li>Treat a chip fast, water under a chip is what causes peeling</li>
+      </ul></div>
+      <div class="dd dont"><h4>Don't</h4><ul>
+        <li>No suction-cup bath mats, ever (the #1 cause of peeling)</li>
+        <li>No bleach, ammonia, abrasive pads, or powder cleansers</li>
+        <li>Don't use the tub hard for ~30 days while it fully cures</li>
+        <li>Don't cheap out with a Groupon refinisher on the one irreversible step</li>
+      </ul></div>
     </div>
-  </div>
-</section>
-
-<section>
-  <div class="container">
-    <h2><em>Before</em> & After</h2>
-    <p class="section-sub">Same bones. Different room.</p>
-    <div class="ba-grid">
-      <div class="ba-card ba-before">
-        <div class="ba-label">Before</div>
-        <h3>Pink Tile Time Capsule</h3>
-        <ul>
-          <li>Pink wainscot tile (original)</li>
-          <li>Dated builder-grade vanity, floor-mount</li>
-          <li>Vertical blinds on window</li>
-          <li>Overhead-only lighting</li>
-          <li>Builder-beige walls</li>
-          <li>Old toilet, loud vent fan</li>
-        </ul>
-      </div>
-      <div class="ba-card ba-after">
-        <div class="ba-label">After</div>
-        <h3>Contemporary Spa</h3>
-        <ul>
-          <li>White reglazed wainscot (no demo)</li>
-          <li>60" floating gray-oak vanity</li>
-          <li>Linen cordless cellular shade</li>
-          <li>Two warm-glow brass sconces + arched mirror</li>
-          <li>Swiss Coffee warm-white walls</li>
-          <li>Toto Drake + WhisperCeiling vent (0.3 sones)</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="container">
-    <h2>Phase <em>2</em></h2>
-    <p class="section-sub">What you're NOT getting at $5K — but could add later as standalone projects.</p>
-    <div class="phase2-grid">
-      <div class="phase2-card">
-        <div class="phase2-title">Frameless Shower Doors</div>
-        <div class="phase2-desc">The single biggest upgrade left on the table. Replaces existing silver-frame sliders.</div>
-        <div class="phase2-cost">$400 – $800</div>
-      </div>
-      <div class="phase2-card">
-        <div class="phase2-title">Heated Towel Bar</div>
-        <div class="phase2-desc">Spa hotel detail. Plug-in or hardwired, mounted next to the shower.</div>
-        <div class="phase2-cost">$300 – $500</div>
-      </div>
-      <div class="phase2-card">
-        <div class="phase2-title">Toto Washlet Bidet Seat</div>
-        <div class="phase2-desc">Drop-in upgrade on the Toto Drake toilet. Heated seat + bidet wash.</div>
-        <div class="phase2-cost">$400</div>
-      </div>
-      <div class="phase2-card">
-        <div class="phase2-title">Built-In Shower Niche</div>
-        <div class="phase2-desc">Requires opening the wall — bigger job, but elegant. Coordinate with reglazing.</div>
-        <div class="phase2-cost">$600 – $1,200</div>
-      </div>
+    <div class="egg">
+      <h4>One honest pause, from someone who cares about your house</h4>
+      <p>Going white is the one permanent decision here. That pink is a real mid-century time capsule, and there's a whole movement (<a href="https://retrorenovation.com/category/bathroom-categories/save-the-pink-bathrooms/" target="_blank" rel="noopener">Save the Pink Bathrooms</a>, since 2009) of people who restore it instead, especially in design-forward LA pockets where an intact period-pink bath is an asset. You already chose white, and white is going to be beautiful. I just wanted you to have made the call on purpose. Either way, I'm with you.</p>
     </div>
   </div>
 </section>
 
 <footer>
-  <div class="eyebrow">Hall Bathroom Visualization</div>
-  <p>Designed for Gordon &amp; Joe · Built 2026-05-24 by Darby · Reglaze, don't replace.</p>
+  <div class="eyebrow">Joe's Hall Bathroom · Design Studio</div>
+  <p>Made for Joe by Darby. Play with it as much as you want, the budget and your punch-list are yours to move. Reglaze, don't replace. 💛</p>
 </footer>
 
+<script>
+/* ---------- room SVG (before/after) ---------- */
+function roomSVG(after){
+  const wall = after ? '#F4EFE9' : '#F0D9DD';
+  const tile = after ? '#FAFAF7' : '#E7B8C0';
+  const grout = after ? '#E8E1D4' : '#D49AA6';
+  const rail = after ? '#C9A876' : '#9C5C68';
+  const floor = after ? '#8F7D63' : '#B7A98C';
+  return `<svg viewBox="0 0 900 380" xmlns="http://www.w3.org/2000/svg">
+    <defs><linearGradient id="oak" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9B89A"/><stop offset="1" stop-color="#7A6850"/></linearGradient></defs>
+    <rect x="0" y="0" width="900" height="210" fill="${wall}"/>
+    <rect x="0" y="210" width="900" height="120" fill="${tile}"/>
+    <g stroke="${grout}" stroke-width="1" opacity=".7">
+      ${[245,280,315].map(y=>`<line x1="0" y1="${y}" x2="900" y2="${y}"/>`).join('')}
+      ${Array.from({length:23},(_,i)=>`<line x1="${i*40}" y1="210" x2="${i*40}" y2="330"/>`).join('')}
+    </g>
+    <line x1="0" y1="210" x2="900" y2="210" stroke="${rail}" stroke-width="3"/>
+    <rect x="0" y="330" width="900" height="50" fill="${floor}"/>
+    ${ after ? `
+    <!-- spa vanity -->
+    <rect x="250" y="222" width="400" height="80" fill="url(#oak)" stroke="#5E4838" rx="3"/>
+    <rect x="245" y="214" width="410" height="10" fill="#FAFAF7" stroke="#7A6850"/>
+    <ellipse cx="450" cy="219" rx="42" ry="3" fill="#E8E1D4"/>
+    <g class="hw" fill="${'#A88A56'}"><rect x="315" y="248" width="18" height="3"/><rect x="441" y="248" width="18" height="3"/><rect x="567" y="248" width="18" height="3"/></g>
+    <!-- faucet (always chrome) -->
+    <rect x="447" y="180" width="6" height="40" fill="#C8CCCF" stroke="#909498" stroke-width=".5"/><rect x="440" y="177" width="20" height="6" rx="2" fill="#C8CCCF"/>
+    <!-- mirror -->
+    <path class="frame" d="M370 70 Q370 45 450 45 Q530 45 530 70 L530 175 L370 175 Z" fill="none" stroke="${'#A88A56'}" stroke-width="6"/>
+    <path d="M375 72 Q375 50 450 50 Q525 50 525 72 L525 170 L375 170 Z" fill="#E8E1D4" opacity=".55"/>
+    <!-- sconces -->
+    ${[300,600].map(x=>`<g class="sconce" transform="translate(${x},95)"><rect x="-3" y="0" width="6" height="26" fill="${'#A88A56'}"/><ellipse cx="0" cy="40" rx="12" ry="20" fill="#FFF8E7" stroke="${'#A88A56'}" stroke-width="2"/></g>`).join('')}
+    <ellipse cx="450" cy="306" rx="210" ry="6" fill="#000" opacity=".12"/>
+    ` : `
+    <!-- before: dated vanity + pink -->
+    <rect x="300" y="250" width="300" height="80" fill="#C9A98A" stroke="#8a6f55"/>
+    <rect x="296" y="244" width="308" height="8" fill="#efe7da" stroke="#9b8468"/>
+    <rect x="430" y="200" width="40" height="50" fill="#dfe3e6" stroke="#9aa"/>
+    <rect x="360" y="80" width="180" height="110" fill="#cfd6da" stroke="#9aa" stroke-width="3"/>
+    <text x="450" y="140" text-anchor="middle" font-family="Inter" font-size="13" fill="#9C5C68">1962, and proud of it</text>
+    `}
+    <text x="450" y="22" text-anchor="middle" font-family="Inter" font-size="10" letter-spacing="2" fill="${after?'#7A6850':'#9C5C68'}">${after?'AFTER · CONTEMPORARY SPA':'BEFORE · PINK TIME CAPSULE'}</text>
+  </svg>`;
+}
+let isAfter=true;
+function renderRoom(){document.getElementById('room').innerHTML=roomSVG(isAfter);
+  document.getElementById('ba-after').classList.toggle('on',isAfter);
+  document.getElementById('ba-before').classList.toggle('on',!isAfter);}
+document.getElementById('ba-after').onclick=()=>{isAfter=true;renderRoom()};
+document.getElementById('ba-before').onclick=()=>{isAfter=false;renderRoom()};
+renderRoom();
+
+/* ---------- finish studio (metal toggle) ---------- */
+document.getElementById('elev').innerHTML=roomSVG(true);
+function setMetal(m){
+  const accent = m==='brass' ? '#A88A56' : '#9aa1a6';
+  document.querySelectorAll('#elev .hw rect, #elev .frame, #elev .sconce rect, #elev .sconce ellipse').forEach(el=>{
+    if(el.tagName==='ellipse'){el.setAttribute('stroke',accent);} else {el.setAttribute('fill',accent);el.setAttribute('stroke',accent);}
+  });
+  document.getElementById('sw-accent').querySelector('.c').style.background = m==='brass'
+     ? 'linear-gradient(135deg,#C9A876,#A88A56)' : 'linear-gradient(135deg,#E8EBED,#909498)';
+  document.getElementById('m-brass').classList.toggle('on',m==='brass');
+  document.getElementById('m-chrome').classList.toggle('on',m==='chrome');
+  document.getElementById('metal-note').textContent = m==='brass'
+    ? 'Brass on the mirror, sconces, and pulls, chrome at the faucet and shower. One deliberate two-metal split reads designed, not accidental. The 2026-trend pick: warm metal as a deliberate accent.'
+    : 'All chrome, head to toe. The most cohesive, lowest-risk look, and it matches your locked chrome faucet and silver shower frame exactly. Add warmth with towels and wood, not metal.';
+}
+setMetal('brass');
+
+/* ---------- budget builder ---------- */
+const items=[
+ {n:'Reglaze tub + wall tile (white)',save:1200,splurge:1800,meta:'pro · the one to not cheap out on',on:1,t:0},
+ {n:'New toilet — Toto Drake + install',save:300,splurge:430,meta:'~$210 toilet + seat + install',on:1,t:0},
+ {n:'Vanity sink top (GODMORGON discontinued)',save:170,splurge:300,meta:'IKEA ORRSJÖN $170 / universal top $300',on:1,t:0},
+ {n:'Faucet — Delta Trinsic chrome (locked)',save:210,splurge:280,meta:'street price beats Delta direct',on:1,t:0},
+ {n:'Plumbing reconfig for wall-mount',save:500,splurge:500,meta:'combine with toilet to save a trip',on:1,t:0},
+ {n:'Flooring — Sterling Oak LVP',save:160,splurge:300,meta:'$2.98–4.39/sqft · DIY',on:1,t:0},
+ {n:'Vent fan — Panasonic WhisperCeiling',save:170,splurge:250,meta:'quietest in class',on:1,t:0},
+ {n:'Lighting — 2 brass sconces (Mitzi Beck)',save:300,splurge:470,meta:'$234 ea, or West Elm ~$149',on:1,t:0},
+ {n:'Arched brass mirror',save:120,splurge:160,meta:'ANDY STAR ~$130',on:1,t:0},
+ {n:'Hardware set (chrome, matches faucet)',save:60,splurge:90,meta:'TP holder, bar, hooks',on:1,t:0},
+ {n:'Paint — BM Swiss Coffee OC-45',save:70,splurge:90,meta:'sample first vs reglazed white',on:1,t:0},
+ {n:'Cordless cellular shade, ivory',save:60,splurge:75,meta:'pull the vertical blinds',on:1,t:0},
+ {n:'Towels, plant, scent (the wow)',save:120,splurge:200,meta:'highest spa-per-dollar',on:1,t:0},
+ {n:'Contingency buffer',save:500,splurge:500,meta:'you WILL find something',on:1,t:0},
+];
+let p2=0;
+function priceOf(it){return it.t==='splurge'?it.splurge:it.save;}
+function renderBudget(){
+  const b=document.getElementById('budget');b.innerHTML='';
+  items.forEach((it,i)=>{
+    const row=document.createElement('div');row.className='brow'+(it.on?' on':' off');
+    row.innerHTML=`<div><span class="nm">${it.n}</span>
+      <span class="tier" data-t="save">${it.t==='splurge'?'use save':'splurge'}</span>
+      <div class="meta">${it.meta}</div></div>
+      <div class="amt">$${priceOf(it).toLocaleString()}</div>
+      <div class="tk">${it.on?'✓':''}</div>`;
+    row.onclick=(e)=>{ if(e.target.classList.contains('tier')){it.t=it.t==='splurge'?'save':'splurge';} else {it.on=!it.on;} renderBudget(); };
+    b.appendChild(row);
+  });
+  const total=items.reduce((s,it)=>s+(it.on?priceOf(it):0),0)+p2;
+  const tEl=document.getElementById('total');tEl.textContent='$'+total.toLocaleString();
+  tEl.classList.toggle('over',total>5000);
+  const m=document.getElementById('budget-msg');
+  if(total>5000){m.innerHTML=`<b style="color:#b5483a">$${(total-5000).toLocaleString()} over.</b> Drop a line or switch a splurge back to save.`;}
+  else{m.innerHTML=`<b style="color:#6a8a66">$${(5000-total).toLocaleString()} of headroom</b> left under $5,000.`;}
+}
+function togP2(btn,amt){btn.classList.toggle('on');p2+=btn.classList.contains('on')?amt:-amt;renderBudget();}
+renderBudget();
+
+/* ---------- punch list (localStorage) ---------- */
+const tasks=[
+ {t:'Lock the design',d:'Confirm white reglaze, chrome faucet, accent metal. (Done.)'},
+ {t:'Get 3 reglaze quotes',d:'Miracle Method + 2 LA refinishers, tub + walls'},
+ {t:'Order long-lead items',d:'Toilet, faucet, fan, sink top, sconces, mirror'},
+ {t:'Book the pro trades',d:'Plumber + electrician in ONE combined visit'},
+ {t:'Reglaze tub + tile',d:'Then do NOTHING to it for ~24h, baby it 30 days'},
+ {t:'Paint walls',d:'Swiss Coffee, after reglaze cures'},
+ {t:'Install LVP flooring',d:'DIY weekend, click-lock'},
+ {t:'Hang vanity + plumb',d:'Wall-mount, relocate supply + drain'},
+ {t:'Mount mirror, sconces, hardware',d:'The jewelry goes on last'},
+ {t:'Style it',d:'Towels, plant, scent, shade. Stand back. Exhale.'},
+];
+const KEY='joe-bathroom-punch';
+let done=JSON.parse(localStorage.getItem(KEY)||'[]');
+function renderTasks(){
+  const c=document.getElementById('tasks');c.innerHTML='';
+  tasks.forEach((tk,i)=>{
+    const el=document.createElement('div');el.className='task'+(done.includes(i)?' done':'');
+    el.innerHTML=`<div class="box">${done.includes(i)?'✓':''}</div><div><div class="t">${i+1}. ${tk.t}</div><div class="d">${tk.d}</div></div>`;
+    el.onclick=()=>{ done.includes(i)?done=done.filter(x=>x!==i):done.push(i); localStorage.setItem(KEY,JSON.stringify(done)); renderTasks(); };
+    c.appendChild(el);
+  });
+  const pct=Math.round(done.length/tasks.length*100);
+  document.getElementById('pbar').style.width=pct+'%';
+  const msg=document.getElementById('pmsg');
+  msg.textContent = pct===0?'Tap a step when you finish it. It saves itself.'
+    : pct===100?'Every box checked. The room is done, Joe. Go run a bath. 💛'
+    : `${done.length} of ${tasks.length} done · ${pct}%. Brick by brick.`;
+}
+renderTasks();
+
+/* ---------- products (verified June 2026) ---------- */
+const prods=[
+ {cat:'Vanity',badge:'Owned',pn:'60" floating vanity, gray oak',pd:'Already purchased. Wall-mount, single basin.',pp:'In hand',link:''},
+ {cat:'Sink top',badge:'Heads up',fix:1,pn:'IKEA ORRSJÖN sink',pd:'GODMORGON is discontinued. Use ORRSJÖN ($170) IF your cabinet is current-gen IKEA, else a universal 61" cultured-marble top. Measure first.',pp:'$170–300',link:'https://www.ikea.com/us/en/p/orrsjoen-sink-with-water-trap-white-s69516906/'},
+ {cat:'Faucet · locked',pn:'Delta Trinsic, chrome',pd:'Single-handle. In stock at retailers (cheaper than Delta direct).',pp:'$210–280',link:'https://www.walmart.com/ip/Delta-Trinsic-Single-Handle-Bathroom-Faucet-Chrome/51043349'},
+ {cat:'Toilet',pn:'Toto Drake CST744SL',pd:'Elongated, comfort height. Seat sold separately (~$40).',pp:'$198–276',link:'https://www.lowes.com/pd/TOTO-Drake-Elongated-Two-Piece-Toilet-Cotton-White/5005324303'},
+ {cat:'Vent fan',pn:'Panasonic WhisperCeiling FV-0511VQ1',pd:'Quietest in class. Or the VQL1 with a built-in LED.',pp:'$168–250',link:'https://www.homedepot.com/p/Panasonic-WhisperCeiling-DC-Fan-with-Pick-A-Flow-Speed-Selector-50-80-or-110-CFM-and-Flex-Z-Fast-Installation-Bracket-FV-0511VQ1/303619101'},
+ {cat:'Sconces ×2',badge:'Corrected',fix:1,pn:'Mitzi Beck, aged brass',pd:'The fluted damp-rated bath sconce (there is no "Mitzi Cyrus"). West Elm fluted ~$149 is the budget swap.',pp:'$234 ea',link:'https://www.mitzi.com/Product/H640101-AGB'},
+ {cat:'Mirror',pn:'Arched brass mirror, 24×36',pd:'The room\'s jewelry. ANDY STAR or Wayfair.',pp:'$90–160',link:'https://www.amazon.com/ANDY-STAR-Bathroom-SUS304-Anti-Rust-Vertical/dp/B0C61H2GY8'},
+ {cat:'Flooring',pn:'Lifeproof Sterling Oak LVP',pd:'Waterproof click-lock. DIY weekend.',pp:'$2.98–4.39/sqft',link:'https://www.homedepot.com/p/Lifeproof-Sterling-Oak-22-MIL-x-8-7-in-W-x-48-in-L-Click-Lock-Waterproof-Luxury-Vinyl-Plank-Flooring-20-1-sqft-case-I966106LP/309083456'},
+ {cat:'Paint',pn:'BM Swiss Coffee OC-45',pd:'Warm white. Sample it against the reglazed tile, which can read cooler.',pp:'$50–75/gal',link:'https://www.benjaminmoore.com/en-us/paint-colors/color/oc-45/swiss-coffee'},
+ {cat:'Window',pn:'Cordless cellular shade, ivory',pd:'Replaces the vertical blinds.',pp:'$45–75',link:'https://www.lowes.com/pd/allen-roth-58-5-in-x-48-in-Ivory-Blackout-Cordless-Cellular-Shade/5002160695'},
+];
+const pc=document.getElementById('prods');
+prods.forEach(p=>{const d=document.createElement('div');d.className='pc';
+  d.innerHTML=(p.badge?`<span class="badge${p.fix?' fix':''}">${p.badge}</span>`:'')+
+   `<div class="cat">${p.cat}</div><div class="pn">${p.pn}</div><div class="pd">${p.pd}</div><div class="pp">${p.pp}</div>`+
+   (p.link?`<a href="${p.link}" target="_blank" rel="noopener">View it →</a>`:'');
+  pc.appendChild(d);});
+
+/* progress bar */
+addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-innerHeight;document.getElementById('ptop').style.width=(scrollY/h*100)+'%';},{passive:true});
+</script>
 </body>
 </html>
