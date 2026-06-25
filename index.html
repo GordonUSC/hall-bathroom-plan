@@ -208,6 +208,7 @@ footer .eyebrow{color:var(--brass-l)}footer p{max-width:540px;margin:14px auto 0
         <div class="opt-group"><h4>Wall color</h4><p class="optip">Warm whites make a small room feel bigger, and read 2026, not clinical.</p><div class="chips" id="opt-wall"></div></div>
         <div class="opt-group"><h4>Floor</h4><p class="optip">Wood-look LVP is warm and DIY-friendly; marble-look reads more luxe but cooler.</p><div class="chips" id="opt-floor"></div></div>
         <div class="opt-group"><h4>Accent metal</h4><p class="optip">Your faucet is chrome, so brass works as a deliberate accent, not a clash.</p><div class="chips" id="opt-metal"></div></div>
+        <div class="opt-group"><h4>Mirror shape</h4><p class="optip">The mirror is the room's jewelry; the shape sets the whole mood.</p><div class="chips" id="opt-mirror"></div></div>
         <div class="opt-group"><h4>Towels &amp; the green thing</h4><p class="optip">One sage or terracotta note plus a plant lands the 2026 spa palette.</p><div class="chips" id="opt-towel"></div></div>
         <div class="opt-group"><h4>Lighting &mdash; feel the spa</h4><p class="optip">2700–3000K warm light is the spa secret; cool white reads hospital.</p><div class="chips light-pick" id="opt-light"></div></div>
         <div class="lockbar">
@@ -335,10 +336,17 @@ const PAL={
   wall:{warm:{c:'#F1EADE',n:'Swiss Coffee'},greige:{c:'#D9CFC0',n:'Greige'},sage:{c:'#CBD6C8',n:'Soft Sage'}},
   floor:{oak:{n:'Sterling Oak'},marble:{n:'Marble-look'}},
   metal:{brass:{c:'#A88A56',n:'Brass'},chrome:{c:'#9aa1a6',n:'Chrome'}},
-  towel:{sage:{c:'#8FA38C',n:'Sage'},white:{c:'#F6F1E8',n:'White'},terra:{c:'#C9785E',n:'Terracotta'}}
+  towel:{sage:{c:'#8FA38C',n:'Sage'},white:{c:'#F6F1E8',n:'White'},terra:{c:'#C9785E',n:'Terracotta'}},
+  mirror:{arched:{n:'Arched'},round:{n:'Round'},rect:{n:'Rectangle'}}
 };
-let cfg={wall:'warm',floor:'oak',metal:'brass',towel:'sage'};
+let cfg={wall:'warm',floor:'oak',metal:'brass',towel:'sage',mirror:'arched'};
+const GROUPS=['wall','floor','metal','towel','mirror'];
 
+function mirrorSVG(shape,metal){
+  if(shape==='round') return `<circle cx="510" cy="152" r="82" fill="none" stroke="${metal}" stroke-width="7"/><circle cx="510" cy="152" r="76" fill="#E9E3D6" opacity=".5"/>`;
+  if(shape==='rect') return `<rect x="412" y="72" width="196" height="168" rx="3" fill="none" stroke="${metal}" stroke-width="7"/><rect x="419" y="79" width="182" height="154" fill="#E9E3D6" opacity=".5"/>`;
+  return `<path d="M410 95 Q410 60 510 60 Q610 60 610 95 L610 240 L410 240 Z" fill="none" stroke="${metal}" stroke-width="7"/><path d="M417 97 Q417 67 510 67 Q603 67 603 97 L603 233 L417 233 Z" fill="#E9E3D6" opacity=".5"/>`;
+}
 function floorFill(t){
   return t==='marble'
    ? `<rect x="0" y="430" width="1000" height="170" fill="#ECEAE6"/>
@@ -385,9 +393,8 @@ function afterSVG(c,uid){c=c||cfg;uid=uid||'';
    <!-- pulls (metal) --><g fill="${metal}"><rect x="370" y="340" width="20" height="3.5" rx="1"/><rect x="510" y="340" width="20" height="3.5" rx="1"/><rect x="650" y="340" width="20" height="3.5" rx="1"/></g>
    <!-- chrome faucet (locked) -->
    <rect x="506" y="252" width="7" height="52" fill="#C8CCCF" stroke="#909498" stroke-width=".5"/><rect x="498" y="248" width="24" height="7" rx="3" fill="#C8CCCF"/><circle cx="510" cy="243" r="5" fill="#D6DADD"/>
-   <!-- arched mirror (metal frame) -->
-   <path d="M410 95 Q410 60 510 60 Q610 60 610 95 L610 240 L410 240 Z" fill="none" stroke="${metal}" stroke-width="7"/>
-   <path d="M417 97 Q417 67 510 67 Q603 67 603 97 L603 233 L417 233 Z" fill="#E9E3D6" opacity=".5"/>
+   <!-- mirror (shape configurable) -->
+   ${mirrorSVG(c.mirror,metal)}
    <!-- sconces (metal + warm glow) -->
    ${[345,675].map(x=>`<g transform="translate(${x},130)"><rect x="-4" y="0" width="8" height="30" fill="${metal}"/><ellipse cx="0" cy="46" rx="15" ry="24" fill="url(#glow)" stroke="${metal}" stroke-width="2.5"/></g>`).join('')}
    <!-- rolled towels on counter (towel color) -->
@@ -450,8 +457,10 @@ function buildChips(group,key){
   const c=document.getElementById('opt-'+group);c.innerHTML='';
   Object.entries(PAL[group]).forEach(([k,v])=>{
     const b=document.createElement('button');b.className='chip'+(cfg[group]===k?' on':'');
+    const mShape={arched:'⌓',round:'◯',rect:'▭'};
     const swatch = v.c?`<span class="sw" style="background:${v.c}"></span>`
       : (group==='floor'&&k==='oak'?`<span class="sw" style="background:repeating-linear-gradient(0deg,#6B5B45,#9C8A6E 2px,#9C8A6E 5px,#6B5B45 6px)"></span>`
+        : group==='mirror'?`<span class="sw" style="background:#fff;display:grid;place-items:center;font-size:13px;color:var(--oak-d)">${mShape[k]}</span>`
         : `<span class="sw" style="background:#ECEAE6"></span>`);
     b.innerHTML=swatch+v.n;
     b.onclick=()=>{cfg[group]=k;buildChips(group);paint();updateState();};
@@ -474,21 +483,22 @@ let curPreset='';
 function buildPresets(){const c=document.getElementById('presets');c.innerHTML='';
   Object.entries(PRESETS).forEach(([k,p])=>{const b=document.createElement('button');b.className='preset'+(curPreset===k?' on':'');
     b.innerHTML=`${p.n}<small>${p.d}</small>`;b.onclick=()=>applyPreset(k);c.appendChild(b);});}
-function applyPreset(k){const p=PRESETS[k];cfg={...p.cfg};curLight=p.light;curPreset=k;
-  ['wall','floor','metal','towel'].forEach(g=>buildChips(g));buildLights();buildPresets();
+function applyPreset(k){const p=PRESETS[k];cfg={...cfg,...p.cfg};curLight=p.light;curPreset=k;
+  GROUPS.forEach(g=>buildChips(g));buildLights();buildPresets();
   document.getElementById('preview').className='preview '+curLight;paint();updateState();}
 /* save / share / restore */
-function stateStr(){return `w=${cfg.wall}&f=${cfg.floor}&m=${cfg.metal}&t=${cfg.towel}&l=${curLight}`;}
+function stateStr(){return `w=${cfg.wall}&f=${cfg.floor}&m=${cfg.metal}&t=${cfg.towel}&mr=${cfg.mirror}&l=${curLight}`;}
 function updateState(){curPreset='';buildPresets();localStorage.setItem('joe-design',stateStr());history.replaceState(null,'','#'+stateStr());}
 function restore(){
   const h=location.hash.slice(1)||localStorage.getItem('joe-design')||'';
   const p=Object.fromEntries(new URLSearchParams(h));
   if(p.w&&PAL.wall[p.w])cfg.wall=p.w; if(p.f&&PAL.floor[p.f])cfg.floor=p.f;
   if(p.m&&PAL.metal[p.m])cfg.metal=p.m; if(p.t&&PAL.towel[p.t])cfg.towel=p.t;
+  if(p.mr&&PAL.mirror[p.mr])cfg.mirror=p.mr;
   if(p.l&&['day','eve','spa'].includes(p.l))curLight=p.l;
 }
 restore();
-['wall','floor','metal','towel'].forEach(g=>buildChips(g));
+GROUPS.forEach(g=>buildChips(g));
 buildLights();buildPresets();
 document.getElementById('preview').className='preview '+curLight;
 paint();
@@ -520,7 +530,7 @@ function renderCmp(s){
   el.className='cmp';
   const d=`${PAL.wall[p.cfg.wall].n} · ${PAL.floor[p.cfg.floor].n} · ${PAL.metal[p.cfg.metal].n} metal · ${LIGHTS.find(l=>l[0]===p.light)[1]}`;
   el.innerHTML=`<div class="preview ${p.light}"><div style="position:absolute;inset:0">${afterSVG(p.cfg,s.toLowerCase()+'c')}</div><div class="lightfx"></div><div class="lightglow"></div></div><div class="lab"><b>Look ${s}</b> &mdash; ${d}<br><button class="use">Use Look ${s}</button></div>`;
-  el.querySelector('.use').onclick=()=>{cfg={...p.cfg};curLight=p.light;['wall','floor','metal','towel'].forEach(g=>buildChips(g));buildLights();buildPresets();document.getElementById('preview').className='preview '+curLight;paint();updateState();document.getElementById('preview').scrollIntoView({behavior:'smooth',block:'center'});};
+  el.querySelector('.use').onclick=()=>{cfg={...p.cfg};curLight=p.light;GROUPS.forEach(g=>buildChips(g));buildLights();buildPresets();document.getElementById('preview').className='preview '+curLight;paint();updateState();document.getElementById('preview').scrollIntoView({behavior:'smooth',block:'center'});};
 }
 document.getElementById('pinA').onclick=()=>pinSlot('A');
 document.getElementById('pinB').onclick=()=>pinSlot('B');
