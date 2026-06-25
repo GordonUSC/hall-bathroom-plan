@@ -47,6 +47,19 @@ h1{font-size:clamp(2.5rem,7vw,4.2rem);line-height:1.0;margin:16px 0 12px}
 @media(max-width:820px){.config-grid{grid-template-columns:1fr}}
 .preview{position:relative;border-radius:14px;overflow:hidden;box-shadow:0 12px 36px var(--sh);aspect-ratio:5/3;background:#000}
 .preview svg{width:100%;height:100%;display:block}
+.hotspots{position:absolute;inset:0;z-index:4}
+.pin{position:absolute;width:26px;height:26px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:var(--oak-d);font-weight:700;cursor:pointer;transform:translate(-50%,-50%);box-shadow:0 2px 10px rgba(0,0,0,.3);display:grid;place-items:center;font-size:15px;transition:transform .15s}
+.pin::after{content:'';position:absolute;inset:-7px;border-radius:50%;border:2px solid rgba(255,255,255,.6);animation:pulse 2s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.7);opacity:.9}100%{transform:scale(1.5);opacity:0}}
+.pin:hover{transform:translate(-50%,-50%) scale(1.18)}
+.pin.active{background:var(--oak-d);color:#fff}
+.popinfo{position:absolute;z-index:6;max-width:240px;background:#fff;border-radius:12px;box-shadow:0 12px 34px rgba(0,0,0,.28);padding:16px;font-size:.86rem;transform:translate(-50%,12px);opacity:0;pointer-events:none;transition:opacity .2s}
+.popinfo.show{opacity:1;pointer-events:auto}
+.popinfo .pcat{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--oak-d);font-weight:700}
+.popinfo .pnm{font-weight:700;margin:3px 0}
+.popinfo .ppr{font-weight:700;color:var(--brass);font-variant-numeric:tabular-nums}
+.popinfo a{display:inline-block;margin-top:8px;font-size:.78rem;font-weight:700;color:var(--oak-d);border-bottom:1.5px solid var(--brass);text-decoration:none}
+@media(prefers-reduced-motion:reduce){.pin::after{animation:none}}
 .opt-group{margin-bottom:20px}
 .opt-group h4{font-family:Inter;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gray);margin-bottom:9px;font-weight:700}
 .chips{display:flex;gap:9px;flex-wrap:wrap}
@@ -137,7 +150,7 @@ footer .eyebrow{color:var(--brass-l)}footer p{max-width:540px;margin:14px auto 0
     <h2>Your <em>Look</em>, your way</h2>
     <p class="sub">Tap any option and the room updates instantly. The tile and tub stay reglazed-white and the faucet stays chrome, those are your locked calls. Everything else is yours to try.</p>
     <div class="config-grid">
-      <div class="preview" id="preview"></div>
+      <div class="preview"><div id="preview-svg" style="position:absolute;inset:0"></div><div class="hotspots" id="hotspots"></div><div class="popinfo" id="popinfo"></div></div>
       <div>
         <div class="opt-group"><h4>Wall color</h4><div class="chips" id="opt-wall"></div></div>
         <div class="opt-group"><h4>Floor</h4><div class="chips" id="opt-floor"></div></div>
@@ -257,17 +270,25 @@ function floorFill(t){
       ${[150,420,700,930].map(x=>`<line x1="${x}" y1="430" x2="${x}" y2="600"/>`).join('')}</g>`;
 }
 function afterSVG(){
-  const wall=PAL.wall[cfg.wall].c, metal=PAL.metal[cfg.metal].c, towel=PAL.towel[cfg.towel].c;
+  const wall=PAL.wall[cfg.wall].c, towel=PAL.towel[cfg.towel].c, metal='url(#metalg)';
+  const mg = cfg.metal==='brass'
+    ? '<stop offset="0" stop-color="#E6CD92"/><stop offset=".34" stop-color="#A88A56"/><stop offset=".52" stop-color="#D2B074"/><stop offset=".72" stop-color="#8A6F3E"/><stop offset="1" stop-color="#6f5832"/>'
+    : '<stop offset="0" stop-color="#EEF1F3"/><stop offset=".38" stop-color="#9aa1a6"/><stop offset=".53" stop-color="#D2D6D9"/><stop offset=".72" stop-color="#7d8488"/><stop offset="1" stop-color="#6a7074"/>';
   return `<svg viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
    <defs>
      <linearGradient id="oak" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9B89A"/><stop offset=".5" stop-color="#A89472"/><stop offset="1" stop-color="#7A6850"/></linearGradient>
      <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF6E2"/><stop offset="1" stop-color="#F4D58A" stop-opacity=".2"/></linearGradient>
      <radialGradient id="amb" cx="50%" cy="20%" r="80%"><stop offset="0" stop-color="#fff" stop-opacity=".25"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+     <linearGradient id="metalg" x1="0" y1="0" x2="0" y2="1">${mg}</linearGradient>
+     <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/></linearGradient>
+     <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope="0.05"/></feComponentTransfer><feComposite operator="over" in2="SourceGraphic"/></filter>
    </defs>
    <rect x="0" y="0" width="1000" height="430" fill="${wall}"/>
+   <rect x="0" y="0" width="1000" height="430" fill="${wall}" filter="url(#grain)" opacity=".55"/>
    <rect x="0" y="0" width="1000" height="600" fill="url(#amb)"/>
-   <!-- reglazed white tile wainscot (locked) -->
+   <!-- reglazed white tile wainscot (locked), with glaze sheen -->
    <rect x="0" y="300" width="1000" height="130" fill="#FAFAF7"/>
+   <rect x="0" y="300" width="1000" height="130" fill="url(#sheen)" opacity=".22"/>
    <g stroke="#E6E0D4" stroke-width="1.1" opacity=".8">${[336,372,408].map(y=>`<line x1="0" y1="${y}" x2="1000" y2="${y}"/>`).join('')}${Array.from({length:26},(_,i)=>`<line x1="${i*40}" y1="300" x2="${i*40}" y2="430"/>`).join('')}</g>
    <line x1="0" y1="300" x2="1000" y2="300" stroke="${metal}" stroke-width="2.5"/>
    ${floorFill(cfg.floor)}
@@ -319,10 +340,31 @@ function beforeSVG(){
 }
 /* render configurator preview + before/after layers */
 function paint(){
-  document.getElementById('preview').innerHTML=afterSVG();
+  document.getElementById('preview-svg').innerHTML=afterSVG();
   document.getElementById('ba-after').innerHTML=afterSVG();
   document.getElementById('ba-before').innerHTML=beforeSVG();
 }
+/* shop-the-room hotspots */
+const spots=[
+ {x:50,y:62,cat:'Vanity · owned',nm:'60" floating gray-oak vanity',pr:'In hand'},
+ {x:51,y:44,cat:'Faucet · locked',nm:'Delta Trinsic, chrome',pr:'$210–280',link:'https://www.walmart.com/ip/Delta-Trinsic-Single-Handle-Bathroom-Faucet-Chrome/51043349'},
+ {x:51,y:25,cat:'Mirror',nm:'Arched brass mirror, 24×36',pr:'$90–160',link:'https://www.amazon.com/ANDY-STAR-Bathroom-SUS304-Anti-Rust-Vertical/dp/B0C61H2GY8'},
+ {x:34.5,y:31,cat:'Sconce ×2',nm:'Mitzi Beck, aged brass',pr:'$234 ea',link:'https://www.mitzi.com/Product/H640101-AGB'},
+ {x:16,y:86,cat:'Flooring',nm:'Lifeproof Sterling Oak LVP',pr:'$2.98–4.39/sqft',link:'https://www.homedepot.com/p/Lifeproof-Sterling-Oak-22-MIL-x-8-7-in-W-x-48-in-L-Click-Lock-Waterproof-Luxury-Vinyl-Plank-Flooring-20-1-sqft-case-I966106LP/309083456'},
+ {x:67,y:50,cat:'The wow',nm:'Towels, plant, scent',pr:'$120–200'},
+];
+function renderHotspots(){
+  const h=document.getElementById('hotspots');h.innerHTML='';
+  spots.forEach(s=>{const b=document.createElement('button');b.className='pin';b.textContent='+';b.setAttribute('aria-label',s.nm);
+    b.style.left=s.x+'%';b.style.top=s.y+'%';
+    b.onclick=e=>{e.stopPropagation();const p=document.getElementById('popinfo');
+      document.querySelectorAll('.pin').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+      p.innerHTML=`<div class="pcat">${s.cat}</div><div class="pnm">${s.nm}</div><div class="ppr">${s.pr}</div>`+(s.link?`<a href="${s.link}" target="_blank" rel="noopener">View it →</a>`:'');
+      p.style.left=Math.min(82,Math.max(18,s.x))+'%';p.style.top=s.y+'%';p.classList.add('show');};
+    h.appendChild(b);});
+}
+renderHotspots();
+document.addEventListener('click',()=>{const p=document.getElementById('popinfo');if(p){p.classList.remove('show');document.querySelectorAll('.pin').forEach(x=>x.classList.remove('active'));}});
 /* chips */
 function buildChips(group,key){
   const c=document.getElementById('opt-'+group);c.innerHTML='';
