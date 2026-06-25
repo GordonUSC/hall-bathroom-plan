@@ -79,6 +79,16 @@ h1{font-size:clamp(2.5rem,7vw,4.2rem);line-height:1.0;margin:16px 0 12px}
 .lockbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .locktag{font-size:.7rem;background:var(--reglazed);border:1px solid var(--line);color:var(--oak-d);border-radius:999px;padding:4px 11px;font-weight:600}
 .locktag b{color:var(--ink)}
+.presets{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px}
+.preset{border:1.5px solid var(--line);background:#fff;border-radius:13px;padding:12px 18px;cursor:pointer;font-family:Inter;font-weight:700;font-size:.92rem;display:flex;flex-direction:column;gap:2px;transition:all .16s}
+.preset:hover{border-color:var(--oak-d);box-shadow:0 5px 16px var(--sh);transform:translateY(-1px)}
+.preset.on{border-color:var(--oak-d);background:var(--warm-white)}
+.preset small{font-weight:500;color:var(--gray);font-size:.72rem}
+.saveshare{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:20px}
+.saveshare button{border:0;border-radius:10px;padding:11px 17px;cursor:pointer;font-family:Inter;font-weight:700;font-size:.85rem;background:var(--oak-d);color:#fff;transition:transform .12s}
+.saveshare button:active{transform:scale(.96)}
+.saveshare button.alt{background:var(--sage)}
+.saveshare #save-msg{font-size:.82rem;color:var(--sage);font-weight:700}
 
 /* generic card grids reused */
 .budget{background:#fff;border-radius:14px;box-shadow:0 6px 26px var(--sh);border:1px solid var(--line);overflow:hidden}
@@ -157,7 +167,8 @@ footer .eyebrow{color:var(--brass-l)}footer p{max-width:540px;margin:14px auto 0
   <div class="wrap">
     <div class="eyebrow">Design it yourself</div>
     <h2>Your <em>Look</em>, your way</h2>
-    <p class="sub">Tap any option and the room updates instantly. The tile and tub stay reglazed-white and the faucet stays chrome, those are your locked calls. Everything else is yours to try.</p>
+    <p class="sub">Start from a designer preset, then make it yours. Tap any option and the room updates instantly. Tile, tub, and the chrome faucet stay locked, everything else is yours to try.</p>
+    <div class="presets" id="presets"></div>
     <div class="config-grid">
       <div class="preview day" id="preview"><div id="preview-svg" style="position:absolute;inset:0"></div><div class="lightfx"></div><div class="lightglow"></div><div class="hotspots" id="hotspots"></div><div class="popinfo" id="popinfo"></div></div>
       <div>
@@ -171,6 +182,11 @@ footer .eyebrow{color:var(--brass-l)}footer p{max-width:540px;margin:14px auto 0
           <span class="locktag">🔒 Tub: <b>reglazed white</b></span>
           <span class="locktag">🔒 Faucet: <b>chrome</b></span>
           <span class="locktag">🔒 Vanity: <b>gray oak</b></span>
+        </div>
+        <div class="saveshare">
+          <button id="btn-save">💾 Save my look</button>
+          <button class="alt" id="btn-share">📋 Copy it to send Gordon</button>
+          <span id="save-msg"></span>
         </div>
       </div>
     </div>
@@ -384,18 +400,52 @@ function buildChips(group,key){
       : (group==='floor'&&k==='oak'?`<span class="sw" style="background:repeating-linear-gradient(0deg,#6B5B45,#9C8A6E 2px,#9C8A6E 5px,#6B5B45 6px)"></span>`
         : `<span class="sw" style="background:#ECEAE6"></span>`);
     b.innerHTML=swatch+v.n;
-    b.onclick=()=>{cfg[group]=k;buildChips(group);paint();};
+    b.onclick=()=>{cfg[group]=k;buildChips(group);paint();updateState();};
     c.appendChild(b);
   });
 }
-['wall','floor','metal','towel'].forEach(g=>buildChips(g));
-/* lighting toggle */
+/* lighting */
 const LIGHTS=[['day','☀️ Day'],['eve','🌆 Evening'],['spa','🕯️ Spa']];let curLight='day';
+function setLight(k){curLight=k;document.getElementById('preview').className='preview '+k;buildLights();}
 function buildLights(){const c=document.getElementById('opt-light');c.innerHTML='';
   LIGHTS.forEach(([k,n])=>{const b=document.createElement('button');b.className='chip'+(curLight===k?' on':'');b.textContent=n;
-    b.onclick=()=>{curLight=k;document.getElementById('preview').className='preview '+k;buildLights();};c.appendChild(b);});}
-buildLights();
+    b.onclick=()=>{setLight(k);updateState();};c.appendChild(b);});}
+/* style presets */
+const PRESETS={
+ warmspa:{n:'Warm Spa',d:'sage + brass, candlelit',cfg:{wall:'warm',floor:'oak',metal:'brass',towel:'sage'},light:'spa'},
+ greige:{n:'Greige Minimal',d:'greige + chrome, daylight',cfg:{wall:'greige',floor:'marble',metal:'chrome',towel:'white'},light:'day'},
+ luxe:{n:'Hotel Luxe',d:'brass + terracotta, evening',cfg:{wall:'warm',floor:'marble',metal:'brass',towel:'terra'},light:'eve'},
+};
+let curPreset='';
+function buildPresets(){const c=document.getElementById('presets');c.innerHTML='';
+  Object.entries(PRESETS).forEach(([k,p])=>{const b=document.createElement('button');b.className='preset'+(curPreset===k?' on':'');
+    b.innerHTML=`${p.n}<small>${p.d}</small>`;b.onclick=()=>applyPreset(k);c.appendChild(b);});}
+function applyPreset(k){const p=PRESETS[k];cfg={...p.cfg};curLight=p.light;curPreset=k;
+  ['wall','floor','metal','towel'].forEach(g=>buildChips(g));buildLights();buildPresets();
+  document.getElementById('preview').className='preview '+curLight;paint();updateState();}
+/* save / share / restore */
+function stateStr(){return `w=${cfg.wall}&f=${cfg.floor}&m=${cfg.metal}&t=${cfg.towel}&l=${curLight}`;}
+function updateState(){curPreset='';buildPresets();localStorage.setItem('joe-design',stateStr());history.replaceState(null,'','#'+stateStr());}
+function restore(){
+  const h=location.hash.slice(1)||localStorage.getItem('joe-design')||'';
+  const p=Object.fromEntries(new URLSearchParams(h));
+  if(p.w&&PAL.wall[p.w])cfg.wall=p.w; if(p.f&&PAL.floor[p.f])cfg.floor=p.f;
+  if(p.m&&PAL.metal[p.m])cfg.metal=p.m; if(p.t&&PAL.towel[p.t])cfg.towel=p.t;
+  if(p.l&&['day','eve','spa'].includes(p.l))curLight=p.l;
+}
+restore();
+['wall','floor','metal','towel'].forEach(g=>buildChips(g));
+buildLights();buildPresets();
+document.getElementById('preview').className='preview '+curLight;
 paint();
+document.getElementById('btn-save').onclick=()=>{localStorage.setItem('joe-design',stateStr());msg('Saved on this device 💛 it will be here next time.');};
+document.getElementById('btn-share').onclick=async()=>{
+  const url=location.href.split('#')[0]+'#'+stateStr();
+  const txt=`Joe's bathroom look: ${PAL.wall[cfg.wall].n} walls, ${PAL.floor[cfg.floor].n} floor, ${PAL.metal[cfg.metal].n} metal, ${PAL.towel[cfg.towel].n} towels, ${LIGHTS.find(l=>l[0]===curLight)[1]} lighting. ${url}`;
+  try{await navigator.clipboard.writeText(txt);msg('Copied! Paste it to Gordon 📋');}
+  catch(e){msg('Copy this: '+txt);}
+};
+function msg(t){const m=document.getElementById('save-msg');m.textContent=t;clearTimeout(window._mt);window._mt=setTimeout(()=>m.textContent='',4000);}
 
 /* ================= BEFORE/AFTER DRAG ================= */
 (function(){
