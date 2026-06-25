@@ -25,6 +25,10 @@ section{padding:clamp(48px,8vw,76px) 0;border-bottom:1px solid var(--line)}
 h2{font-size:clamp(1.8rem,5vw,2.7rem);margin:8px 0 8px}
 .sub{color:var(--gray);max-width:620px;margin-bottom:26px;font-size:1.02rem}
 #ptop{position:fixed;top:0;left:0;height:4px;width:0;z-index:60;background:linear-gradient(90deg,var(--sage),var(--brass),var(--oak-d))}
+.jumpnav{position:sticky;top:0;z-index:55;display:flex;gap:4px;overflow-x:auto;background:rgba(251,247,241,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:8px 14px}
+.jumpnav a{flex:none;text-decoration:none;color:var(--oak-d);font-weight:600;font-size:.82rem;padding:7px 13px;border-radius:8px;white-space:nowrap}
+.jumpnav a:hover,.jumpnav a.active{background:var(--swiss)}
+section{scroll-margin-top:54px}
 
 /* HERO */
 .hero{padding:clamp(72px,12vw,104px) 0 56px;background:radial-gradient(120% 90% at 80% 0,rgba(143,163,140,.16),transparent 60%),linear-gradient(160deg,var(--swiss),var(--paper))}
@@ -194,6 +198,10 @@ footer .eyebrow{color:var(--brass-l)}footer p{max-width:540px;margin:14px auto 0
     <div class="hint">Drag the white handle left and right. 👆</div>
   </div>
 </header>
+
+<nav class="jumpnav" id="jumpnav">
+  <a href="#sec0">🎨 Design</a><a href="#sec1">💰 Budget</a><a href="#sec2">✅ To-do</a><a href="#sec3">🛍️ Shop</a><a href="#sec4">🌿 Spa tips</a><a href="#sec5">🛁 Care</a>
+</nav>
 
 <!-- CONFIGURATOR -->
 <section>
@@ -637,6 +645,11 @@ prods.forEach(p=>{const d=document.createElement('div');d.className='pc';
   pcw.appendChild(d);});
 
 addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-innerHeight;document.getElementById('ptop').style.width=(scrollY/h*100)+'%';},{passive:true});
+/* jump-nav ids + active highlight */
+(function(){const secs=[...document.querySelectorAll('section')];secs.forEach((s,i)=>{if(!s.id)s.id='sec'+i;});
+  const links=[...document.querySelectorAll('.jumpnav a')];
+  addEventListener('scroll',()=>{let act=0;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<130)act=i;});
+    links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#sec'+Math.min(act,5)));},{passive:true});})();
 </script>
 </body>
 </html>
