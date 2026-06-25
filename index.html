@@ -60,6 +60,15 @@ h1{font-size:clamp(2.5rem,7vw,4.2rem);line-height:1.0;margin:16px 0 12px}
 .popinfo .ppr{font-weight:700;color:var(--brass);font-variant-numeric:tabular-nums}
 .popinfo a{display:inline-block;margin-top:8px;font-size:.78rem;font-weight:700;color:var(--oak-d);border-bottom:1.5px solid var(--brass);text-decoration:none}
 @media(prefers-reduced-motion:reduce){.pin::after{animation:none}}
+/* lighting simulation overlays */
+.lightfx,.lightglow{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0;transition:opacity .6s}
+.lightfx{mix-blend-mode:multiply}
+.preview.eve .lightfx{opacity:1;background:radial-gradient(62% 52% at 50% 30%,rgba(255,205,130,.16),transparent 70%),linear-gradient(rgba(70,46,22,.10),rgba(34,22,10,.30))}
+.preview.spa .lightfx{opacity:1;background:radial-gradient(46% 42% at 50% 28%,rgba(255,195,100,.36),transparent 64%),linear-gradient(rgba(46,28,12,.28),rgba(16,10,5,.56))}
+.lightglow{mix-blend-mode:screen;background:radial-gradient(20% 24% at 34.5% 31%,rgba(255,236,170,.85),transparent 68%),radial-gradient(20% 24% at 67% 31%,rgba(255,236,170,.85),transparent 68%),radial-gradient(22% 30% at 51% 25%,rgba(255,242,205,.7),transparent 70%)}
+.preview.eve .lightglow{opacity:.5}.preview.spa .lightglow{opacity:.95}
+.light-pick{display:flex;gap:8px}
+.light-pick .chip{flex:1;justify-content:center}
 .opt-group{margin-bottom:20px}
 .opt-group h4{font-family:Inter;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gray);margin-bottom:9px;font-weight:700}
 .chips{display:flex;gap:9px;flex-wrap:wrap}
@@ -150,12 +159,13 @@ footer .eyebrow{color:var(--brass-l)}footer p{max-width:540px;margin:14px auto 0
     <h2>Your <em>Look</em>, your way</h2>
     <p class="sub">Tap any option and the room updates instantly. The tile and tub stay reglazed-white and the faucet stays chrome, those are your locked calls. Everything else is yours to try.</p>
     <div class="config-grid">
-      <div class="preview"><div id="preview-svg" style="position:absolute;inset:0"></div><div class="hotspots" id="hotspots"></div><div class="popinfo" id="popinfo"></div></div>
+      <div class="preview day" id="preview"><div id="preview-svg" style="position:absolute;inset:0"></div><div class="lightfx"></div><div class="lightglow"></div><div class="hotspots" id="hotspots"></div><div class="popinfo" id="popinfo"></div></div>
       <div>
         <div class="opt-group"><h4>Wall color</h4><div class="chips" id="opt-wall"></div></div>
         <div class="opt-group"><h4>Floor</h4><div class="chips" id="opt-floor"></div></div>
         <div class="opt-group"><h4>Accent metal</h4><div class="chips" id="opt-metal"></div></div>
         <div class="opt-group"><h4>Towels &amp; the green thing</h4><div class="chips" id="opt-towel"></div></div>
+        <div class="opt-group"><h4>Lighting &mdash; feel the spa</h4><div class="chips light-pick" id="opt-light"></div></div>
         <div class="lockbar">
           <span class="locktag">🔒 Tile: <b>reglazed white</b></span>
           <span class="locktag">🔒 Tub: <b>reglazed white</b></span>
@@ -379,6 +389,12 @@ function buildChips(group,key){
   });
 }
 ['wall','floor','metal','towel'].forEach(g=>buildChips(g));
+/* lighting toggle */
+const LIGHTS=[['day','☀️ Day'],['eve','🌆 Evening'],['spa','🕯️ Spa']];let curLight='day';
+function buildLights(){const c=document.getElementById('opt-light');c.innerHTML='';
+  LIGHTS.forEach(([k,n])=>{const b=document.createElement('button');b.className='chip'+(curLight===k?' on':'');b.textContent=n;
+    b.onclick=()=>{curLight=k;document.getElementById('preview').className='preview '+k;buildLights();};c.appendChild(b);});}
+buildLights();
 paint();
 
 /* ================= BEFORE/AFTER DRAG ================= */
