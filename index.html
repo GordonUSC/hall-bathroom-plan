@@ -156,6 +156,24 @@ h1{font-size:clamp(2.5rem,7vw,4.2rem);line-height:1.0;margin:16px 0 12px}
 footer{background:var(--ink);color:var(--warm-white);text-align:center;padding:52px 24px}
 footer .eyebrow{color:var(--brass-l)}footer p{max-width:540px;margin:14px auto 0;opacity:.9}
 .confetti{position:fixed;width:10px;height:14px;top:-20px;z-index:80;pointer-events:none;border-radius:2px}
+.finale{background:linear-gradient(160deg,var(--swiss),#fff);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 16px 46px var(--sh);display:grid;grid-template-columns:1.05fr 1fr}
+@media(max-width:640px){.finale{grid-template-columns:1fr}}
+.finale .fimg{position:relative;aspect-ratio:5/4;background:#000}
+.finale .fimg .preview{border-radius:0;box-shadow:none;margin:0;height:100%;aspect-ratio:auto}
+.finale .fbody{padding:clamp(24px,4vw,38px)}
+.finale h3{font-family:Fraunces,serif;font-size:1.8rem;margin:4px 0 0}
+.finale .picks{margin:16px 0}
+.finale .picks div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:.92rem}
+.finale .picks span{color:var(--gray)}.finale .picks b{font-weight:700}
+.finale .fcta button{border:0;border-radius:10px;padding:12px 20px;font-weight:700;font-family:Inter;cursor:pointer;font-size:.88rem;transition:transform .12s}
+.finale .fcta button:active{transform:scale(.96)}
+.introtip{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);max-width:560px;width:calc(100% - 32px);background:var(--ink);color:var(--warm-white);border-radius:14px;padding:14px 18px;font-size:.86rem;box-shadow:0 12px 40px rgba(0,0,0,.4);z-index:90;display:flex;gap:12px;align-items:center;animation:tipin .5s ease}
+@keyframes tipin{from{opacity:0;transform:translate(-50%,16px)}to{opacity:1;transform:translate(-50%,0)}}
+.introtip b{color:var(--brass-l)}
+.introtip button{margin-left:auto;flex:none;border:0;background:var(--brass);color:#fff;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer;font-family:Inter}
+.introtip.hide{display:none}
+.divider:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
@@ -296,10 +314,19 @@ footer .eyebrow{color:var(--brass-l)}footer p{max-width:540px;margin:14px auto 0
     <p>White is the one permanent call here. That pink is a genuine mid-century time capsule, and there's a whole movement (<a href="https://retrorenovation.com/category/bathroom-categories/save-the-pink-bathrooms/" target="_blank" rel="noopener">Save the Pink Bathrooms</a>, since 2009) of people who restore it instead, especially in design-forward LA. You chose white, and white will be beautiful. I just wanted it to be a choice, not a default. Either way, I'm with you.</p></div>
 </div></section>
 
+<section style="border-bottom:0">
+  <div class="wrap"><div class="finale" id="finale"></div></div>
+</section>
+
 <footer>
   <div class="eyebrow">Joe's Hall Bathroom · Design Studio</div>
   <p>Made for you, Joe. The room, the budget, and your punch-list are all yours to move. Reglaze, don't replace. 💛 Darby</p>
 </footer>
+
+<div class="introtip" id="introtip">
+  <b>👋 Hey Joe</b> — start with a <b>preset</b>, <b>drag</b> the before/after up top, and <b>tap the + pins</b> on the room. Flip the lighting to <b>Spa</b> to feel it at night.
+  <button id="tip-x" aria-label="dismiss">Got it</button>
+</div>
 
 <script>
 /* ================= ROOM RENDERER ================= */
@@ -394,6 +421,7 @@ function paint(){
   document.getElementById('preview-svg').innerHTML=afterSVG(cfg,'p');
   document.getElementById('ba-after').innerHTML=afterSVG(cfg,'h');
   document.getElementById('ba-before').innerHTML=beforeSVG();
+  if(typeof renderFinale==='function')renderFinale();
 }
 /* shop-the-room hotspots */
 const spots=[
@@ -463,13 +491,24 @@ restore();
 buildLights();buildPresets();
 document.getElementById('preview').className='preview '+curLight;
 paint();
-document.getElementById('btn-save').onclick=()=>{localStorage.setItem('joe-design',stateStr());msg('Saved on this device 💛 it will be here next time.');};
-document.getElementById('btn-share').onclick=async()=>{
+async function shareLook(){
   const url=location.href.split('#')[0]+'#'+stateStr();
   const txt=`Joe's bathroom look: ${PAL.wall[cfg.wall].n} walls, ${PAL.floor[cfg.floor].n} floor, ${PAL.metal[cfg.metal].n} metal, ${PAL.towel[cfg.towel].n} towels, ${LIGHTS.find(l=>l[0]===curLight)[1]} lighting. ${url}`;
-  try{await navigator.clipboard.writeText(txt);msg('Copied! Paste it to Gordon 📋');}
-  catch(e){msg('Copy this: '+txt);}
-};
+  try{await navigator.clipboard.writeText(txt);msg('Copied! Paste it to Gordon 📋');}catch(e){msg('Copy this: '+txt);}
+}
+document.getElementById('btn-save').onclick=()=>{localStorage.setItem('joe-design',stateStr());msg('Saved on this device 💛 it will be here next time.');};
+document.getElementById('btn-share').onclick=shareLook;
+/* finale summary card */
+function renderFinale(){
+  const f=document.getElementById('finale');if(!f)return;
+  const picks=[['Walls',PAL.wall[cfg.wall].n],['Floor',PAL.floor[cfg.floor].n],['Accent metal',PAL.metal[cfg.metal].n],['Towels & plant',PAL.towel[cfg.towel].n],['Lighting',LIGHTS.find(l=>l[0]===curLight)[1]]];
+  f.innerHTML=`<div class="fimg"><div class="preview ${curLight}"><div style="position:absolute;inset:0">${afterSVG(cfg,'f')}</div><div class="lightfx"></div><div class="lightglow"></div></div></div>
+   <div class="fbody"><div class="eyebrow">Your room is ready</div><h3>This is it, Joe.</h3>
+   <div class="picks">${picks.map(p=>`<div><span>${p[0]}</span><b>${p[1]}</b></div>`).join('')}</div>
+   <p style="font-size:.85rem;color:var(--gray)">Screenshot this card, or copy it to Gordon. Reglazed white tile and chrome faucet stay locked, those are your calls.</p>
+   <div class="fcta"><button id="fin-share" style="background:var(--oak-d);color:#fff">📋 Copy it to Gordon</button></div></div>`;
+  const fs=document.getElementById('fin-share');if(fs)fs.onclick=shareLook;
+}
 function msg(t){const m=document.getElementById('save-msg');m.textContent=t;clearTimeout(window._mt);window._mt=setTimeout(()=>m.textContent='',4000);}
 /* compare two looks */
 let pin={A:null,B:null};
@@ -488,7 +527,9 @@ document.getElementById('pinB').onclick=()=>pinSlot('B');
 /* ================= BEFORE/AFTER DRAG ================= */
 (function(){
   const ba=document.getElementById('ba'),div=document.getElementById('ba-div'),after=document.getElementById('ba-after');
-  function set(pct){pct=Math.max(2,Math.min(98,pct));div.style.left=pct+'%';after.style.clipPath=`inset(0 0 0 ${pct}%)`;}
+  div.setAttribute('tabindex','0');div.setAttribute('role','slider');div.setAttribute('aria-label','Drag to reveal before and after');div.setAttribute('aria-valuemin','0');div.setAttribute('aria-valuemax','100');
+  let cur=50;
+  function set(pct){pct=Math.max(2,Math.min(98,pct));cur=pct;div.style.left=pct+'%';after.style.clipPath=`inset(0 0 0 ${pct}%)`;div.setAttribute('aria-valuenow',Math.round(pct));}
   set(50);
   function fromEvent(e){const r=ba.getBoundingClientRect();const x=(e.touches?e.touches[0].clientX:e.clientX)-r.left;set(x/r.width*100);}
   let drag=false;
@@ -497,7 +538,11 @@ document.getElementById('pinB').onclick=()=>pinSlot('B');
   const up=()=>drag=false;
   ba.addEventListener('mousedown',down);addEventListener('mousemove',move);addEventListener('mouseup',up);
   ba.addEventListener('touchstart',down,{passive:false});ba.addEventListener('touchmove',move,{passive:false});addEventListener('touchend',up);
+  div.addEventListener('keydown',e=>{const k=e.key;if(k==='ArrowLeft')set(cur-5);else if(k==='ArrowRight')set(cur+5);else if(k==='Home')set(2);else if(k==='End')set(98);else return;e.preventDefault();});
 })();
+/* first-visit guide */
+(function(){const tip=document.getElementById('introtip');if(!tip)return;if(localStorage.getItem('joe-tip-seen'))tip.classList.add('hide');
+  const x=document.getElementById('tip-x');if(x)x.onclick=()=>{tip.classList.add('hide');localStorage.setItem('joe-tip-seen','1');};})();
 
 /* ================= BUDGET ================= */
 const items=[
