@@ -187,6 +187,15 @@ footer .eyebrow{color:var(--brass-l)}footer p{max-width:540px;margin:14px auto 0
 .faq summary::after{content:'+';color:var(--oak-d);font-size:1.3rem;font-weight:400;flex:none}
 .faq details[open] summary::after{content:'\\2013'}
 .faq .a{padding:0 20px 18px;color:var(--gray);font-size:.9rem;line-height:1.6}
+.tl{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:0 4px 20px var(--sh)}
+.tl-weeks,.tl-row{display:grid;grid-template-columns:160px 1fr;gap:14px;align-items:center}
+.tl-weeks{margin-bottom:10px}
+.tl-weeks .wlabel{display:grid;grid-template-columns:repeat(4,1fr);text-align:center;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gray)}
+.tl-row{padding:6px 0}
+.tl-lab{font-size:.84rem;font-weight:600}
+.tl-track{position:relative;height:22px;background:var(--swiss);border-radius:6px;background-image:repeating-linear-gradient(90deg,transparent,transparent calc(25% - 1px),rgba(0,0,0,.06) 25%)}
+.tl-track .bar{position:absolute;top:0;bottom:0;border-radius:6px;opacity:.92;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+@media(max-width:560px){.tl-weeks,.tl-row{grid-template-columns:110px 1fr}.tl-lab{font-size:.74rem}}
 .introtip{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);max-width:560px;width:calc(100% - 32px);background:var(--ink);color:var(--warm-white);border-radius:14px;padding:14px 18px;font-size:.86rem;box-shadow:0 12px 40px rgba(0,0,0,.4);z-index:90;display:flex;gap:12px;align-items:center;animation:tipin .5s ease}
 @keyframes tipin{from{opacity:0;transform:translate(-50%,16px)}to{opacity:1;transform:translate(-50%,0)}}
 .introtip b{color:var(--brass-l)}
@@ -353,6 +362,16 @@ footer .eyebrow{color:var(--brass-l)}footer p{max-width:540px;margin:14px auto 0
   <h2>Reglaze &amp; remodel <em>FAQ</em></h2>
   <p class="sub">The things people ask before they start. Tap to open.</p>
   <div class="faq" id="faqbox"></div>
+</div></section>
+
+<section id="timeline"><div class="wrap">
+  <div class="eyebrow">What to expect</div>
+  <h2>The <em>timeline</em></h2>
+  <p class="sub">Roughly four weeks, much of it the reglaze curing while other work continues. Trade schedules will nudge this around.</p>
+  <div class="tl">
+    <div class="tl-weeks"><div></div><div class="wlabel"><span>Week 1</span><span>Week 2</span><span>Week 3</span><span>Week 4</span></div></div>
+    <div id="tlrows"></div>
+  </div>
 </div></section>
 
 <section style="border-bottom:0">
@@ -697,6 +716,10 @@ const FAQS=[
 ];
 const fb=document.getElementById('faqbox');
 if(fb)FAQS.forEach(([q,a])=>{const d=document.createElement('details');d.innerHTML=`<summary>${q}</summary><div class="a">${a}</div>`;fb.appendChild(d);});
+/* timeline */
+const PHASES=[['Get quotes + order materials',0,28,'var(--oak-d)'],['Reglaze tub + tile (pro)',24,24,'var(--brass)'],['Plumbing, electric, toilet, fan',40,22,'var(--sage)'],['Paint walls',48,14,'var(--oak-m)'],['Flooring (DIY weekend)',56,18,'var(--terra)'],['Hang + plumb the vanity',62,15,'var(--oak-d)'],['Mirror, sconces, hardware',74,16,'var(--brass)'],['Style it, then exhale',88,12,'var(--sage)']];
+const tr=document.getElementById('tlrows');
+if(tr)PHASES.forEach(([n,l,w,c])=>{const r=document.createElement('div');r.className='tl-row';r.innerHTML=`<div class="tl-lab">${n}</div><div class="tl-track"><span class="bar" style="left:${l}%;width:${w}%;background:${c}"></span></div>`;tr.appendChild(r);});
 addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-innerHeight;document.getElementById('ptop').style.width=(scrollY/h*100)+'%';},{passive:true});
 /* jump-nav ids + active highlight */
 (function(){const secs=[...document.querySelectorAll('section')];secs.forEach((s,i)=>{if(!s.id)s.id='sec'+i;});
