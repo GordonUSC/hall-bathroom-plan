@@ -207,6 +207,12 @@ footer .eyebrow{color:var(--brass-l)}footer p{max-width:540px;margin:14px auto 0
 .cc{background:#fff;border:1px solid var(--line);border-left:4px solid var(--sage);border-radius:12px;padding:20px}
 .cc-when{font-family:Fraunces,serif;font-size:1.15rem;color:var(--oak-d);margin-bottom:6px}
 .cc-what{font-size:.87rem;color:var(--gray)}
+.spameter{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:0 3px 14px var(--sh)}
+.sm-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.sm-score{font-family:Fraunces,serif;font-size:1.5rem;color:var(--oak-d)}
+.sm-bar{height:9px;background:var(--swiss);border-radius:6px;overflow:hidden}
+.sm-bar span{display:block;height:100%;background:linear-gradient(90deg,var(--sage),var(--brass));transition:width .45s}
+.sm-v{font-size:.85rem;color:var(--gray);margin-top:10px;font-style:italic}
 .introtip{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);max-width:560px;width:calc(100% - 32px);background:var(--ink);color:var(--warm-white);border-radius:14px;padding:14px 18px;font-size:.86rem;box-shadow:0 12px 40px rgba(0,0,0,.4);z-index:90;display:flex;gap:12px;align-items:center;animation:tipin .5s ease}
 @keyframes tipin{from{opacity:0;transform:translate(-50%,16px)}to{opacity:1;transform:translate(-50%,0)}}
 .introtip b{color:var(--brass-l)}
@@ -265,6 +271,7 @@ footer .eyebrow{color:var(--brass-l)}footer p{max-width:540px;margin:14px auto 0
           <button class="alt" id="btn-share">📋 Copy it to send Gordon</button>
           <span id="save-msg"></span>
         </div>
+        <div class="spameter" id="spameter"></div>
       </div>
     </div>
     <div class="compare">
@@ -530,7 +537,19 @@ function beforeSVG(){
   </svg>`;
 }
 /* render configurator preview + before/after layers */
+function renderSpa(){const el=document.getElementById('spameter');if(!el)return;
+  let s=38;
+  s+= cfg.wall==='warm'?14:cfg.wall==='sage'?10:4;
+  s+= cfg.metal==='brass'?14:6;
+  s+= cfg.towel==='sage'?12:cfg.towel==='terra'?10:5;
+  s+= curLight==='spa'?18:curLight==='eve'?12:4;
+  s+= cfg.floor==='oak'?8:10;
+  s=Math.min(100,s);
+  const v=s>=88?'Full boutique-spa. A destination bathroom.':s>=72?'Warm, calm, and current. Very 2026.':s>=56?'Pleasant and clean, lean warmer for more spa.':'Crisp and bright, more daylight than candlelight.';
+  el.innerHTML=`<div class="sm-top"><span class="eyebrow">Spa-meter</span><span class="sm-score">${s}<span style="font-size:.85rem;color:var(--gray)">/100</span></span></div><div class="sm-bar"><span style="width:${s}%"></span></div><div class="sm-v">${v}</div>`;
+}
 function paint(){
+  renderSpa();
   document.getElementById('preview-svg').innerHTML=afterSVG(cfg,'p');
   document.getElementById('ba-after').innerHTML=afterSVG(cfg,'h');
   document.getElementById('ba-before').innerHTML=beforeSVG();
@@ -622,8 +641,16 @@ function renderFinale(){
    <div class="fbody"><div class="eyebrow">Your room is ready</div><h3>This is it, Joe.</h3>
    <div class="picks">${picks.map(p=>`<div><span>${p[0]}</span><b>${p[1]}</b></div>`).join('')}</div>
    <p style="font-size:.85rem;color:var(--gray)">Screenshot this card, or copy it to Gordon. Reglazed white tile and chrome faucet stay locked, those are your calls.</p>
-   <div class="fcta"><button id="fin-share" style="background:var(--oak-d);color:#fff">📋 Copy it to Gordon</button></div></div>`;
+   <div class="fcta"><button id="fin-share" style="background:var(--oak-d);color:#fff">📋 Copy it to Gordon</button><button id="fin-dl" style="background:var(--sage);color:#fff;margin-left:8px">📸 Download my room</button></div></div>`;
   const fs=document.getElementById('fin-share');if(fs)fs.onclick=shareLook;
+  const fd=document.getElementById('fin-dl');if(fd)fd.onclick=downloadRoom;
+}
+function downloadRoom(){
+  const blob=new Blob([afterSVG(cfg,'dl')],{type:'image/svg+xml;charset=utf-8'});
+  const url=URL.createObjectURL(blob);const img=new Image();
+  img.onload=()=>{const cv=document.createElement('canvas');cv.width=1000;cv.height=600;const x=cv.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,1000,600);x.drawImage(img,0,0,1000,600);URL.revokeObjectURL(url);
+    try{const a=document.createElement('a');a.download='joe-bathroom.png';a.href=cv.toDataURL('image/png');a.click();}catch(e){msg&&msg('Long-press the room to save it.');}};
+  img.onerror=()=>URL.revokeObjectURL(url);img.src=url;
 }
 function msg(t){const m=document.getElementById('save-msg');m.textContent=t;clearTimeout(window._mt);window._mt=setTimeout(()=>m.textContent='',4000);}
 /* compare two looks */
