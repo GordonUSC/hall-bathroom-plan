@@ -172,6 +172,21 @@ footer .eyebrow{color:var(--brass-l)}footer p{max-width:540px;margin:14px auto 0
 .finale .picks span{color:var(--gray)}.finale .picks b{font-weight:700}
 .finale .fcta button{border:0;border-radius:10px;padding:12px 20px;font-weight:700;font-family:Inter;cursor:pointer;font-size:.88rem;transition:transform .12s}
 .finale .fcta button:active{transform:scale(.96)}
+.shoplist{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 4px 20px var(--sh)}
+.sli{display:flex;align-items:center;gap:13px;padding:13px 20px;border-bottom:1px solid var(--line);cursor:pointer}
+.sli:last-child{border-bottom:0}
+.sli .box{flex:none;width:23px;height:23px;border-radius:7px;border:2px solid var(--oak-m);display:grid;place-items:center;color:#fff;font-size:13px}
+.sli.done .box{background:var(--sage);border-color:var(--sage)}.sli.done .nm{text-decoration:line-through;color:var(--gray)}
+.sli .nm{flex:1;font-weight:600;font-size:.92rem}.sli .pr{font-variant-numeric:tabular-nums;color:var(--oak-d);font-weight:700;font-size:.9rem}
+.shop-foot{display:flex;justify-content:space-between;align-items:center;margin-top:16px;flex-wrap:wrap;gap:12px}
+.shop-foot button{border:0;border-radius:10px;padding:11px 17px;background:var(--oak-d);color:#fff;font-weight:700;font-family:Inter;cursor:pointer}
+.faq{display:flex;flex-direction:column;gap:10px}
+.faq details{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.faq summary{padding:16px 20px;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;font-size:.95rem;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:'+';color:var(--oak-d);font-size:1.3rem;font-weight:400;flex:none}
+.faq details[open] summary::after{content:'\\2013'}
+.faq .a{padding:0 20px 18px;color:var(--gray);font-size:.9rem;line-height:1.6}
 .introtip{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);max-width:560px;width:calc(100% - 32px);background:var(--ink);color:var(--warm-white);border-radius:14px;padding:14px 18px;font-size:.86rem;box-shadow:0 12px 40px rgba(0,0,0,.4);z-index:90;display:flex;gap:12px;align-items:center;animation:tipin .5s ease}
 @keyframes tipin{from{opacity:0;transform:translate(-50%,16px)}to{opacity:1;transform:translate(-50%,0)}}
 .introtip b{color:var(--brass-l)}
@@ -322,6 +337,22 @@ footer .eyebrow{color:var(--brass-l)}footer p{max-width:540px;margin:14px auto 0
   </div>
   <div class="egg"><h4>One honest pause, because I care about your house</h4>
     <p>White is the one permanent call here. That pink is a genuine mid-century time capsule, and there's a whole movement (<a href="https://retrorenovation.com/category/bathroom-categories/save-the-pink-bathrooms/" target="_blank" rel="noopener">Save the Pink Bathrooms</a>, since 2009) of people who restore it instead, especially in design-forward LA. You chose white, and white will be beautiful. I just wanted it to be a choice, not a default. Either way, I'm with you.</p></div>
+</div></section>
+
+<section id="shoplist"><div class="wrap">
+  <div class="eyebrow">When you're ready to buy</div>
+  <h2>Your <em>shopping list</em></h2>
+  <p class="sub">Every product, checkable, with a rough total. Tick things off as you order, it saves on your device.</p>
+  <div class="shoplist" id="shoplistbox"></div>
+  <div class="shop-foot"><div><span class="eyebrow">Rough materials total</span><br><span id="shoptotal" style="font-family:Fraunces,serif;font-size:1.6rem"></span></div>
+    <button id="copylist">📋 Copy the list</button></div>
+</div></section>
+
+<section id="faq"><div class="wrap">
+  <div class="eyebrow">Good questions</div>
+  <h2>Reglaze &amp; remodel <em>FAQ</em></h2>
+  <p class="sub">The things people ask before they start. Tap to open.</p>
+  <div class="faq" id="faqbox"></div>
 </div></section>
 
 <section style="border-bottom:0">
@@ -644,6 +675,28 @@ prods.forEach(p=>{const d=document.createElement('div');d.className='pc';
   d.innerHTML=(p.badge?`<span class="badge${p.fix?' fix':''}">${p.badge}</span>`:'')+`<div class="cat">${p.cat}</div><div class="pn">${p.pn}</div><div class="pd">${p.pd}</div><div class="pp">${p.pp}</div>`+(p.link?`<a href="${p.link}" target="_blank" rel="noopener">View it →</a>`:'');
   pcw.appendChild(d);});
 
+/* shopping list */
+function priceNum(pp){const m=pp.replace(/,/g,'').match(/\$?(\d+)(?:[–-]\$?(\d+))?/);if(!m)return 0;return m[2]?Math.round((+m[1]+ +m[2])/2):+m[1];}
+const shopItems=prods.filter(p=>p.pp&&/\d/.test(p.pp));
+const SKEY='joe-shop';let sdone=JSON.parse(localStorage.getItem(SKEY)||'[]');
+function renderShop(){const b=document.getElementById('shoplistbox');if(!b)return;b.innerHTML='';let tot=0;
+  shopItems.forEach((p,i)=>{tot+=priceNum(p.pp);const el=document.createElement('div');el.className='sli'+(sdone.includes(i)?' done':'');
+    el.innerHTML=`<div class="box">${sdone.includes(i)?'✓':''}</div><div class="nm">${p.pn}</div><div class="pr">${p.pp}</div>`;
+    el.onclick=()=>{sdone.includes(i)?sdone=sdone.filter(x=>x!==i):sdone.push(i);localStorage.setItem(SKEY,JSON.stringify(sdone));renderShop();};b.appendChild(el);});
+  document.getElementById('shoptotal').textContent='~$'+tot.toLocaleString();}
+renderShop();
+const cl=document.getElementById('copylist');if(cl)cl.onclick=async()=>{const t="Joe's bathroom shopping list:\n"+shopItems.map(p=>`• ${p.pn} — ${p.pp}`).join('\n');try{await navigator.clipboard.writeText(t);cl.textContent='Copied ✓';setTimeout(()=>cl.textContent='📋 Copy the list',2500);}catch(e){}};
+/* FAQ */
+const FAQS=[
+ ['How long does reglazing last?','Wall tile 10–15 years, a cast-iron tub 15–20+. A low-use guest tub lands at the upper end. Pros like Miracle Method give a 5-year warranty.'],
+ ['Can I DIY the reglaze?','Go pro on the tub and any in-shower wet wall, DIY epoxy fails most in wet zones. The dry wainscot is the only forgiving DIY candidate, and even then a pro keeps the white uniform.'],
+ ['How do I not wreck the new finish?','No suction-cup bath mats (the #1 cause of peeling), non-abrasive cleaners only, wipe dry after use, and baby it ~30 days while it fully cures.'],
+ ['Why keep the pink tile at all?','Reglazing over it means zero demo, zero dust, and about a quarter the cost of re-tiling. The tile stays put; only the color changes.'],
+ ['Chrome or brass, won\'t they clash?','Not if it\'s deliberate: chrome at the plumbing (your locked faucet), brass as the jewelry (mirror, sconces, pulls). A clean two-metal split reads designed.'],
+ ['What\'s the right light?','2700–3000K, CRI 90+. Warm enough to feel like a spa, accurate enough to shave by. Cool white reads like an office.'],
+];
+const fb=document.getElementById('faqbox');
+if(fb)FAQS.forEach(([q,a])=>{const d=document.createElement('details');d.innerHTML=`<summary>${q}</summary><div class="a">${a}</div>`;fb.appendChild(d);});
 addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-innerHeight;document.getElementById('ptop').style.width=(scrollY/h*100)+'%';},{passive:true});
 /* jump-nav ids + active highlight */
 (function(){const secs=[...document.querySelectorAll('section')];secs.forEach((s,i)=>{if(!s.id)s.id='sec'+i;});
