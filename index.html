@@ -196,6 +196,17 @@ footer .eyebrow{color:var(--brass-l)}footer p{max-width:540px;margin:14px auto 0
 .tl-track{position:relative;height:22px;background:var(--swiss);border-radius:6px;background-image:repeating-linear-gradient(90deg,transparent,transparent calc(25% - 1px),rgba(0,0,0,.06) 25%)}
 .tl-track .bar{position:absolute;top:0;bottom:0;border-radius:6px;opacity:.92;box-shadow:0 1px 4px rgba(0,0,0,.12)}
 @media(max-width:560px){.tl-weeks,.tl-row{grid-template-columns:110px 1fr}.tl-lab{font-size:.74rem}}
+.qcols{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:720px){.qcols{grid-template-columns:1fr}}
+.qcard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px}
+.qcard h4{font-family:Fraunces,serif;font-weight:500;font-size:1.1rem;margin-bottom:10px}
+.qcard ul{list-style:none}.qcard li{font-size:.86rem;color:var(--gray);padding:6px 0;border-bottom:1px solid rgba(0,0,0,.05)}.qcard li:last-child{border:0}
+.qcopy{margin-top:18px;border:0;border-radius:10px;padding:11px 17px;background:var(--oak-d);color:#fff;font-weight:700;font-family:Inter;cursor:pointer}
+.carecards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:640px){.carecards{grid-template-columns:1fr}}
+.cc{background:#fff;border:1px solid var(--line);border-left:4px solid var(--sage);border-radius:12px;padding:20px}
+.cc-when{font-family:Fraunces,serif;font-size:1.15rem;color:var(--oak-d);margin-bottom:6px}
+.cc-what{font-size:.87rem;color:var(--gray)}
 .introtip{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);max-width:560px;width:calc(100% - 32px);background:var(--ink);color:var(--warm-white);border-radius:14px;padding:14px 18px;font-size:.86rem;box-shadow:0 12px 40px rgba(0,0,0,.4);z-index:90;display:flex;gap:12px;align-items:center;animation:tipin .5s ease}
 @keyframes tipin{from{opacity:0;transform:translate(-50%,16px)}to{opacity:1;transform:translate(-50%,0)}}
 .introtip b{color:var(--brass-l)}
@@ -371,6 +382,42 @@ footer .eyebrow{color:var(--brass-l)}footer p{max-width:540px;margin:14px auto 0
   <div class="tl">
     <div class="tl-weeks"><div></div><div class="wlabel"><span>Week 1</span><span>Week 2</span><span>Week 3</span><span>Week 4</span></div></div>
     <div id="tlrows"></div>
+  </div>
+</div></section>
+
+<section id="contractor"><div class="wrap">
+  <div class="eyebrow">Before you hire</div>
+  <h2>Questions to <em>ask</em></h2>
+  <p class="sub">Bring these to each quote. Good answers separate a pro from a Groupon.</p>
+  <div class="qcols">
+    <div class="qcard"><h4>🛁 The reglaze pro</h4><ul>
+      <li>What prep and bonding agent do you use on already-glazed tile?</li>
+      <li>What's the warranty, and what voids it?</li>
+      <li>How soon can I use it, and what's full cure time?</li>
+      <li>Can you match one uniform white across the tub and the walls?</li>
+      <li>How long do the fumes last?</li></ul></div>
+    <div class="qcard"><h4>🔧 The plumber</h4><ul>
+      <li>Can you relocate supply + drain for a wall-mount vanity?</li>
+      <li>Can you set the new toilet on the same trip?</li>
+      <li>Any likely surprises behind this old wall?</li>
+      <li>Flat rate or hourly?</li></ul></div>
+    <div class="qcard"><h4>⚡ The electrician</h4><ul>
+      <li>Can the new fan reuse the existing box and circuit?</li>
+      <li>Can you wire two sconces on a dimmer?</li>
+      <li>Is the GFCI up to current code?</li>
+      <li>Can you combine with the plumber's visit?</li></ul></div>
+  </div>
+  <button id="copyq" class="qcopy">📋 Copy all the questions</button>
+</div></section>
+
+<section id="care"><div class="wrap">
+  <div class="eyebrow">Keep it beautiful</div>
+  <h2>The <em>first month</em> matters</h2>
+  <p class="sub">A reglaze rewards patience. Treat it right early and it lasts 15+ years.</p>
+  <div class="carecards">
+    <div class="cc"><div class="cc-when">First 24 hours</div><div class="cc-what">Don't touch it. No water, no items, nothing on the surface while it sets.</div></div>
+    <div class="cc"><div class="cc-when">First 30 days</div><div class="cc-what">Gentle use only. No suction mats, no harsh cleaners. It's curing to full hardness.</div></div>
+    <div class="cc"><div class="cc-when">Forever after</div><div class="cc-what">Soft sponge + mild dish soap, wipe dry, fix any chip fast. That's the whole secret.</div></div>
   </div>
 </div></section>
 
@@ -720,6 +767,9 @@ if(fb)FAQS.forEach(([q,a])=>{const d=document.createElement('details');d.innerHT
 const PHASES=[['Get quotes + order materials',0,28,'var(--oak-d)'],['Reglaze tub + tile (pro)',24,24,'var(--brass)'],['Plumbing, electric, toilet, fan',40,22,'var(--sage)'],['Paint walls',48,14,'var(--oak-m)'],['Flooring (DIY weekend)',56,18,'var(--terra)'],['Hang + plumb the vanity',62,15,'var(--oak-d)'],['Mirror, sconces, hardware',74,16,'var(--brass)'],['Style it, then exhale',88,12,'var(--sage)']];
 const tr=document.getElementById('tlrows');
 if(tr)PHASES.forEach(([n,l,w,c])=>{const r=document.createElement('div');r.className='tl-row';r.innerHTML=`<div class="tl-lab">${n}</div><div class="tl-track"><span class="bar" style="left:${l}%;width:${w}%;background:${c}"></span></div>`;tr.appendChild(r);});
+/* contractor questions copy */
+const cq=document.getElementById('copyq');
+if(cq)cq.onclick=async()=>{const t=[...document.querySelectorAll('#contractor .qcard')].map(c=>c.querySelector('h4').textContent+'\n'+[...c.querySelectorAll('li')].map(li=>'• '+li.textContent).join('\n')).join('\n\n');try{await navigator.clipboard.writeText('Questions for the bathroom remodel:\n\n'+t);cq.textContent='Copied ✓';setTimeout(()=>cq.textContent='📋 Copy all the questions',2500);}catch(e){}};
 addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-innerHeight;document.getElementById('ptop').style.width=(scrollY/h*100)+'%';},{passive:true});
 /* jump-nav ids + active highlight */
 (function(){const secs=[...document.querySelectorAll('section')];secs.forEach((s,i)=>{if(!s.id)s.id='sec'+i;});
