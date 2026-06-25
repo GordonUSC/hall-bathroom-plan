@@ -34,6 +34,11 @@ section{scroll-margin-top:54px}
 .hero{padding:clamp(72px,12vw,104px) 0 56px;background:radial-gradient(120% 90% at 80% 0,rgba(143,163,140,.16),transparent 60%),linear-gradient(160deg,var(--swiss),var(--paper))}
 h1{font-size:clamp(2.5rem,7vw,4.2rem);line-height:1.0;margin:16px 0 12px}
 .tag{font-size:1.12rem;color:var(--gray);max-width:560px}
+.ditip{margin-top:18px;font-size:.85rem;color:var(--oak-d);font-style:italic;min-height:1.4em;transition:opacity .5s}
+.ditip::before{content:'💡 ';font-style:normal}
+.sec-anim{animation:rise .6s both}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.sec-anim{animation:none}}
 
 /* BEFORE/AFTER DRAG SLIDER */
 .ba{position:relative;margin-top:34px;border-radius:16px;overflow:hidden;box-shadow:0 20px 50px var(--sh);user-select:none;touch-action:none;aspect-ratio:5/3;background:#000}
@@ -241,6 +246,7 @@ footer .eyebrow{color:var(--brass-l)}footer p{max-width:540px;margin:14px auto 0
     <div class="eyebrow">For Joe · Hall Bathroom · Design Studio</div>
     <h1>Joe, here's your<br><em>spa</em>, before you build it.</h1>
     <p class="tag">Drag the handle to peel 1962 off the wall. Then scroll down and design it yourself, the wall, the floor, the metal, the towels. It's your room. Play with it.</p>
+    <div class="ditip" id="ditip" aria-live="polite"></div>
     <div class="ba" id="ba">
       <div class="layer before" id="ba-before"></div>
       <div class="layer after" id="ba-after"></div>
@@ -252,7 +258,7 @@ footer .eyebrow{color:var(--brass-l)}footer p{max-width:540px;margin:14px auto 0
 </header>
 
 <nav class="jumpnav" id="jumpnav">
-  <a href="#sec0">🎨 Design</a><a href="#sec1">💰 Budget</a><a href="#sec2">✅ To-do</a><a href="#sec3">🛍️ Shop</a><a href="#sec4">🌿 Spa tips</a><a href="#sec5">🛁 Care</a>
+  <a href="#sec0">🎨 Design</a><a href="#sec1">💰 Budget</a><a href="#sec2">✅ To-do</a><a href="#sec3">🛍️ Shop</a><a href="#shoplist">🧾 List</a><a href="#timeline">🗓️ Timeline</a><a href="#faq">❓ FAQ</a><a href="#sec5">🛁 Care</a>
 </nav>
 
 <!-- CONFIGURATOR -->
@@ -445,7 +451,7 @@ footer .eyebrow{color:var(--brass-l)}footer p{max-width:540px;margin:14px auto 0
 
 <footer>
   <div class="eyebrow">Joe's Hall Bathroom · Design Studio</div>
-  <p>Made for you, Joe. The room, the budget, and your punch-list are all yours to move. Reglaze, don't replace. 💛 Darby</p>
+  <p>Made for you, Joe, and rebuilt across 20 rounds of you being wonderfully picky. The room, the budget, and your punch-list are all yours to move. Reglaze, don't replace. 💛 Darby</p>
 </footer>
 
 <div class="introtip" id="introtip">
@@ -831,6 +837,14 @@ addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-inn
   const links=[...document.querySelectorAll('.jumpnav a')];
   addEventListener('scroll',()=>{let act=0;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<130)act=i;});
     links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#sec'+Math.min(act,5)));},{passive:true});})();
+/* rotating designer did-you-knows */
+(function(){const tips=["Warm white can make a 40 sq ft room feel noticeably bigger.","A floating vanity shows more floor, so the eye reads the room as larger.","Reglazing keeps your original cast-iron tub, which outlasts most modern acrylic.","Brass as an accent, not everywhere, is the 2026 move. All-matching reads builder-grade.","Sconces beside the mirror flatter your face; an overhead bar casts shadows.","2700 to 3000K light is the spa secret. Cool white reads like an office."];
+  const el=document.getElementById('ditip');if(!el)return;let i=0;el.textContent=tips[0];
+  setInterval(()=>{el.style.opacity=0;setTimeout(()=>{i=(i+1)%tips.length;el.textContent=tips[i];el.style.opacity=1;},500);},5200);})();
+/* section entrance animation (base state visible, safe) */
+(function(){if(!('IntersectionObserver'in window)||matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('sec-anim');io.unobserve(e.target);}});},{threshold:.08});
+  document.querySelectorAll('section').forEach(s=>io.observe(s));})();
 </script>
 </body>
 </html>
