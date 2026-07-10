@@ -216,13 +216,12 @@
   <section class="mv">
     <div class="eyebrow">Step 3 &middot; Stand in the room</div>
     <h2>The elevation view</h2>
-    <p class="lede">Pick a wall and see it head-on, to scale: the reglazed-white line, the floating vanity gap, the sconces at face height.</p>
+    <p class="lede">Same room, standing up. Pick a wall and see exactly the pieces you placed on it, at their real spots, with the finishes you choose below. The little map shows which wall you are looking at.</p>
     <div class="wallpick" id="wallpick"></div>
     <div class="plannerwrap" style="margin-top:12px"><svg id="elev" viewBox="0 0 600 360" role="img" aria-label="Elevation of the chosen wall"></svg></div>
     <div class="eyebrow" style="margin-top:26px">The light changes everything</div>
     <div class="temp" id="temp"></div>
     <p style="font-size:14px;color:var(--ink-faint);margin-top:10px">This one bulb choice is free, and it does more than two grand of tile ever could.</p>
-    <a href="room3d.html" class="room3dcta"><span class="rc-k">New</span><span class="rc-t">Walk into your room in 3D</span><span class="rc-d">Your 5 by 8, to scale. Drag to look around it. &rarr;</span></a>
   </section>
 
   <section class="mv">
@@ -263,6 +262,7 @@
     <div class="card" id="upgrades"></div>
     <div class="planbar"><div><div class="pt" id="plantotal">$0</div><div class="ps" id="planweeks">still to fund</div></div><div class="palette" id="palette"></div></div>
     <div class="impact" id="impact">Make a change and I will tell you exactly what it does to your budget and your timeline.</div>
+    <a href="room3d.html" class="room3dcta"><span class="rc-k">Now the payoff</span><span class="rc-t">Walk into the room you just designed</span><span class="rc-d">Your measured room, your walls, your floor, your finishes, to scale. Drag to look around it. &rarr;</span></a>
   </section>
 
   <section class="mv">
@@ -335,7 +335,7 @@ var FIX={
   toilet:{name:'Toilet',w:20,h:28,fill:'#dfe6ea',placed:false,x:0,y:0,rot:0},
   door:{name:'Door swing',w:30,h:30,fill:'rgba(127,212,198,0.28)',placed:false,x:0,y:0,rot:0}
 };
-var selected=null, temp=1, wall='B';
+var selected=null, temp=1, wall='top';
 
 /* ---------- MEASURE ---------- */
 var STEPS=[['A','Wall A width',24,90,2],['B','Wall B length',48,140,2],['ceil','Ceiling height',84,108,1]];
@@ -357,7 +357,7 @@ function fh(f){return f.rot%180?f.w:f.h;}
 function drawPlan(){var s=scale(),ox=(600-room.B*s)/2,oy=(600-room.A*s)/2,g='';
   for(var x=0;x<=room.B;x+=12)g+='<line x1="'+(ox+x*s)+'" y1="'+oy+'" x2="'+(ox+x*s)+'" y2="'+(oy+room.A*s)+'" stroke="rgba(255,255,255,0.05)"/>';
   for(var y=0;y<=room.A;y+=12)g+='<line x1="'+ox+'" y1="'+(oy+y*s)+'" x2="'+(ox+room.B*s)+'" y2="'+(oy+y*s)+'" stroke="rgba(255,255,255,0.05)"/>';
-  g+='<rect x="'+ox+'" y="'+oy+'" width="'+(room.B*s)+'" height="'+(room.A*s)+'" fill="rgba(255,255,255,0.02)" stroke="'+cssv('--line2')+'" stroke-width="2" rx="4"/>';
+  g+='<rect x="'+ox+'" y="'+oy+'" width="'+(room.B*s)+'" height="'+(room.A*s)+'" fill="'+planFloor()+'" stroke="'+cssv('--line2')+'" stroke-width="2" rx="4"/>';
   g+='<line x1="'+ox+'" y1="'+(oy+room.A*s+18)+'" x2="'+(ox+12*s)+'" y2="'+(oy+room.A*s+18)+'" stroke="'+cssv('--spa')+'" stroke-width="2"/><text x="'+(ox+6*s)+'" y="'+(oy+room.A*s+34)+'" fill="'+cssv('--spa')+'" font-size="11" text-anchor="middle" font-family="monospace">12 in</text>';
   Object.keys(FIX).forEach(function(k){var f=FIX[k];if(!f.placed)return;var w=fw(f),h=fh(f),px=ox+f.x*s,py=oy+f.y*s;
     var sel=selected===k?'stroke="'+cssv('--spa')+'" stroke-width="2.5"':'stroke="rgba(0,0,0,0.35)" stroke-width="1"';
@@ -379,7 +379,7 @@ function bindDrag(){plan.querySelectorAll('.fx').forEach(function(el){
 function renderTools(){var t=document.getElementById('tools');t.innerHTML='';
   Object.keys(FIX).forEach(function(k){var f=FIX[k];var c=document.createElement('button');c.className='chip';c.dataset.on=f.placed?'1':'0';
     c.innerHTML=(f.thumb?'<img src="'+f.thumb+'" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;flex:none">':'<span class="sw" style="background:'+f.fill+'"></span>')+f.name;
-    c.onclick=function(){if(!f.placed){f.placed=true;f.x=Math.round(room.B/2-f.w/2);f.y=0;selected=k;}else selected=k;
+    c.onclick=function(){if(!f.placed){f.placed=true;f.x=Math.round(room.B/2-f.w/2);f.y=0;selected=k;wall=wallOf(f);}else selected=k;
       c.dataset.on='1';drawPlan();checkFit();fixtureSpoken(k);};t.appendChild(c);});}
 document.getElementById('rotate').onclick=function(){if(selected){FIX[selected].rot=(FIX[selected].rot+90)%360;
   var f=FIX[selected];f.x=clamp(f.x,0,room.B-fw(f));f.y=clamp(f.y,0,room.A-fh(f));drawPlan();checkFit();}};
@@ -391,7 +391,7 @@ function fixtureSpoken(k){
   if(k==='toilet')sayOnce('toi','host',"Give that toilet fifteen inches to each side and twenty-one out front, and your plumber is going to love you.");}
 /* clearance / fit */
 function overlap(a,b){return a.x<b.x+fw(b)&&a.x+fw(a)>b.x&&a.y<b.y+fh(b)&&a.y+fh(a)>b.y;}
-function checkFit(){var placed=Object.keys(FIX).filter(function(k){return FIX[k].placed;});var el=document.getElementById('fit');
+function checkFit(){try{renderWallpick();drawElev();saveChoices();}catch(e){}var placed=Object.keys(FIX).filter(function(k){return FIX[k].placed;});var el=document.getElementById('fit');
   if(!placed.length){el.className='fitometer';document.getElementById('fittitle').textContent='Place your pieces';document.getElementById('fitsub').textContent='Tap a chip below to drop it in';return;}
   var problems=[];
   for(var i=0;i<placed.length;i++)for(var j=i+1;j<placed.length;j++){if(placed[i]==='door'||placed[j]==='door')continue;
@@ -402,24 +402,61 @@ function checkFit(){var placed=Object.keys(FIX).filter(function(k){return FIX[k]
     sayOnce('fit','host',"Everything fits. Every clearance green, nothing overlapping. This room is real, and it works.");
     if(FIX.vanity.placed&&room.A>=60&&room.A<=64)sayOnce('vanfit','host',"Sixty-inch vanity, and it fits like it was measured for the wall. Because it was.");}}
 
-/* ---------- ELEVATION ---------- */
+/* ---------- ELEVATION (driven by the planner + finishes) ---------- */
+var WALLS=[['top','Far wall'],['bottom','Near wall'],['left','Left wall'],['right','Right wall']];
+function wallOf(f){var dT=f.y,dB=room.A-(f.y+fh(f)),dL=f.x,dR=room.B-(f.x+fw(f));var m=Math.min(dT,dB,dL,dR);
+  return m===dT?'top':m===dB?'bottom':m===dL?'left':'right';}
+function onWall(w){var list=[];Object.keys(FIX).forEach(function(k){var f=FIX[k];if(!f.placed)return;if(wallOf(f)!==w)return;
+  var horiz=(w==='top'||w==='bottom');list.push({k:k,off:horiz?f.x:f.y,len:horiz?fw(f):fh(f)});});return list;}
+function planFloor(){var f=(typeof getOpt==='function')?getOpt('floor').floor:'keep';return f==='oak'?'rgba(184,149,104,0.13)':f==='stone'?'rgba(207,201,192,0.10)':'rgba(255,255,255,0.02)';}
+function elabel(cx,cy,t,c){return '<text x="'+cx+'" y="'+cy+'" fill="'+c+'" font-size="9" text-anchor="middle" font-family="monospace" style="paint-order:stroke;stroke:rgba(0,0,0,0.3);stroke-width:2px">'+t+'</text>';}
 function renderWallpick(){var w=document.getElementById('wallpick');w.innerHTML='';
-  [['B','Long wall (tub)'],['A','Short wall (vanity)']].forEach(function(o){var b=document.createElement('button');b.textContent=o[1];b.dataset.on=wall===o[0]?'1':'0';
-    b.onclick=function(){wall=o[0];renderWallpick();drawElev();};w.appendChild(b);});}
-function drawElev(){var el=document.getElementById('elev');var W=wall==='B'?room.B:room.A;var H=room.ceil;
-  var s=Math.min(560/W,300/H),ox=(600-W*s)/2,oy=(360-H*s)/2,g='';
-  g+='<rect x="'+ox+'" y="'+oy+'" width="'+(W*s)+'" height="'+(H*s)+'" fill="#2e373f" stroke="'+cssv('--line2')+'" rx="3"/>';
-  var wains=48*s;g+='<rect x="'+ox+'" y="'+(oy+H*s-wains)+'" width="'+(W*s)+'" height="'+wains+'" fill="#f4f6f7" opacity="0.88"/>';
-  g+='<line x1="'+ox+'" y1="'+(oy+H*s-wains)+'" x2="'+(ox+W*s)+'" y2="'+(oy+H*s-wains)+'" stroke="'+cssv('--chrome')+'" stroke-width="2"/>';
-  g+='<text x="'+(ox+8)+'" y="'+(oy+H*s-wains-8)+'" fill="'+cssv('--chrome')+'" font-size="11" font-family="monospace">reglazed white to 48 in</text>';
-  if(wall==='A'){var vw=Math.min(60,W-4)*s,vx=ox+(W*s-vw)/2;
-    g+='<image href="assets/wood.jpg" x="'+vx+'" y="'+(oy+H*s-24*s)+'" width="'+vw+'" height="'+(20*s)+'" preserveAspectRatio="xMidYMid slice"/><rect x="'+vx+'" y="'+(oy+H*s-24*s)+'" width="'+vw+'" height="'+(20*s)+'" rx="3" fill="none" stroke="rgba(0,0,0,0.25)"/><text x="'+(vx+vw/2)+'" y="'+(oy+H*s-13*s)+'" fill="#fff" font-size="10" text-anchor="middle" font-family="monospace" style="paint-order:stroke;stroke:rgba(0,0,0,0.4);stroke-width:2px">floating vanity</text>';
-    g+='<rect x="'+(vx+vw/2-14*s)+'" y="'+(oy+18*s)+'" width="'+(28*s)+'" height="'+(34*s)+'" rx="3" fill="rgba(207,224,238,0.28)" stroke="'+cssv('--chrome')+'"/>';
-    [vx+vw/2-22*s,vx+vw/2+18*s].forEach(function(sx){g+='<circle cx="'+sx+'" cy="'+(oy+H*s-66*s)+'" r="'+(3.5*s)+'" fill="'+cssv('--gold')+'" opacity="'+(0.45+temp*0.45)+'"/>';});
-    g+='<text x="'+ox+'" y="'+(oy+H*s+18)+'" fill="'+cssv('--ink-faint')+'" font-size="11" font-family="monospace">4 in floor gap under the vanity: the room breathes</text>';
-  }else{var tw=Math.min(60,W-4)*s,tx=ox+(W*s-tw)/2;
-    g+='<rect x="'+tx+'" y="'+(oy+H*s-20*s)+'" width="'+tw+'" height="'+(18*s)+'" rx="6" fill="#f4f6f7" stroke="'+cssv('--chrome')+'"/><text x="'+(tx+tw/2)+'" y="'+(oy+H*s-9*s)+'" fill="#0d1114" font-size="10" text-anchor="middle" font-family="monospace">reglazed cast-iron tub</text>';
-    g+='<rect x="'+(tx+tw-16*s)+'" y="'+(oy+H*s-32*s)+'" width="'+(3*s)+'" height="'+(12*s)+'" fill="'+cssv('--chrome')+'"/>';}
+  WALLS.forEach(function(o){var has=onWall(o[0]);var lbl=(has.length===1)?('The '+has[0].k+' wall'):o[1];
+    var b=document.createElement('button');b.innerHTML=lbl+(has.length?'<br><span style="font-size:10px;color:var(--ink-faint)">'+has.map(function(x){return x.k;}).join(', ')+'</span>':'<br><span style="font-size:10px;color:var(--ink-faint)">empty</span>');
+    b.dataset.on=wall===o[0]?'1':'0';b.onclick=function(){wall=o[0];renderWallpick();drawElev();};w.appendChild(b);});}
+function elevTub(x0,wpx,baseY,s,chrome){var h=20*s;return '<rect x="'+x0+'" y="'+(baseY-h)+'" width="'+wpx+'" height="'+h+'" rx="6" fill="#f4f6f7" stroke="'+chrome+'"/>'+
+  '<rect x="'+(x0+3*s)+'" y="'+(baseY-h)+'" width="'+(wpx-6*s)+'" height="'+(3*s)+'" fill="#e4ebee"/>'+
+  '<rect x="'+(x0+wpx-12*s)+'" y="'+(baseY-32*s)+'" width="'+(3*s)+'" height="'+(12*s)+'" fill="'+chrome+'"/>'+elabel(x0+wpx/2,baseY-h/2+3,'reglazed tub','#0d1114');}
+function elevToilet(x0,wpx,baseY,s){var bowl=17*s,tank=30*s,tw=Math.min(wpx,16*s);return '<rect x="'+x0+'" y="'+(baseY-bowl)+'" width="'+wpx+'" height="'+bowl+'" rx="6" fill="#eef2f4"/>'+
+  '<rect x="'+x0+'" y="'+(baseY-tank)+'" width="'+tw+'" height="'+(tank-bowl)+'" rx="3" fill="#eef2f4"/>'+elabel(x0+wpx/2,baseY-bowl/2+3,'toilet','#33393f');}
+function elevDoor(x0,wpx,baseY,s,H,spa){var dh=Math.min(80,H-6)*s;return '<rect x="'+x0+'" y="'+(baseY-dh)+'" width="'+wpx+'" height="'+dh+'" fill="rgba(127,212,198,0.08)" stroke="'+spa+'" stroke-dasharray="4 3"/>'+elabel(x0+wpx/2,baseY-dh/2,'door','rgba(127,212,198,0.9)');}
+function elevVanity(x0,wpx,baseY,s,oy,chrome,gold){var gap=6*s,cabH=20*s,cabY=baseY-gap-cabH;var g='';
+  g+='<image href="assets/wood.jpg" x="'+x0+'" y="'+cabY+'" width="'+wpx+'" height="'+cabH+'" preserveAspectRatio="xMidYMid slice"/>';
+  g+='<rect x="'+x0+'" y="'+cabY+'" width="'+wpx+'" height="'+cabH+'" fill="none" stroke="rgba(0,0,0,0.25)"/>';
+  g+='<rect x="'+(x0-2*s)+'" y="'+(cabY-3*s)+'" width="'+(wpx+4*s)+'" height="'+(3*s)+'" fill="#f4f6f7"/>';
+  var mstyle=getOpt('mirror').mirror,accent=getOpt('accent').accent,frameC=accent==='brass'?'#c69a5a':chrome;
+  var mw=Math.min(30*s,wpx*0.7),mcx=x0+wpx/2,mh=34*s,mtop=baseY-88*s;if(mtop<oy+4)mtop=oy+4;
+  if(mstyle==='lit')g+='<rect x="'+(mcx-mw/2-3)+'" y="'+(mtop-3)+'" width="'+(mw+6)+'" height="'+(mh+6)+'" rx="8" fill="'+gold+'" opacity="'+(0.25+temp*0.25)+'"/>';
+  g+='<rect x="'+(mcx-mw/2)+'" y="'+mtop+'" width="'+mw+'" height="'+mh+'" rx="'+(mstyle==='framed'?mw/2:4)+'" fill="rgba(207,224,238,0.30)" stroke="'+frameC+'" stroke-width="'+(mstyle==='cabinet'?3:1.5)+'"/>';
+  if(mstyle==='cabinet')g+='<line x1="'+mcx+'" y1="'+mtop+'" x2="'+mcx+'" y2="'+(mtop+mh)+'" stroke="'+frameC+'" stroke-width="1"/>';
+  [mcx-mw/2-8*s,mcx+mw/2+8*s].forEach(function(sx){g+='<circle cx="'+sx+'" cy="'+(baseY-66*s)+'" r="'+(3.2*s)+'" fill="'+gold+'" opacity="'+(0.4+temp*0.5)+'"/>';});
+  return g+elabel(x0+wpx/2,cabY+cabH/2+3,'vanity','#fff');}
+function miniPlan(w){var mw=132,mh2=90,mx=600-mw-14,my=14,s2=Math.min((mw-14)/room.B,(mh2-14)/room.A);
+  var rw=room.B*s2,rh=room.A*s2,rx=mx+(mw-rw)/2,ry=my+(mh2-rh)/2,g='';
+  g+='<rect x="'+mx+'" y="'+my+'" width="'+mw+'" height="'+mh2+'" rx="6" fill="rgba(10,13,16,0.72)" stroke="'+cssv('--line2')+'"/>';
+  g+='<rect x="'+rx+'" y="'+ry+'" width="'+rw+'" height="'+rh+'" fill="rgba(255,255,255,0.05)" stroke="'+cssv('--ink-faint')+'"/>';
+  Object.keys(FIX).forEach(function(k){var f=FIX[k];if(!f.placed)return;g+='<rect x="'+(rx+f.x*s2)+'" y="'+(ry+f.y*s2)+'" width="'+(fw(f)*s2)+'" height="'+(fh(f)*s2)+'" fill="'+(f.tex?'#b89568':f.fill)+'" opacity="0.85"/>';});
+  var e={top:[rx,ry,rx+rw,ry],bottom:[rx,ry+rh,rx+rw,ry+rh],left:[rx,ry,rx,ry+rh],right:[rx+rw,ry,rx+rw,ry+rh]}[w];
+  g+='<line x1="'+e[0]+'" y1="'+e[1]+'" x2="'+e[2]+'" y2="'+e[3]+'" stroke="'+cssv('--spa')+'" stroke-width="3.5"/>';
+  return g+'<text x="'+(mx+mw/2)+'" y="'+(my+mh2+13)+'" fill="'+cssv('--spa')+'" font-size="9" text-anchor="middle" font-family="monospace">the highlighted wall</text>';}
+function drawElev(){var el=document.getElementById('elev');var horiz=(wall==='top'||wall==='bottom');
+  var W=horiz?room.B:room.A,H=room.ceil,s=Math.min(560/W,300/H),ox=(600-W*s)/2,oy=(360-H*s)/2,baseY=oy+H*s;
+  var chrome=cssv('--chrome'),spa=cssv('--spa'),gold=cssv('--gold'),wallHex=getOpt('wall').hex;
+  var g='<rect x="'+ox+'" y="'+oy+'" width="'+(W*s)+'" height="'+(H*s)+'" fill="'+wallHex+'" stroke="'+cssv('--line2')+'" rx="3"/>';
+  var wains=48*s;g+='<rect x="'+ox+'" y="'+(baseY-wains)+'" width="'+(W*s)+'" height="'+wains+'" fill="#f4f6f7" opacity="0.9"/>';
+  g+='<line x1="'+ox+'" y1="'+(baseY-wains)+'" x2="'+(ox+W*s)+'" y2="'+(baseY-wains)+'" stroke="'+chrome+'" stroke-width="2"/>';
+  g+='<text x="'+(ox+8)+'" y="'+(baseY-wains-8)+'" fill="'+chrome+'" font-size="10" font-family="monospace">reglazed white to 48 in</text>';
+  var fl=getOpt('floor').floor,flc=fl==='oak'?'#b89568':fl==='stone'?'#cfc9c0':'#c8ccce';
+  g+='<rect x="'+ox+'" y="'+baseY+'" width="'+(W*s)+'" height="8" fill="'+flc+'"/>';
+  var items=onWall(wall);
+  items.forEach(function(it){var x0=ox+it.off*s,wpx=it.len*s;
+    if(it.k==='tub')g+=elevTub(x0,wpx,baseY,s,chrome);
+    else if(it.k==='vanity')g+=elevVanity(x0,wpx,baseY,s,oy,chrome,gold);
+    else if(it.k==='toilet')g+=elevToilet(x0,wpx,baseY,s);
+    else if(it.k==='door')g+=elevDoor(x0,wpx,baseY,s,H,spa);});
+  var cap=items.length?('On this wall: '+items.map(function(x){return x.k;}).join(', ')):'Nothing on this wall yet. Drag a piece to it in the planner above.';
+  g+='<text x="'+ox+'" y="'+(baseY+24)+'" fill="'+cssv('--ink-faint')+'" font-size="11" font-family="monospace">'+cap+'</text>';
+  g+=miniPlan(wall);
   el.innerHTML=g;}
 
 /* ---------- TEMP ---------- */
@@ -498,7 +535,9 @@ var REGLAZE=1200, SKEY='joe_reglaze_saved_v1', CKEY='joe_reglaze_choices_v1';
 function getOpt(id){for(var i=0;i<DECISIONS.length;i++)if(DECISIONS[i].id===id)return DECISIONS[i].opts[choice[id]];}
 function planTotal(){var t=REGLAZE;DECISIONS.forEach(function(d){t+=d.opts[choice[d.id]].p;});UPGRADES.forEach(function(u){if(upgOn[u.id])t+=u.p;});return t;}
 function getSaved(){return +(localStorage.getItem(SKEY)||0);}
-function saveChoices(){var s={wall:getOpt('wall').hex,floor:getOpt('floor').floor,sink:getOpt('top').sink,mirror:getOpt('mirror').mirror,accent:getOpt('accent').accent};
+function saveChoices(){var s={wall:getOpt('wall').hex,floor:getOpt('floor').floor,sink:getOpt('top').sink,mirror:getOpt('mirror').mirror,accent:getOpt('accent').accent,
+  A:room.A,B:room.B,ceil:room.ceil,
+  tubWall:FIX.tub.placed?wallOf(FIX.tub):null,vanWall:FIX.vanity.placed?wallOf(FIX.vanity):null,toiletWall:FIX.toilet.placed?wallOf(FIX.toilet):null};
   try{localStorage.setItem(CKEY,JSON.stringify(s));}catch(e){}}
 function renderDecisions(){var c=document.getElementById('decisions');c.innerHTML='';
   DECISIONS.forEach(function(d){var el=document.createElement('div');el.className='decision';
@@ -526,7 +565,7 @@ function updatePlan(){var t=planTotal();var saved=getSaved();var rem=Math.max(0,
   var pal=document.getElementById('palette');pal.innerHTML='';
   var fl=getOpt('floor').floor;var flc=fl==='oak'?'#b89568':fl==='stone'?'#cfc9c0':'#9aa0a3';
   [getOpt('wall').hex,flc,'#cfe0ee',(getOpt('accent').accent==='brass'?'#c69a5a':'#e8edf0')].forEach(function(hx){var s=document.createElement('span');s.style.background=hx;pal.appendChild(s);});
-  saveChoices();updateSavings();}
+  saveChoices();updateSavings();try{drawPlan();renderWallpick();drawElev();}catch(e){}}
 function updateSavings(){var t=planTotal();var saved=getSaved();var rem=Math.max(0,t-saved);
   document.getElementById('goalbig').textContent='$'+t.toLocaleString();document.getElementById('savedbig').textContent='$'+saved.toLocaleString();
   var pct=t>0?Math.min(1,saved/t):1;document.getElementById('ringfill').setAttribute('stroke-dashoffset',(327*(1-pct)).toFixed(1));

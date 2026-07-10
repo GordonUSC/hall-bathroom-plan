@@ -88,50 +88,52 @@
   if(CH.floor==='stone'){mFloor=new THREE.MeshStandardMaterial({color:0xcfc9c0,roughness:0.45,metalness:0.05});}
   if(CH.mirror==='lit'){mMirror.emissive=new THREE.Color(0xffe6c2);mMirror.emissiveIntensity=0.42;}
   var mFrame=(CH.accent==='brass')?mBrass:mTrim;
+  // room dimensions from Joe's planner (feet)
+  var B_ft=(CH.B||96)/12, A_ft=(CH.A||62)/12, H_ft=(CH.ceil||96)/12, hx=B_ft/2, hz=A_ft/2;
+  camera.position.set(hx*1.15,H_ft*0.6,hz+Math.max(3.2,B_ft*0.62));
+  controls.target.set(-hx*0.08,H_ft*0.26,0);
+  controls.maxDistance=Math.max(12,B_ft*2.4);
+  try{document.querySelector('.ov .sub').textContent='Your '+(Math.round(B_ft*10)/10)+' by '+(Math.round(A_ft*10)/10)+' feet, to scale. Your walls, your floor, your finishes, exactly as you set them.';}catch(e){}
 
   function box(w,h,d,mat,x,y,z){var m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);scene.add(m);return m;}
 
-  // room feet: x -4..4 (8ft), z -2.5..2.5 (5ft), y 0..8
-  // floor
-  var fl=new THREE.Mesh(new THREE.PlaneGeometry(8,5),mFloor);fl.rotation.x=-Math.PI/2;fl.position.y=0;scene.add(fl);
-  // back wall (z=-2.5) and left wall (x=-4), open dollhouse corner
-  var bw=new THREE.Mesh(new THREE.PlaneGeometry(8,8),mWall);bw.position.set(0,4,-2.5);scene.add(bw);
-  var lw=new THREE.Mesh(new THREE.PlaneGeometry(5,8),mWall);lw.rotation.y=Math.PI/2;lw.position.set(-4,4,0);scene.add(lw);
-  // chrome wainscot trim at 48in (4ft)
-  box(8,0.05,0.06,mTrim,0,4,-2.47);
-  var lt=box(0.06,0.05,5,mTrim,-3.97,4,0);
+  // ---- room to Joe's measured size (x = length B, z = width A, y = ceiling) ----
+  var fl=new THREE.Mesh(new THREE.PlaneGeometry(B_ft,A_ft),mFloor);fl.rotation.x=-Math.PI/2;fl.position.y=0;scene.add(fl);
+  var bw=new THREE.Mesh(new THREE.PlaneGeometry(B_ft,H_ft),mWall);bw.position.set(0,H_ft/2,-hz);scene.add(bw);
+  var lw=new THREE.Mesh(new THREE.PlaneGeometry(A_ft,H_ft),mWall);lw.rotation.y=Math.PI/2;lw.position.set(-hx,H_ft/2,0);scene.add(lw);
+  box(B_ft,0.05,0.06,mTrim,0,4,-hz+0.03);          // reglaze wainscot line, back
+  box(0.06,0.05,A_ft,mTrim,-hx+0.03,4,0);          // reglaze wainscot line, left
 
-  // ---- tub along back wall ----
-  box(5,1.8,2.3,mWhite,-0.6,0.9,-1.35);           // apron
-  box(4.4,0.12,1.9,mWhite,-0.6,1.82,-1.35);        // rim
-  box(4.0,0.7,1.5,mBasin,-0.6,1.5,-1.35);          // basin recess
-  box(0.09,0.5,0.09,mChrome,-2.4,2.05,-2.15);      // chrome tub filler
+  // ---- reglazed tub along the back wall ----
+  var tubLen=Math.min(5,B_ft-0.6),tubX=-hx+tubLen/2+0.3,tubZ=-hz+1.2;
+  box(tubLen,1.8,2.3,mWhite,tubX,0.9,tubZ);        // apron
+  box(tubLen-0.6,0.12,1.9,mWhite,tubX,1.82,tubZ);  // rim
+  box(tubLen-1,0.7,1.5,mBasin,tubX,1.5,tubZ);      // basin recess
+  box(0.09,0.5,0.09,mChrome,tubX-tubLen/2+0.3,2.05,-hz+0.15);
 
-  // ---- floating vanity along left wall ----
-  // length along z (~4.4ft), depth along x (~1.7ft), height 1.4ft, floating bottom at y=1.05
-  box(1.7,1.4,4.4,mWood,-3.05,1.75,0);             // cabinet
-  box(1.95,0.12,4.7,mWhite,-2.98,2.51,0);          // counter slab w/ overhang
-  // sink: vessel (raised) or integrated (flush) per Joe's choice
-  if(CH.sink==='integrated'){var isink=new THREE.Mesh(new THREE.CylinderGeometry(0.62,0.55,0.14,28),mBasin);isink.scale.z=0.62;isink.position.set(-3.0,2.55,0);scene.add(isink);}
-  else{var sink=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.42,0.5,28),mBasin);sink.position.set(-3.0,2.72,0);scene.add(sink);}
-  // chrome faucet
-  var fa=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,0.85,16),mChrome);fa.position.set(-3.55,2.9,0);scene.add(fa);
-  box(0.5,0.06,0.06,mChrome,-3.35,3.32,0);         // spout
-  // mirror above vanity
-  var mir=new THREE.Mesh(new THREE.PlaneGeometry(3.2,3.4),mMirror);mir.rotation.y=Math.PI/2;mir.position.set(-3.95,4.7,0);scene.add(mir);
-  box(0.05,3.6,3.4,mFrame,-3.985,4.7,0);           // mirror frame (brass if Joe chose the accent)
-  if(CH.mirror==='lit'){var halo=new THREE.PointLight(0xffe6c2,0.5,10,2);halo.position.set(-3.6,4.7,0);scene.add(halo);}
-  if(CH.accent==='brass'){var hook=new THREE.Mesh(new THREE.TorusGeometry(0.2,0.045,10,24),mBrass);hook.rotation.y=Math.PI/2;hook.position.set(-3.9,3.1,1.7);scene.add(hook);}
+  // ---- floating vanity along the left wall ----
+  var vanLen=Math.min(4.4,A_ft-0.5),vx=-hx+0.85;
+  box(1.7,1.4,vanLen,mWood,vx,1.75,0);             // cabinet
+  box(1.95,0.12,vanLen+0.3,mWhite,vx+0.07,2.51,0); // counter slab
+  if(CH.sink==='integrated'){var isink=new THREE.Mesh(new THREE.CylinderGeometry(0.62,0.55,0.14,28),mBasin);isink.scale.z=0.62;isink.position.set(vx+0.05,2.55,0);scene.add(isink);}
+  else{var sink=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.42,0.5,28),mBasin);sink.position.set(vx+0.05,2.72,0);scene.add(sink);}
+  var fa=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,0.85,16),mChrome);fa.position.set(vx-0.4,2.9,0);scene.add(fa);
+  box(0.5,0.06,0.06,mChrome,vx-0.2,3.32,0);        // spout
+  var mmw=Math.min(3.2,vanLen*0.85);
+  var mir=new THREE.Mesh(new THREE.PlaneGeometry(mmw,3.4),mMirror);mir.rotation.y=Math.PI/2;mir.position.set(-hx+0.05,4.7,0);scene.add(mir);
+  box(0.05,3.6,mmw+0.3,mFrame,-hx+0.015,4.7,0);    // mirror frame (brass if chosen)
+  if(CH.mirror==='lit'){var halo=new THREE.PointLight(0xffe6c2,0.5,10,2);halo.position.set(-hx+0.4,4.7,0);scene.add(halo);}
+  if(CH.accent==='brass'){var hook=new THREE.Mesh(new THREE.TorusGeometry(0.2,0.045,10,24),mBrass);hook.rotation.y=Math.PI/2;hook.position.set(-hx+0.1,3.1,hz-0.8);scene.add(hook);}
 
-  // ---- toilet in back-right corner ----
-  box(1.2,1.1,1.0,mWhite,3.1,0.55,-1.9);           // base/bowl block
-  box(1.15,1.4,0.4,mWhite,3.1,1.6,-2.25);          // tank
-  var lid=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.55,0.16,24),mWhite);lid.position.set(3.1,1.15,-1.75);scene.add(lid);
+  // ---- toilet in the back-right corner ----
+  box(1.2,1.1,1.0,mWhite,hx-0.7,0.55,-hz+0.6);     // base/bowl block
+  box(1.15,1.4,0.4,mWhite,hx-0.7,1.6,-hz+0.25);    // tank
+  var lid=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.55,0.16,24),mWhite);lid.position.set(hx-0.7,1.15,-hz+0.85);scene.add(lid);
 
-  // ---- sconces ----
-  function sconce(z){var s=new THREE.Mesh(new THREE.SphereGeometry(0.13,18,18),new THREE.MeshStandardMaterial({color:0xfff2df,emissive:0xffcf9a,emissiveIntensity:1.2,roughness:0.4}));s.position.set(-3.85,5.4,z);scene.add(s);
-    var pl=new THREE.PointLight(0xffcf9a,0.6,14,2);pl.position.set(-3.7,5.4,z);scene.add(pl);return s;}
-  sconce(-1.25);sconce(1.25);
+  // ---- sconces flanking the mirror ----
+  function sconce(z){var s=new THREE.Mesh(new THREE.SphereGeometry(0.13,18,18),new THREE.MeshStandardMaterial({color:0xfff2df,emissive:0xffcf9a,emissiveIntensity:1.2,roughness:0.4}));s.position.set(-hx+0.15,5.3,z);scene.add(s);
+    var pl=new THREE.PointLight(0xffcf9a,0.6,14,2);pl.position.set(-hx+0.3,5.3,z);scene.add(pl);return s;}
+  sconce(-vanLen*0.3);sconce(vanLen*0.3);
 
   // ---- lighting (2700K warm base) ----
   var hemi=new THREE.HemisphereLight(0xfff2e0,0x2b2622,0.55);scene.add(hemi);
