@@ -81,6 +81,13 @@
   var mChrome=new THREE.MeshStandardMaterial({color:0xdfeaf2,roughness:0.16,metalness:0.92});
   var mMirror=new THREE.MeshStandardMaterial({color:0xcde0ee,roughness:0.06,metalness:0.6});
   var mTrim=new THREE.MeshStandardMaterial({color:0xd7e4ee,roughness:0.25,metalness:0.7});
+  var mBrass=new THREE.MeshStandardMaterial({color:0xc69a5a,roughness:0.3,metalness:0.85});
+  // reflect Joe's choices from the studio
+  var CH={};try{CH=JSON.parse(localStorage.getItem('joe_reglaze_choices_v1')||'{}');}catch(e){}
+  if(CH.wall){mWall.color.set(CH.wall);}
+  if(CH.floor==='stone'){mFloor=new THREE.MeshStandardMaterial({color:0xcfc9c0,roughness:0.45,metalness:0.05});}
+  if(CH.mirror==='lit'){mMirror.emissive=new THREE.Color(0xffe6c2);mMirror.emissiveIntensity=0.42;}
+  var mFrame=(CH.accent==='brass')?mBrass:mTrim;
 
   function box(w,h,d,mat,x,y,z){var m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);scene.add(m);return m;}
 
@@ -104,14 +111,17 @@
   // length along z (~4.4ft), depth along x (~1.7ft), height 1.4ft, floating bottom at y=1.05
   box(1.7,1.4,4.4,mWood,-3.05,1.75,0);             // cabinet
   box(1.95,0.12,4.7,mWhite,-2.98,2.51,0);          // counter slab w/ overhang
-  // vessel sink (cylinder)
-  var sink=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.42,0.5,28),mBasin);sink.position.set(-3.0,2.72,0);scene.add(sink);
+  // sink: vessel (raised) or integrated (flush) per Joe's choice
+  if(CH.sink==='integrated'){var isink=new THREE.Mesh(new THREE.CylinderGeometry(0.62,0.55,0.14,28),mBasin);isink.scale.z=0.62;isink.position.set(-3.0,2.55,0);scene.add(isink);}
+  else{var sink=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.42,0.5,28),mBasin);sink.position.set(-3.0,2.72,0);scene.add(sink);}
   // chrome faucet
   var fa=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,0.85,16),mChrome);fa.position.set(-3.55,2.9,0);scene.add(fa);
   box(0.5,0.06,0.06,mChrome,-3.35,3.32,0);         // spout
   // mirror above vanity
   var mir=new THREE.Mesh(new THREE.PlaneGeometry(3.2,3.4),mMirror);mir.rotation.y=Math.PI/2;mir.position.set(-3.95,4.7,0);scene.add(mir);
-  box(0.05,3.6,3.4,mTrim,-3.985,4.7,0);            // mirror frame back (thin)
+  box(0.05,3.6,3.4,mFrame,-3.985,4.7,0);           // mirror frame (brass if Joe chose the accent)
+  if(CH.mirror==='lit'){var halo=new THREE.PointLight(0xffe6c2,0.5,10,2);halo.position.set(-3.6,4.7,0);scene.add(halo);}
+  if(CH.accent==='brass'){var hook=new THREE.Mesh(new THREE.TorusGeometry(0.2,0.045,10,24),mBrass);hook.rotation.y=Math.PI/2;hook.position.set(-3.9,3.1,1.7);scene.add(hook);}
 
   // ---- toilet in back-right corner ----
   box(1.2,1.1,1.0,mWhite,3.1,0.55,-1.9);           // base/bowl block
