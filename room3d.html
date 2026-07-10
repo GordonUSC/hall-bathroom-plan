@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Your Room in 3D · The Reglaze Room</title>
+<style>
+  :root{--serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;--body:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;--mono:ui-monospace,"SF Mono",Menlo,monospace;--spa:#7fd4c6;--gold:#e6b877;--ink:#eef2f5}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#12161a;color:var(--ink);font-family:var(--body);overflow:hidden}
+  #c{position:fixed;inset:0;display:block;touch-action:none}
+  .ov{position:fixed;left:0;right:0;top:0;padding:16px 18px;pointer-events:none;z-index:5;
+    background:linear-gradient(180deg,rgba(10,13,16,0.7),transparent)}
+  .ov .kick{font-family:var(--mono);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--spa)}
+  .ov h1{font-family:var(--serif);font-size:26px;margin:6px 0 2px}
+  .ov .sub{font-size:13.5px;color:#c4ced6}
+  .back{position:fixed;top:14px;right:14px;z-index:6;pointer-events:auto;background:rgba(15,20,24,0.85);border:1px solid rgba(238,242,245,0.22);border-radius:22px;padding:9px 15px;color:var(--ink);font:inherit;font-size:14px;text-decoration:none}
+  .hint{position:fixed;left:0;right:0;bottom:20px;text-align:center;z-index:5;pointer-events:none;font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(238,242,245,0.6)}
+  .tempbar{position:fixed;left:50%;transform:translateX(-50%);bottom:52px;z-index:6;display:flex;gap:8px;pointer-events:auto}
+  .tempbar button{background:rgba(15,20,24,0.85);border:1px solid rgba(238,242,245,0.22);border-radius:18px;padding:8px 13px;color:#c4ced6;font-family:var(--mono);font-size:11px;letter-spacing:0.06em}
+  .tempbar button.on{color:var(--gold);border-color:var(--gold)}
+  .load{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:8;background:#12161a;flex-direction:column;gap:14px;text-align:center;padding:24px}
+  .load .r{font-family:var(--serif);font-style:italic;font-size:20px;color:#c4ced6;max-width:24ch}
+  .load .s{width:44px;height:44px;border:3px solid rgba(127,212,198,0.25);border-top-color:var(--spa);border-radius:50%;animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .err{max-width:30ch;font-size:15px;color:#c4ced6;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="load" id="load"><div class="s"></div><div class="r">Building your room, to the inch...</div></div>
+<canvas id="c"></canvas>
+<div class="ov"><div class="kick">Walk into it</div><h1>Your room, in 3D</h1><div class="sub">Your 5 by 8, to scale. The oak floor, the floating vanity, your reglazed white tub.</div></div>
+<a class="back" href="index.html">&larr; Back to studio</a>
+<div class="tempbar" id="tempbar"><button data-t="warm" class="on">2700K spa</button><button data-t="neutral">3000K</button><button data-t="work">4000K work</button></div>
+<div class="hint">Drag to look around &middot; pinch to zoom</div>
+
+<script src="vendor/three.min.js"></script>
+<script src="vendor/OrbitControls.js"></script>
+<script>
+(function(){
+  var load=document.getElementById('load');
+  if(!window.THREE||!THREE.WebGLRenderer){load.innerHTML='<div class="err">This device could not start 3D. Everything else in the studio still works, tap Back to studio.</div><a class="back" href="index.html" style="position:static;pointer-events:auto">Back to studio</a>';return;}
+  try{ start(); }catch(e){ load.innerHTML='<div class="err">3D hiccup on this device. The full studio still works, tap Back to studio.</div><a class="back" href="index.html" style="position:static;pointer-events:auto">Back to studio</a>'; }
+
+  function start(){
+  var canvas=document.getElementById('c');
+  var renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  renderer.setSize(innerWidth,innerHeight);
+  renderer.outputEncoding=THREE.sRGBEncoding;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure=1.12;
+
+  var scene=new THREE.Scene();
+  // soft warm gradient backdrop
+  var bg=document.createElement('canvas');bg.width=8;bg.height=256;var bx=bg.getContext('2d');
+  var gr=bx.createLinearGradient(0,0,0,256);gr.addColorStop(0,'#20272e');gr.addColorStop(0.55,'#191f25');gr.addColorStop(1,'#12161a');
+  bx.fillStyle=gr;bx.fillRect(0,0,8,256);
+  var bgt=new THREE.CanvasTexture(bg);scene.background=bgt;
+
+  var camera=new THREE.PerspectiveCamera(54,innerWidth/innerHeight,0.1,200);
+  camera.position.set(5.2,5,6.4);
+  var controls=new THREE.OrbitControls(camera,renderer.domElement);
+  controls.enableDamping=true;controls.dampingFactor=0.08;
+  controls.target.set(-0.4,2,0);
+  controls.minDistance=3.5;controls.maxDistance=15;
+  controls.minPolarAngle=0.25;controls.maxPolarAngle=1.52;
+  controls.enablePan=false;
+
+  // ---- textures ----
+  var loader=new THREE.TextureLoader();
+  function wood(file,rx,ry){var t=loader.load(file);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(rx,ry);t.encoding=THREE.sRGBEncoding;return t;}
+  var floorTex=wood('assets/floor.jpg',3,3);
+  var vanTex=wood('assets/oak.jpg',2,1);
+
+  // ---- materials ----
+  var mWhite=new THREE.MeshStandardMaterial({color:0xf1f4f5,roughness:0.82,metalness:0.02});
+  var mWall=new THREE.MeshStandardMaterial({color:0xeef1f2,roughness:0.95,metalness:0.0});
+  var mBasin=new THREE.MeshStandardMaterial({color:0xe4ebee,roughness:0.7,metalness:0.03});
+  var mWood=new THREE.MeshStandardMaterial({map:vanTex,color:0xefe7db,roughness:0.72,metalness:0.05});
+  var mFloor=new THREE.MeshStandardMaterial({map:floorTex,color:0xf0e6d6,roughness:0.84,metalness:0.04});
+  var mChrome=new THREE.MeshStandardMaterial({color:0xdfeaf2,roughness:0.16,metalness:0.92});
+  var mMirror=new THREE.MeshStandardMaterial({color:0xcde0ee,roughness:0.06,metalness:0.6});
+  var mTrim=new THREE.MeshStandardMaterial({color:0xd7e4ee,roughness:0.25,metalness:0.7});
+
+  function box(w,h,d,mat,x,y,z){var m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);scene.add(m);return m;}
+
+  // room feet: x -4..4 (8ft), z -2.5..2.5 (5ft), y 0..8
+  // floor
+  var fl=new THREE.Mesh(new THREE.PlaneGeometry(8,5),mFloor);fl.rotation.x=-Math.PI/2;fl.position.y=0;scene.add(fl);
+  // back wall (z=-2.5) and left wall (x=-4), open dollhouse corner
+  var bw=new THREE.Mesh(new THREE.PlaneGeometry(8,8),mWall);bw.position.set(0,4,-2.5);scene.add(bw);
+  var lw=new THREE.Mesh(new THREE.PlaneGeometry(5,8),mWall);lw.rotation.y=Math.PI/2;lw.position.set(-4,4,0);scene.add(lw);
+  // chrome wainscot trim at 48in (4ft)
+  box(8,0.05,0.06,mTrim,0,4,-2.47);
+  var lt=box(0.06,0.05,5,mTrim,-3.97,4,0);
+
+  // ---- tub along back wall ----
+  box(5,1.8,2.3,mWhite,-0.6,0.9,-1.35);           // apron
+  box(4.4,0.12,1.9,mWhite,-0.6,1.82,-1.35);        // rim
+  box(4.0,0.7,1.5,mBasin,-0.6,1.5,-1.35);          // basin recess
+  box(0.09,0.5,0.09,mChrome,-2.4,2.05,-2.15);      // chrome tub filler
+
+  // ---- floating vanity along left wall ----
+  // length along z (~4.4ft), depth along x (~1.7ft), height 1.4ft, floating bottom at y=1.05
+  box(1.7,1.4,4.4,mWood,-3.05,1.75,0);             // cabinet
+  box(1.95,0.12,4.7,mWhite,-2.98,2.51,0);          // counter slab w/ overhang
+  // vessel sink (cylinder)
+  var sink=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.42,0.5,28),mBasin);sink.position.set(-3.0,2.72,0);scene.add(sink);
+  // chrome faucet
+  var fa=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,0.85,16),mChrome);fa.position.set(-3.55,2.9,0);scene.add(fa);
+  box(0.5,0.06,0.06,mChrome,-3.35,3.32,0);         // spout
+  // mirror above vanity
+  var mir=new THREE.Mesh(new THREE.PlaneGeometry(3.2,3.4),mMirror);mir.rotation.y=Math.PI/2;mir.position.set(-3.95,4.7,0);scene.add(mir);
+  box(0.05,3.6,3.4,mTrim,-3.985,4.7,0);            // mirror frame back (thin)
+
+  // ---- toilet in back-right corner ----
+  box(1.2,1.1,1.0,mWhite,3.1,0.55,-1.9);           // base/bowl block
+  box(1.15,1.4,0.4,mWhite,3.1,1.6,-2.25);          // tank
+  var lid=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.55,0.16,24),mWhite);lid.position.set(3.1,1.15,-1.75);scene.add(lid);
+
+  // ---- sconces ----
+  function sconce(z){var s=new THREE.Mesh(new THREE.SphereGeometry(0.13,18,18),new THREE.MeshStandardMaterial({color:0xfff2df,emissive:0xffcf9a,emissiveIntensity:1.2,roughness:0.4}));s.position.set(-3.85,5.4,z);scene.add(s);
+    var pl=new THREE.PointLight(0xffcf9a,0.6,14,2);pl.position.set(-3.7,5.4,z);scene.add(pl);return s;}
+  sconce(-1.25);sconce(1.25);
+
+  // ---- lighting (2700K warm base) ----
+  var hemi=new THREE.HemisphereLight(0xfff2e0,0x2b2622,0.55);scene.add(hemi);
+  var key=new THREE.DirectionalLight(0xffe0b8,0.55);key.position.set(4,9,6);scene.add(key);
+  var fill=new THREE.PointLight(0xffd9ad,0.5,26,2);fill.position.set(0,6.5,2);scene.add(fill);
+  var warmVeil=new THREE.PointLight(0xffb46e,0.35,30,2);warmVeil.position.set(-1,4,3);scene.add(warmVeil);
+
+  // temperature presets
+  var TEMPS={warm:{hemi:0xfff2e0,key:0xffe0b8,amb:0.55,veil:0.35,bg:'#20272e'},
+             neutral:{hemi:0xfdf6ee,key:0xfff0dd,amb:0.62,veil:0.18,bg:'#222a30'},
+             work:{hemi:0xeef4ff,key:0xffffff,amb:0.75,veil:0.05,bg:'#232c34'}};
+  function setTemp(t){var p=TEMPS[t];hemi.color.setHex(p.hemi);hemi.intensity=p.amb;key.color.setHex(p.key);warmVeil.intensity=p.veil;
+    gr=bx.createLinearGradient(0,0,0,256);gr.addColorStop(0,p.bg);gr.addColorStop(1,'#12161a');bx.fillStyle=gr;bx.fillRect(0,0,8,256);bgt.needsUpdate=true;}
+  document.getElementById('tempbar').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;
+    [].forEach.call(this.querySelectorAll('button'),function(x){x.classList.remove('on');});b.classList.add('on');setTemp(b.dataset.t);});
+
+  // reveal (fade out loader once first frame drawn)
+  var started=false;
+  function onResize(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);}
+  window.addEventListener('resize',onResize);
+  function tick(){controls.update();renderer.render(scene,camera);
+    if(!started){started=true;load.style.transition='opacity .6s';load.style.opacity='0';setTimeout(function(){load.style.display='none';},650);}
+    requestAnimationFrame(tick);}
+  tick();
+  }
+})();
+</script>
+</body></html>

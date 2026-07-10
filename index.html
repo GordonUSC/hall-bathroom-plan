@@ -140,6 +140,12 @@
   #ctrls{position:fixed;top:12px;right:12px;z-index:61;display:flex;gap:8px}
   #ctrls button{background:rgba(15,20,24,0.85);border:1px solid var(--line2);border-radius:20px;padding:8px 12px;color:var(--ink-soft);font-family:var(--mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase}
 
+  .room3dcta{display:block;margin-top:18px;text-decoration:none;color:var(--ink);border-radius:16px;padding:20px 22px;
+    background:linear-gradient(120deg,rgba(127,212,198,0.16),rgba(230,184,119,0.14));border:1px solid rgba(127,212,198,0.35)}
+  .room3dcta .rc-k{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#0d1114;background:var(--spa);padding:3px 8px;border-radius:20px}
+  .room3dcta .rc-t{display:block;font-family:var(--serif);font-size:22px;margin-top:10px}
+  .room3dcta .rc-d{display:block;font-size:14px;color:var(--ink-soft);margin-top:4px}
+  .room3dcta:active{transform:scale(0.99)}
   .gallery{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
   .gallery .g{border-radius:16px;overflow:hidden;background:var(--ground-2);border:1px solid var(--line)}
   .gallery .g.wide{grid-column:span 2}
@@ -198,6 +204,7 @@
     <div class="eyebrow" style="margin-top:26px">The light changes everything</div>
     <div class="temp" id="temp"></div>
     <p style="font-size:14px;color:var(--ink-faint);margin-top:10px">This one bulb choice is free, and it does more than two grand of tile ever could.</p>
+    <a href="room3d.html" class="room3dcta"><span class="rc-k">New</span><span class="rc-t">Walk into your room in 3D</span><span class="rc-d">Your 5 by 8, to scale. Drag to look around it. &rarr;</span></a>
   </section>
 
   <section class="mv">
