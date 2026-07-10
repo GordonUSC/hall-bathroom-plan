@@ -140,6 +140,16 @@
   #ctrls{position:fixed;top:12px;right:12px;z-index:61;display:flex;gap:8px}
   #ctrls button{background:rgba(15,20,24,0.85);border:1px solid var(--line2);border-radius:20px;padding:8px 12px;color:var(--ink-soft);font-family:var(--mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase}
 
+  .gallery{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+  .gallery .g{border-radius:16px;overflow:hidden;background:var(--ground-2);border:1px solid var(--line)}
+  .gallery .g.wide{grid-column:span 2}
+  .gallery .g img{display:block;width:100%;height:190px;object-fit:cover;background:var(--ground-3)}
+  .gallery .g.wide img{height:230px}
+  .gallery .g .cap{padding:14px 16px}
+  .gallery .g .cap .t{font-family:var(--serif);font-size:17px}
+  .gallery .g .cap .d{font-size:13.5px;color:var(--ink-soft);margin-top:4px}
+  .chip2{display:inline-block;margin-top:9px;font-family:var(--mono);font-size:9.5px;letter-spacing:0.08em;text-transform:uppercase;padding:4px 9px;border-radius:20px;background:rgba(127,212,198,0.16);color:var(--spa);border:1px solid rgba(127,212,198,0.3)}
+  @media(max-width:520px){.gallery{grid-template-columns:1fr}.gallery .g.wide{grid-column:span 1}}
   footer{border-top:1px solid var(--line);padding:26px 0 90px;text-align:center;color:var(--ink-faint);font-size:12.5px}
   .warmveil{position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse 120% 90% at 50% 50%,rgba(255,180,110,0.14),transparent 70%);opacity:var(--amb);transition:opacity 1s}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -195,6 +205,20 @@
     <h2>Every choice you made was a pro move</h2>
     <p class="lede">Not luck. Here is the design principle behind each thing you already decided, and what it would have cost to get it wrong.</p>
     <div class="eyecards" id="eyecards"></div>
+  </section>
+
+  <section class="mv">
+    <div class="eyebrow">Shop this look</div>
+    <h2>Your choices, in the flesh</h2>
+    <p class="lede">Real rooms, real materials. This is what your decisions look like once they are built.</p>
+    <div class="gallery">
+      <div class="g wide"><img src="assets/spa.jpg" alt="Bright contemporary spa bathroom with wood and white" loading="lazy"><div class="cap"><div class="t">The whole feeling</div><div class="d">Clean white, warm wood, chrome that reads like water. This is the room you are building.</div><span class="chip2">your palette</span></div></div>
+      <div class="g"><img src="assets/vanity.jpg" alt="Wood floating vanity" loading="lazy"><div class="cap"><div class="t">The floating vanity</div><div class="d">Wood front, wall-mounted, floor running underneath. Your exact move.</div><span class="chip2">you chose this</span></div></div>
+      <div class="g"><img src="assets/tub.jpg" alt="Bright white bathtub" loading="lazy"><div class="cap"><div class="t">The reglazed white tub</div><div class="d">Cast iron brought back to bright white, not hauled out.</div><span class="chip2">restore, don’t replace</span></div></div>
+      <div class="g"><img src="assets/towels.jpg" alt="Folded waffle spa towels" loading="lazy"><div class="cap"><div class="t">The final 10%</div><div class="d">Waffle-weave towels, folded. The styling that says designed.</div><span class="chip2">styling</span></div></div>
+      <div class="g"><img src="assets/spa2.jpg" alt="Spa towels and a bottle on a tub edge" loading="lazy"><div class="cap"><div class="t">The spa details</div><div class="d">A stone tray, one bottle, nothing cluttered. Calm.</div><span class="chip2">calm</span></div></div>
+    </div>
+    <p style="font-size:12px;color:var(--ink-faint);margin-top:14px">Photography via Pexels, free to use.</p>
   </section>
 
   <section class="mv">
@@ -276,8 +300,8 @@ document.getElementById('letin').onclick=function(){primed=true;try{speechSynthe
 /* ---------- STATE ---------- */
 var room={A:62,B:96,ceil:96};
 var FIX={
-  tub:{name:'Cast-iron tub, reglazed',w:60,h:30,fill:'#f4f6f7',placed:false,x:0,y:0,rot:0},
-  vanity:{name:'Gray-oak floating vanity',w:60,h:21,fill:'#b89568',placed:false,x:0,y:0,rot:0},
+  tub:{name:'Cast-iron tub, reglazed',w:60,h:30,fill:'#f4f6f7',placed:false,x:0,y:0,rot:0,thumb:'assets/tub_t.jpg'},
+  vanity:{name:'Gray-oak floating vanity',w:60,h:21,fill:'#b89568',placed:false,x:0,y:0,rot:0,thumb:'assets/vanity_t.jpg',tex:'assets/wood.jpg'},
   toilet:{name:'Toilet',w:20,h:28,fill:'#dfe6ea',placed:false,x:0,y:0,rot:0},
   door:{name:'Door swing',w:30,h:30,fill:'rgba(127,212,198,0.28)',placed:false,x:0,y:0,rot:0}
 };
@@ -307,7 +331,10 @@ function drawPlan(){var s=scale(),ox=(600-room.B*s)/2,oy=(600-room.A*s)/2,g='';
   g+='<line x1="'+ox+'" y1="'+(oy+room.A*s+18)+'" x2="'+(ox+12*s)+'" y2="'+(oy+room.A*s+18)+'" stroke="'+cssv('--spa')+'" stroke-width="2"/><text x="'+(ox+6*s)+'" y="'+(oy+room.A*s+34)+'" fill="'+cssv('--spa')+'" font-size="11" text-anchor="middle" font-family="monospace">12 in</text>';
   Object.keys(FIX).forEach(function(k){var f=FIX[k];if(!f.placed)return;var w=fw(f),h=fh(f),px=ox+f.x*s,py=oy+f.y*s;
     var sel=selected===k?'stroke="'+cssv('--spa')+'" stroke-width="2.5"':'stroke="rgba(0,0,0,0.35)" stroke-width="1"';
-    g+='<g class="fx" data-k="'+k+'" style="cursor:grab"><rect x="'+px+'" y="'+py+'" width="'+(w*s)+'" height="'+(h*s)+'" rx="3" fill="'+f.fill+'" '+sel+'/><text x="'+(px+w*s/2)+'" y="'+(py+h*s/2+4)+'" fill="#0d1114" font-size="10" text-anchor="middle" font-family="monospace">'+k+'</text></g>';});
+    var body=f.tex?'<image href="'+f.tex+'" x="'+px+'" y="'+py+'" width="'+(w*s)+'" height="'+(h*s)+'" preserveAspectRatio="xMidYMid slice"/><rect x="'+px+'" y="'+py+'" width="'+(w*s)+'" height="'+(h*s)+'" rx="3" fill="none" '+sel+'/>'
+                       :'<rect x="'+px+'" y="'+py+'" width="'+(w*s)+'" height="'+(h*s)+'" rx="3" fill="'+f.fill+'" '+sel+'/>';
+    var lc=f.tex?'#fff':'#0d1114';
+    g+='<g class="fx" data-k="'+k+'" style="cursor:grab">'+body+'<text x="'+(px+w*s/2)+'" y="'+(py+h*s/2+4)+'" fill="'+lc+'" font-size="10" text-anchor="middle" font-family="monospace" style="paint-order:stroke;stroke:rgba(0,0,0,0.35);stroke-width:2px">'+k+'</text></g>';});
   plan.innerHTML=g;bindDrag();}
 function cssv(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||'#888';}
 function svgPt(e,svg){var pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse());}
@@ -321,7 +348,7 @@ function bindDrag(){plan.querySelectorAll('.fx').forEach(function(el){
     plan.addEventListener('pointermove',mv);plan.addEventListener('pointerup',up);});});}
 function renderTools(){var t=document.getElementById('tools');t.innerHTML='';
   Object.keys(FIX).forEach(function(k){var f=FIX[k];var c=document.createElement('button');c.className='chip';c.dataset.on=f.placed?'1':'0';
-    c.innerHTML='<span class="sw" style="background:'+f.fill+'"></span>'+f.name;
+    c.innerHTML=(f.thumb?'<img src="'+f.thumb+'" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;flex:none">':'<span class="sw" style="background:'+f.fill+'"></span>')+f.name;
     c.onclick=function(){if(!f.placed){f.placed=true;f.x=Math.round(room.B/2-f.w/2);f.y=0;selected=k;}else selected=k;
       c.dataset.on='1';drawPlan();checkFit();fixtureSpoken(k);};t.appendChild(c);});}
 document.getElementById('rotate').onclick=function(){if(selected){FIX[selected].rot=(FIX[selected].rot+90)%360;
@@ -356,7 +383,7 @@ function drawElev(){var el=document.getElementById('elev');var W=wall==='B'?room
   g+='<line x1="'+ox+'" y1="'+(oy+H*s-wains)+'" x2="'+(ox+W*s)+'" y2="'+(oy+H*s-wains)+'" stroke="'+cssv('--chrome')+'" stroke-width="2"/>';
   g+='<text x="'+(ox+8)+'" y="'+(oy+H*s-wains-8)+'" fill="'+cssv('--chrome')+'" font-size="11" font-family="monospace">reglazed white to 48 in</text>';
   if(wall==='A'){var vw=Math.min(60,W-4)*s,vx=ox+(W*s-vw)/2;
-    g+='<rect x="'+vx+'" y="'+(oy+H*s-24*s)+'" width="'+vw+'" height="'+(20*s)+'" rx="3" fill="#b89568"/><text x="'+(vx+vw/2)+'" y="'+(oy+H*s-13*s)+'" fill="#0d1114" font-size="10" text-anchor="middle" font-family="monospace">floating vanity</text>';
+    g+='<image href="assets/wood.jpg" x="'+vx+'" y="'+(oy+H*s-24*s)+'" width="'+vw+'" height="'+(20*s)+'" preserveAspectRatio="xMidYMid slice"/><rect x="'+vx+'" y="'+(oy+H*s-24*s)+'" width="'+vw+'" height="'+(20*s)+'" rx="3" fill="none" stroke="rgba(0,0,0,0.25)"/><text x="'+(vx+vw/2)+'" y="'+(oy+H*s-13*s)+'" fill="#fff" font-size="10" text-anchor="middle" font-family="monospace" style="paint-order:stroke;stroke:rgba(0,0,0,0.4);stroke-width:2px">floating vanity</text>';
     g+='<rect x="'+(vx+vw/2-14*s)+'" y="'+(oy+18*s)+'" width="'+(28*s)+'" height="'+(34*s)+'" rx="3" fill="rgba(207,224,238,0.28)" stroke="'+cssv('--chrome')+'"/>';
     [vx+vw/2-22*s,vx+vw/2+18*s].forEach(function(sx){g+='<circle cx="'+sx+'" cy="'+(oy+H*s-66*s)+'" r="'+(3.5*s)+'" fill="'+cssv('--gold')+'" opacity="'+(0.45+temp*0.45)+'"/>';});
     g+='<text x="'+ox+'" y="'+(oy+H*s+18)+'" fill="'+cssv('--ink-faint')+'" font-size="11" font-family="monospace">4 in floor gap under the vanity: the room breathes</text>';
