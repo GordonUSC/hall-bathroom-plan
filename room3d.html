@@ -97,12 +97,38 @@
 
   function box(w,h,d,mat,x,y,z){var m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);scene.add(m);return m;}
 
-  // ---- room to Joe's measured size (x = length B, z = width A, y = ceiling) ----
-  var fl=new THREE.Mesh(new THREE.PlaneGeometry(B_ft,A_ft),mFloor);fl.rotation.x=-Math.PI/2;fl.position.y=0;scene.add(fl);
-  var bw=new THREE.Mesh(new THREE.PlaneGeometry(B_ft,H_ft),mWall);bw.position.set(0,H_ft/2,-hz);scene.add(bw);
-  var lw=new THREE.Mesh(new THREE.PlaneGeometry(A_ft,H_ft),mWall);lw.rotation.y=Math.PI/2;lw.position.set(-hx,H_ft/2,0);scene.add(lw);
-  box(B_ft,0.05,0.06,mTrim,0,4,-hz+0.03);          // reglaze wainscot line, back
-  box(0.06,0.05,A_ft,mTrim,-hx+0.03,4,0);          // reglaze wainscot line, left
+  // ---- room to Joe's measured size (supports rectangle or L) ----
+  function polyPts(){var B=CH.B||96,A=CH.A||62,nw=CH.nw||36,nd=CH.nd||30,c=CH.ncorner||'TR';
+   if(CH.shape!=='L')return [[0,0],[B,0],[B,A],[0,A]];
+   if(c==='TR')return [[0,0],[B-nw,0],[B-nw,nd],[B,nd],[B,A],[0,A]];
+   if(c==='TL')return [[nw,0],[B,0],[B,A],[0,A],[0,nd],[nw,nd]];
+   if(c==='BR')return [[0,0],[B,0],[B,A-nd],[B-nw,A-nd],[B-nw,A],[0,A]];
+   return [[0,0],[B,0],[B,A],[nw,A],[nw,A-nd],[0,A-nd]];}
+  var PTS=polyPts().map(function(p){return [p[0]/12-hx, p[1]/12-hz];}); // feet, centered
+  function ptIn(x,y){var B=(CH.B||96)/12,A=(CH.A||62)/12;var xx=x+hx,yy=y+hz;
+   if(xx<0||yy<0||xx>B||yy>A)return false;
+   if(CH.shape!=='L')return true;
+   var nw=(CH.nw||36)/12,nd=(CH.nd||30)/12,c=CH.ncorner||'TR';
+   var n={TL:[0,0,nw,nd],TR:[B-nw,0,nw,nd],BL:[0,A-nd,nw,nd],BR:[B-nw,A-nd,nw,nd]}[c];
+   return !(xx>n[0]&&xx<n[0]+n[2]&&yy>n[1]&&yy<n[1]+n[3]);}
+  var shp=new THREE.Shape(); PTS.forEach(function(p,i){ i?shp.lineTo(p[0],p[1]):shp.moveTo(p[0],p[1]); });
+  var fl=new THREE.Mesh(new THREE.ShapeGeometry(shp),mFloor);
+  fl.rotation.x=-Math.PI/2; fl.position.y=0; scene.add(fl);
+  // walls on edges whose outward normal faces -Z (top) or -X (left), so the dollhouse stays open
+  for(var i=0;i<PTS.length;i++){
+    var a=PTS[i],b=PTS[(i+1)%PTS.length];
+    var horiz=Math.abs(a[1]-b[1])<1e-6, vert=Math.abs(a[0]-b[0])<1e-6;
+    var len=horiz?Math.abs(b[0]-a[0]):Math.abs(b[1]-a[1]);
+    if(len<0.01)continue;
+    var mx=(a[0]+b[0])/2, mz=(a[1]+b[1])/2;
+    if(horiz && ptIn(mx,mz+0.15)){ // interior below -> back-facing wall
+      var w=new THREE.Mesh(new THREE.PlaneGeometry(len,H_ft),mWall); w.position.set(mx,H_ft/2,mz); scene.add(w);
+      box(len,0.05,0.06,mTrim,mx,4,mz+0.03);
+    } else if(vert && ptIn(mx+0.15,mz)){ // interior to the right -> left-facing wall
+      var w2=new THREE.Mesh(new THREE.PlaneGeometry(len,H_ft),mWall); w2.rotation.y=Math.PI/2; w2.position.set(mx,H_ft/2,mz); scene.add(w2);
+      box(0.06,0.05,len,mTrim,mx+0.03,4,mz);
+    }
+  }
 
   // ---- reglazed tub along the back wall ----
   var tubLen=Math.min(5,B_ft-0.6),tubX=-hx+tubLen/2+0.3,tubZ=-hz+1.2;
