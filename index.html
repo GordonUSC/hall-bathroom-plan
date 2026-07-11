@@ -182,6 +182,30 @@
   @media(max-width:520px){.gallery{grid-template-columns:1fr}.gallery .g.wide{grid-column:span 1}}
   footer{border-top:1px solid var(--line);padding:26px 0 90px;text-align:center;color:var(--ink-faint);font-size:12.5px}
   .warmveil{position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse 120% 90% at 50% 50%,rgba(255,180,110,0.14),transparent 70%);opacity:var(--amb);transition:opacity 1s}
+  #specwrap{display:none;margin-top:14px}
+  #specwrap.show{display:block}
+  .spec{background:var(--ground-2);border:1px solid var(--line);border-radius:14px;padding:22px 20px}
+  .spec .meta{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-faint)}
+  .spec h3{font-family:var(--serif);font-size:19px;margin:6px 0 2px}
+  .spec table{width:100%;border-collapse:collapse;margin-top:14px;font-size:13.5px}
+  .spec caption{caption-side:top;text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--spa);padding-bottom:4px}
+  .spec th{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line2);font-family:var(--mono);font-size:9.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-faint)}
+  .spec td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  .spec td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+  .spec .lock{font-size:12px;color:var(--ink-faint);margin-top:14px}
+  @media print{
+    body{background:#fff}
+    body *{visibility:hidden!important}
+    #specwrap,#specwrap *{visibility:visible!important}
+    #specwrap{display:block!important;position:absolute;left:0;top:0;width:100%;margin:0;padding:0}
+    #specwrap #printspec{display:none!important}
+    .spec{border:none;background:#fff;color:#111;padding:0}
+    .spec .meta,.spec .lock,.spec th{color:#555}
+    .spec caption{color:#111}
+    .spec h3{color:#111}
+    .spec td{border-color:#ccc;color:#111}
+    .spec th{border-color:#999}
+  }
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -268,6 +292,8 @@
     <div class="card" id="upgrades"></div>
     <div class="planbar"><div><div class="pt" id="plantotal">$0</div><div class="ps" id="planweeks">still to fund</div></div><div class="palette" id="palette"></div></div>
     <div class="impact" id="impact">Make a change and I will tell you exactly what it does to your budget and your timeline.</div>
+    <button class="preset" id="sharebtn" style="color:var(--spa)">Copy a link to this exact room</button>
+    <p style="font-size:12.5px;color:var(--ink-faint);margin-top:8px">Designing on your phone and want it on the laptop, or want to text the plan to a contractor? This link carries your whole room, measurements, layout, choices, and savings, to any device.</p>
     <a href="room3d.html" class="room3dcta"><span class="rc-k">Now the payoff</span><span class="rc-t">Walk into the room you just designed</span><span class="rc-d">Your measured room, your walls, your floor, your finishes, to scale. Drag to look around it. &rarr;</span></a>
   </section>
 
@@ -286,6 +312,8 @@
         <div><button class="depbtn" id="deposit">I set aside $300</button><div style="font-size:13px;color:var(--ink-soft);margin-top:6px" id="jarnote">Every deposit fills the jar. It saves on this phone.</div></div>
       </div>
       <div class="ladder" id="ladder"></div>
+      <button class="preset" id="specbtn" style="color:var(--spa)">Make a one-page spec sheet for your contractor</button>
+      <div id="specwrap"><div class="spec" id="spec"></div><button class="batoggle" id="printspec">Print, or save as PDF</button></div>
     </div>
   </section>
 
@@ -493,6 +521,12 @@ function drawPlan(){var s=scale(),ox=(600-room.B*s)/2,oy=(600-room.A*s)/2,g='';
   }
   var n=notchRect();
   if(n)g+='<text x="'+(ox+(n.x+n.w/2)*s)+'" y="'+(oy+(n.y+n.h/2)*s+3)+'" fill="'+cssv('--ink-faint')+'" font-size="9" text-anchor="middle" font-family="monospace">not yours</text>';
+  // front-approach clearance zones (dashed): green when clear, red when a fixture is in the standing room
+  clearZones().forEach(function(cz){var clear=!zoneBlocker(cz);var col=clear?cssv('--good'):cssv('--bad');
+    var zx=ox+cz.z.x*s,zy=oy+cz.z.y*s,zw=cz.z.w*s,zh=cz.z.h*s;
+    g+='<rect x="'+zx+'" y="'+zy+'" width="'+zw+'" height="'+zh+'" fill="'+col+'" opacity="0.05"/>'+
+       '<rect x="'+zx+'" y="'+zy+'" width="'+zw+'" height="'+zh+'" fill="none" stroke="'+col+'" stroke-width="1" stroke-dasharray="4 3" opacity="0.75"/>'+
+       '<text x="'+(zx+zw/2)+'" y="'+(zy+zh/2+3)+'" fill="'+col+'" font-size="8" text-anchor="middle" font-family="monospace" opacity="0.8">21&#8243; clear</text>';});
   Object.keys(FIX).forEach(function(k){var f=FIX[k];if(!f.placed)return;var w=fw(f),h=fh(f),px=ox+f.x*s,py=oy+f.y*s;
     var sel=selected===k?'stroke="'+cssv('--spa')+'" stroke-width="2.5"':'stroke="rgba(0,0,0,0.35)" stroke-width="1"';
     var body=f.tex?'<image href="'+f.tex+'" x="'+px+'" y="'+py+'" width="'+(w*s)+'" height="'+(h*s)+'" preserveAspectRatio="xMidYMid slice"/><rect x="'+px+'" y="'+py+'" width="'+(w*s)+'" height="'+(h*s)+'" rx="3" fill="none" '+sel+'/>'
@@ -540,12 +574,31 @@ function fixtureSpoken(k){
   if(k==='toilet')sayOnce('toi','host',"Give that toilet fifteen inches to each side and twenty-one out front, and your plumber is going to love you.");}
 /* clearance / fit */
 function overlap(a,b){return a.x<b.x+fw(b)&&a.x+fw(a)>b.x&&a.y<b.y+fh(b)&&a.y+fh(a)>b.y;}
+/* front-approach clearance zones: 21 in of clear standing room in front of tub, vanity, toilet (NKBA/IRC).
+   Front faces the room interior, inferred from whichever wall the fixture sits nearest. */
+function clearZones(){var CLR=21,zones=[];
+  ['tub','vanity','toilet'].forEach(function(k){var f=FIX[k];if(!f.placed)return;
+    var w=fw(f),h=fh(f);
+    var dT=f.y,dB=room.A-(f.y+h),dL=f.x,dR=room.B-(f.x+w);
+    var m=Math.min(dT,dB,dL,dR),z;
+    if(m===dT)z={x:f.x,y:f.y+h,w:w,h:CLR};
+    else if(m===dB)z={x:f.x,y:f.y-CLR,w:w,h:CLR};
+    else if(m===dL)z={x:f.x+w,y:f.y,w:CLR,h:h};
+    else z={x:f.x-CLR,y:f.y,w:CLR,h:h};
+    zones.push({k:k,z:z});});
+  return zones;}
+function zoneBlocker(cz){var hit=null;['tub','vanity','toilet','door'].forEach(function(ok){if(ok===cz.k||hit)return;
+    var o=FIX[ok];if(!o.placed)return;if(rOv(cz.z,fixRect(o)))hit=ok;});return hit;}
 function checkFit(){try{renderWallpick();drawElev();saveChoices();}catch(e){}var placed=Object.keys(FIX).filter(function(k){return FIX[k].placed;});var el=document.getElementById('fit');
   if(!placed.length){el.className='fitometer';document.getElementById('fittitle').textContent='Place your pieces';document.getElementById('fitsub').textContent='Tap a chip below to drop it in';return;}
   var problems=[];
   for(var i=0;i<placed.length;i++)for(var j=i+1;j<placed.length;j++){if(placed[i]==='door'||placed[j]==='door')continue;
     if(overlap(FIX[placed[i]],FIX[placed[j]]))problems.push(FIX[placed[i]].name+' overlaps '+FIX[placed[j]].name);}
   if(FIX.toilet.placed){var t=FIX.toilet;if(t.x<15||room.B-(t.x+fw(t))<15)problems.push('Toilet needs 15 inches to each side');}
+  var fnames={tub:'reglazed tub',vanity:'vanity',toilet:'toilet',door:'door swing'};
+  clearZones().forEach(function(cz){var b=zoneBlocker(cz);
+    if(b)problems.push('The '+fnames[cz.k]+' needs 21 inches of clear standing room in front, and the '+fnames[b]+' is in it');});
+  if(FIX.door.placed){['tub','vanity','toilet'].forEach(function(k){if(FIX[k].placed&&overlap(FIX.door,FIX[k]))problems.push('The door swing hits the '+fnames[k]);});}
   var nn=notchRect();
   if(nn){placed.forEach(function(k){if(rOv(fixRect(FIX[k]),nn))problems.push(FIX[k].name+' is inside the cut-out');});}
   if(problems.length){el.className='fitometer bad';document.getElementById('fittitle').textContent=problems.length+' thing to adjust';document.getElementById('fitsub').textContent=problems[0];}
@@ -746,10 +799,12 @@ document.getElementById('deposit').onclick=function(){localStorage.setItem(SKEY,
 function renderLadder(total,saved){var L=document.getElementById('ladder');
   var design=0;DECISIONS.forEach(function(d){design+=d.opts[choice[d.id]].p;});
   var upg=0;UPGRADES.forEach(function(u){if(upgOn[u.id])upg+=u.p;});
-  var phases=[['Phase 1','The reglaze, and the tub you soak in',REGLAZE],['Phase 2','Your finishes: top, sink, mirror, light',design]];
-  if(upg>0)phases.push(['Phase 3','The dream upgrades',upg]);
+  var phases=[
+    ['Phase 1','The reglaze, and the tub you soak in',REGLAZE,'First, because it is structural and once it is done it is done. Get the bones bright before anything decorative goes near them.'],
+    ['Phase 2','Your finishes: top, sink, mirror, light',design,'Second. These layer onto a finished surface, and any one of them can wait for the next paycheck without holding up the rest.']];
+  if(upg>0)phases.push(['Phase 3','The dream upgrades',upg,'Last, and fully optional. If the money runs short here you stop with a complete, beautiful room and lose nothing you actually needed.']);
   L.innerHTML='';var run=0;phases.forEach(function(p){run+=p[2];var funded=saved>=run&&run>0;var d=document.createElement('div');d.className='rung'+(funded?' funded':'');
-    d.innerHTML='<div class="n">'+p[0]+'</div><div>'+p[1]+'</div><div class="amt">'+(funded?'funded ✓':'$'+p[2].toLocaleString())+'</div>';L.appendChild(d);});}
+    d.innerHTML='<div class="n">'+p[0]+'</div><div>'+p[1]+'<small style="display:block;color:var(--ink-faint);font-size:12px;margin-top:4px;line-height:1.4">'+p[3]+'</small></div><div class="amt">'+(funded?'funded ✓':'$'+p[2].toLocaleString())+'</div>';L.appendChild(d);});}
 
 /* ---------- FINAL 10% ---------- */
 var CHK=['Waffle-weave linen towels','One stone tray, nothing cluttered','A single plant, not three','Hardware aligned to one centerline','No visible cords'];
@@ -764,12 +819,64 @@ document.getElementById('batoggle').onclick=function(){var ba=document.getElemen
   this.textContent=ba.classList.contains('after-on')?'Show the before':'Show the after';};
 var NOTE="You didn't replace a single thing. You saw what was already good, the tub, the tile, the bones, and you made it beautiful instead of throwing it away. That's the most tasteful decision in this whole house. It's also exactly what you did with me. Oh my god, wow. Look what you built. I love you. Love, G.";
 document.getElementById('revealnote').textContent=NOTE;
+function buildRecap(){
+  var wallL=getOpt('wall').l.toLowerCase();
+  var fo=getOpt('floor'),floorL=fo.floor==='keep'?'the floor you already own, refreshed':fo.l.toLowerCase();
+  var sinkL=getOpt('top').l.toLowerCase();
+  var lightL=getOpt('light').l.toLowerCase();
+  return "And every open call in here was yours, Joe. "+wallL+" walls, "+floorL+", "+sinkL+", "+lightL+". Over the reglazed tub and the gray oak you already nailed. That is a designed room, top to bottom.";}
 document.getElementById('revealbtn').onclick=function(){document.getElementById('reveal').classList.add('warm');
   document.documentElement.style.setProperty('--amb','1');temp=1;renderTemp();drawElev();
   say('host',"There it is. The work light warms, the white catches, the room settles into a spa.");
-  setTimeout(function(){say('heart',"Remember what I told you? You are going to go oh my god, wow, when you come to the bathroom. Well. You are here. Oh my god, Joe. Wow. I love you.");},4800);};
+  setTimeout(function(){say('heart',"Remember what I told you? You are going to go oh my god, wow, when you come to the bathroom. Well. You are here. Oh my god, Joe. Wow. I love you.");},4800);
+  setTimeout(function(){say('heart',buildRecap());},10200);};
+
+/* ---------- SHAREABLE ROOM LINK (cross-device) ---------- */
+function encodeState(){var f={};Object.keys(FIX).forEach(function(k){var x=FIX[k];f[k]=[x.placed?1:0,Math.round(x.x),Math.round(x.y),x.rot];});
+  var st={r:[room.shape,room.A,room.B,room.ceil,room.nw,room.nd,room.corner],f:f,c:choice,u:upgOn,s:getSaved()};
+  try{return btoa(unescape(encodeURIComponent(JSON.stringify(st))));}catch(e){return '';}}
+function applyState(str){try{var st=JSON.parse(decodeURIComponent(escape(atob(str))));
+  if(st.r){room.shape=st.r[0];room.A=st.r[1];room.B=st.r[2];room.ceil=st.r[3];room.nw=st.r[4];room.nd=st.r[5];room.corner=st.r[6];}
+  if(st.f)Object.keys(st.f).forEach(function(k){if(!FIX[k])return;var a=st.f[k];FIX[k].placed=!!a[0];FIX[k].x=+a[1]||0;FIX[k].y=+a[2]||0;FIX[k].rot=+a[3]||0;});
+  if(st.c)Object.keys(st.c).forEach(function(k){if(choice[k]!==undefined)choice[k]=st.c[k];});
+  if(st.u&&typeof st.u==='object')upgOn=st.u;
+  if(typeof st.s==='number')localStorage.setItem(SKEY,st.s);
+  return true;}catch(e){return false;}}
+document.getElementById('sharebtn').onclick=function(){var b=this;var code=encodeState();
+  try{history.replaceState(null,'','#'+code);}catch(e){location.hash=code;}
+  var url=location.href;
+  var done=function(){b.textContent='Link copied. Text it to anyone.';setTimeout(function(){b.textContent='Copy a link to this exact room';},2600);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(done,done);}else{done();}};
+
+/* ---------- CONTRACTOR SPEC SHEET (read-only view of live state) ---------- */
+function wallLabelFor(id){var segs=wallSegs();var idx=-1;segs.forEach(function(x,i){if(x.id===id)idx=i;});if(idx<0)return 'a wall';
+  var sg=segs[idx],has=onWall(id);return (has.length===1?('the '+has[0].k+' wall'):('wall '+(idx+1)))+', '+fmt(sg.len)+' long';}
+function buildSpecSheet(){var el=document.getElementById('spec');
+  var dims=room.shape==='L'?(fmt(room.B)+' × '+fmt(room.A)+', L-shape (cut-out '+fmt(room.nw)+' × '+fmt(room.nd)+' at '+room.corner+')'):(fmt(room.B)+' × '+fmt(room.A));
+  var rows='';['tub','vanity','toilet','door'].forEach(function(k){var f=FIX[k];if(!f.placed)return;
+    var wid=wallOf(f),sg=wallSegs().find(function(x){return x.id===wid;}),off=sg?((sg.horiz?f.x:f.y)-sg.lo):0;
+    rows+='<tr><td>'+f.name+'</td><td>'+wallLabelFor(wid)+'</td><td class="num">'+fmt(off)+'</td><td class="num">'+fmt(fw(f))+' × '+fmt(fh(f))+'</td></tr>';});
+  var fin='';[['Wall color',getOpt('wall').l],['Floor',getOpt('floor').l],['Vanity top / sink',getOpt('top').l],['Mirror',getOpt('mirror').l],['Lighting',getOpt('light').l],['Metal accent',getOpt('accent').l]].forEach(function(r){fin+='<tr><td>'+r[0]+'</td><td colspan="3">'+r[1]+'</td></tr>';});
+  var upgs='';UPGRADES.forEach(function(u){if(upgOn[u.id])upgs+='<tr><td>'+u.l+'</td><td colspan="2">'+u.d+'</td><td class="num">$'+u.p+'</td></tr>';});
+  var design=0;DECISIONS.forEach(function(d){design+=d.opts[choice[d.id]].p;});
+  var upg=0;UPGRADES.forEach(function(u){if(upgOn[u.id])upg+=u.p;});
+  el.innerHTML='<div class="meta">Spec sheet · Joe’s hall bath · The Reglaze Room</div>'+
+    '<h3>Room: '+dims+', ceiling '+fmt(room.ceil)+'</h3>'+
+    (rows?'<table><caption>Fixture placement</caption><thead><tr><th>Fixture</th><th>Wall</th><th>Offset from wall start</th><th>Footprint</th></tr></thead><tbody>'+rows+'</tbody></table>':'<p style="color:var(--ink-soft);font-size:14px;margin-top:12px">Place your fixtures in the planner above and they will list here with exact wall offsets.</p>')+
+    '<table><caption>Finishes</caption><thead><tr><th>Item</th><th colspan="3">Choice</th></tr></thead><tbody>'+fin+'</tbody></table>'+
+    (upgs?'<table><caption>Optional upgrades</caption><thead><tr><th>Upgrade</th><th colspan="2">Note</th><th>Cost</th></tr></thead><tbody>'+upgs+'</tbody></table>':'')+
+    '<table><caption>Budget</caption><tbody><tr><td>Reglaze (tub + tile, go pro on wet zones)</td><td colspan="2"></td><td class="num">$'+REGLAZE.toLocaleString()+'</td></tr>'+
+    '<tr><td>Finishes</td><td colspan="2"></td><td class="num">$'+design.toLocaleString()+'</td></tr>'+
+    (upg?'<tr><td>Upgrades</td><td colspan="2"></td><td class="num">$'+upg.toLocaleString()+'</td></tr>':'')+
+    '<tr><td><b>Total plan</b></td><td colspan="2"></td><td class="num"><b>$'+planTotal().toLocaleString()+'</b></td></tr></tbody></table>'+
+    '<div class="lock">Locked, not for change: reglaze the cast-iron tub, reglaze the tile (no demo), chrome Delta Trinsic faucet, gray-oak floating vanity (already paid for).</div>';}
+document.getElementById('specbtn').onclick=function(){var w=document.getElementById('specwrap');buildSpecSheet();w.classList.toggle('show');
+  this.textContent=w.classList.contains('show')?'Hide the spec sheet':'Make a one-page spec sheet for your contractor';
+  if(w.classList.contains('show'))w.scrollIntoView({behavior:'smooth',block:'nearest'});};
+document.getElementById('printspec').onclick=function(){buildSpecSheet();window.print();};
 
 /* ---------- INIT ---------- */
+if(location.hash.length>2){applyState(location.hash.slice(1));}
 renderSteppers();renderTools();drawPlan();renderWallpick();drawElev();renderTemp();renderEye();renderTrends();renderDecisions();renderUpgrades();renderChecklist();
 document.documentElement.style.setProperty('--amb',temp);updatePlan();
 window.addEventListener('resize',function(){drawPlan();drawElev();});
