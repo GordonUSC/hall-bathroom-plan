@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Floor Plan · Joe's Pink Hall Bath</title>
+<style>
+  :root{
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --body:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --ground:#12161a; --ground-2:#1a2027; --ground-3:#232b34; --ink:#eef2f5; --ink-soft:#b9c4cd; --ink-faint:#8593a0;
+    --spa:#7fd4c6; --gold:#e6b877; --rose:#e59b9b; --pink:#f3d9d9;
+    --line:rgba(238,242,245,0.12); --line2:rgba(238,242,245,0.22);
+    --warn:#e6b24a;
+    --wall:#cfe0ee; --fix:#2b333c; --fixln:#8fa6b8; --dim:#8593a0;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .wrap{max-width:760px;margin:0 auto;padding:0 18px}
+  h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.12;margin:0;text-wrap:balance}
+  p{max-width:62ch}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--spa);display:flex;align-items:center;gap:10px}
+  .eyebrow::after{content:"";flex:1;height:1px;background:var(--line)}
+  header.hero{padding:54px 18px 10px;text-align:center;background:radial-gradient(ellipse 70% 50% at 50% 0,rgba(229,155,155,0.14),transparent 60%)}
+  header .kick{font-family:var(--mono);font-size:12px;letter-spacing:0.26em;text-transform:uppercase;color:var(--rose);margin-bottom:16px}
+  header h1{font-size:clamp(32px,8vw,54px);letter-spacing:-0.02em}
+  header h1 em{font-style:italic;color:var(--gold)}
+  header .sub{font-family:var(--serif);font-style:italic;font-size:clamp(16px,2.4vw,20px);color:var(--ink-soft);margin:16px auto 0;max-width:44ch}
+  .estbanner{max-width:660px;margin:22px auto 0;background:rgba(127,212,198,0.09);border:1px solid rgba(127,212,198,0.3);border-radius:14px;padding:13px 18px;font-size:13.5px;color:var(--ink-soft);text-align:left}
+  .estbanner b{color:var(--spa)}
+  .estbanner .w{color:var(--warn)}
+  section.mv{padding:44px 0;border-top:1px solid var(--line)}
+  .mv h2{font-size:clamp(23px,5vw,32px);margin-top:10px}
+  .mv .lede{color:var(--ink-soft);font-size:16.5px;margin-top:10px}
+  .planwrap{margin-top:20px;border-radius:16px;overflow:hidden;background:#0e1216;border:1px solid var(--line)}
+  #plan{display:block;width:100%;height:auto}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:0.04em;color:var(--ink-soft)}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+  .kv{background:var(--ground-2);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .kv .k{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-faint)}
+  .kv .v{font-family:var(--serif);font-size:22px;margin-top:4px}
+  .kv .v small{font-family:var(--mono);font-size:11px;color:var(--warn);letter-spacing:0.06em}
+  table.spec{width:100%;border-collapse:collapse;margin-top:14px;font-size:14px}
+  table.spec th{text-align:left;padding:8px 8px;border-bottom:1px solid var(--line2);font-family:var(--mono);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-faint)}
+  table.spec td{padding:8px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  table.spec td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink-soft)}
+  .detlist{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+  .det{display:grid;grid-template-columns:120px 1fr;gap:12px;padding:11px 14px;background:var(--ground-3);border:1px solid var(--line);border-radius:11px;font-size:14.5px}
+  .det .l{font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--rose);padding-top:2px}
+  .frames{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px}
+  .frames figure{margin:0;border-radius:12px;overflow:hidden;background:var(--ground-2);border:1px solid var(--line)}
+  .frames img{display:block;width:100%;height:130px;object-fit:cover}
+  .frames figcaption{padding:8px 10px;font-family:var(--mono);font-size:10px;letter-spacing:0.04em;color:var(--ink-soft)}
+  .cta{display:block;margin-top:18px;text-decoration:none;color:var(--ink);border-radius:14px;padding:18px 20px;background:linear-gradient(120deg,rgba(127,212,198,0.15),rgba(230,184,119,0.13));border:1px solid rgba(127,212,198,0.35)}
+  .cta .k{font-family:var(--mono);font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#0d1114;background:var(--spa);padding:3px 8px;border-radius:20px}
+  .cta .t{display:block;font-family:var(--serif);font-size:20px;margin-top:9px}
+  .cta .d{display:block;font-size:13.5px;color:var(--ink-soft);margin-top:4px}
+  nav.foot{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:30px 0 8px;font-family:var(--mono);font-size:11px;letter-spacing:0.08em;text-transform:uppercase}
+  nav.foot a{color:var(--spa);text-decoration:none}
+  footer{border-top:1px solid var(--line);padding:24px 0 60px;text-align:center;color:var(--ink-faint);font-size:12.5px}
+  @media(max-width:520px){.grid2{grid-template-columns:1fr}.det{grid-template-columns:1fr}.frames{grid-template-columns:1fr}.frames img{height:180px}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="kick">Read from your 8 photos</div>
+  <h1>The <em>Floor Plan</em></h1>
+  <p class="sub">Joe's pink hall bath, drawn top-down from the eight clear photos, scaled off the standard 60&Prime; tub.</p>
+  <div class="estbanner"><b>Layout: confirmed.</b> The photos settle it completely, a galley bath: the cast-iron tub with sliding glass doors runs along one wall, the single-sink pink vanity and the toilet along the other, window at the far end, door to the hall. <b>Dimensions: close estimate.</b> With no ruler in frame, I scaled everything off the tub, which is a standard <b>60&Prime;</b>, so the numbers below are good to a few inches. <span class="w">One honest flag:</span> the room reads closer to <b>~6&#39; wide</b> than 5&#39;, because a 5&#39; wall cannot hold a 30&Prime; tub, a walkway, and a 21&Prime; vanity. One tape reading of the width locks it.</div>
+</header>
+
+<main class="wrap">
+  <section class="mv" style="border-top:none">
+    <div class="eyebrow">Top-down · scaled off the 60&Prime; tub</div>
+    <h2>The room, from above</h2>
+    <p class="lede">Tub on the left wall, glass sliders facing the walkway. Vanity with its single stainless sink and big mirror on the right, the toilet in the far corner past it. Window on the end wall over the tub, door to the hallway near you. Pink 4&Prime; wall tile, white floor tile.</p>
+    <div class="planwrap">
+      <svg id="plan" viewBox="0 0 420 500" role="img" aria-label="Top-down floor plan of Joe's pink hall bath, about 6 by 8 feet">
+        <defs>
+          <marker id="ar" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M1,1 L7,4 L1,7" fill="none" stroke="#8593a0" stroke-width="1"/></marker>
+        </defs>
+        <!-- floor -->
+        <rect x="70" y="60" width="288" height="384" fill="#f3d9d9" opacity="0.13"/>
+        <!-- walls -->
+        <rect x="70" y="60" width="288" height="384" fill="none" stroke="#cfe0ee" stroke-width="5"/>
+
+        <!-- WINDOW on far (top) wall -->
+        <rect x="150" y="57" width="90" height="6" fill="#12161a" stroke="#7fd4c6" stroke-width="1.5"/>
+        <text x="195" y="50" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="8.5" fill="#7fd4c6">WINDOW</text>
+
+        <!-- TUB on left wall -->
+        <rect x="72" y="88" width="120" height="240" fill="#2b333c" stroke="#8fa6b8" stroke-width="1.5"/>
+        <rect x="86" y="104" width="92" height="208" rx="16" fill="#e59b9b" opacity="0.26" stroke="#e59b9b" stroke-width="1.2"/>
+        <line x1="192" y1="88" x2="192" y2="328" stroke="#7fd4c6" stroke-width="3" stroke-dasharray="8 5"/>
+        <circle cx="100" cy="106" r="4" fill="#cfe0ee"/>
+        <text x="132" y="200" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="12" fill="#eef2f5" font-weight="600" transform="rotate(-90 132 200)">Cast-iron tub · 60&quot;</text>
+        <text x="152" y="200" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="8.5" fill="#e59b9b" transform="rotate(-90 152 200)">REGLAZE</text>
+        <text x="204" y="208" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="8" fill="#7fd4c6" transform="rotate(-90 204 208)">glass slider</text>
+
+        <!-- VANITY on right wall -->
+        <rect x="274" y="70" width="84" height="180" fill="#2b333c" stroke="#8fa6b8" stroke-width="1.5"/>
+        <rect x="288" y="128" width="56" height="64" rx="7" fill="#dfe6ea" opacity="0.5"/>
+        <rect x="352" y="80" width="6" height="160" fill="#7fd4c6" opacity="0.5"/>
+        <text x="346" y="70" text-anchor="end" font-family="ui-monospace,Menlo,monospace" font-size="8" fill="#7fd4c6">mirror</text>
+        <text x="316" y="228" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="11" fill="#eef2f5" font-weight="600">Vanity</text>
+        <text x="316" y="242" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="7.5" fill="#b9c4cd">single sink → new Domani</text>
+
+        <!-- TOILET far-right corner -->
+        <ellipse cx="318" cy="380" rx="26" ry="34" fill="#dfe6ea"/>
+        <rect x="298" y="322" width="40" height="18" rx="4" fill="#cdd6dc"/>
+        <text x="318" y="384" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#1a2027" font-weight="700">WC</text>
+
+        <!-- DOOR on near (bottom) wall, swing into room -->
+        <path d="M286,444 A96,96 0 0,0 286,348" fill="none" stroke="#7fd4c6" stroke-width="1.2" stroke-dasharray="4 4" opacity="0.7"/>
+        <line x1="190" y1="444" x2="286" y2="444" stroke="#f3d9d9" stroke-width="6" opacity="0.25"/>
+        <line x1="286" y1="444" x2="282" y2="352" stroke="#7fd4c6" stroke-width="2.5"/>
+        <text x="238" y="432" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="8.5" fill="#7fd4c6">DOOR → hall</text>
+
+        <!-- walkway hint -->
+        <text x="232" y="300" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="9" fill="#8593a0">walkway</text>
+
+        <!-- dimension lines -->
+        <line x1="70" y1="468" x2="358" y2="468" stroke="#8593a0" stroke-width="1" marker-start="url(#ar)" marker-end="url(#ar)"/>
+        <text x="214" y="483" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="10.5" fill="#8593a0">≈ 6&#39; 0&Prime; (72&Prime;)  ·  confirm width</text>
+        <line x1="48" y1="60" x2="48" y2="444" stroke="#8593a0" stroke-width="1" marker-start="url(#ar)" marker-end="url(#ar)"/>
+        <text x="40" y="252" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="10.5" fill="#8593a0" transform="rotate(-90 40 252)">≈ 8&#39; 0&Prime; (96&Prime;)  ·  from the 60&Prime; tub</text>
+      </svg>
+    </div>
+    <div class="legend">
+      <span><i style="background:#cfe0ee"></i>wall</span>
+      <span><i style="background:#2b333c;border:1px solid #8fa6b8"></i>tub / vanity</span>
+      <span><i style="background:#7fd4c6"></i>glass slider · door · mirror · window</span>
+      <span><i style="background:#dfe6ea"></i>toilet / sink</span>
+      <span><i style="background:#e59b9b"></i>reglaze</span>
+    </div>
+  </section>
+
+  <section class="mv">
+    <div class="eyebrow">The numbers · scaled off the tub</div>
+    <h2>Dimensions</h2>
+    <p class="lede">Anchored on the tub being a standard <b>60&Prime;</b>, so these are good to within a few inches. Send me one real tape reading of the width and I lock every number exactly.</p>
+    <div class="grid2">
+      <div class="kv"><div class="k">Overall width (wall to wall)</div><div class="v">≈ 6&#39; 0&Prime; <small>confirm</small></div></div>
+      <div class="kv"><div class="k">Overall length</div><div class="v">≈ 8&#39; 0&Prime; <small>from tub</small></div></div>
+      <div class="kv"><div class="k">Floor area</div><div class="v">≈ 48 sq ft <small>est</small></div></div>
+      <div class="kv"><div class="k">Walkway (tub to vanity)</div><div class="v">≈ 24&Prime; <small>est</small></div></div>
+    </div>
+    <table class="spec">
+      <caption style="caption-side:top;text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--rose);padding:6px 0">Fixtures (scaled off the 60&Prime; tub)</caption>
+      <thead><tr><th>Fixture</th><th>Wall</th><th>Size</th></tr></thead>
+      <tbody>
+        <tr><td>Cast-iron tub (reglaze) + glass sliders</td><td>Left wall</td><td class="num">60&Prime; × ~30&Prime;</td></tr>
+        <tr><td>Vanity, single stainless sink → <b>new Domani 48.5&Prime;</b></td><td>Right wall</td><td class="num">≈ 54&Prime; × 21&Prime;</td></tr>
+        <tr><td>Toilet</td><td>Far corner, right</td><td class="num">≈ 20&Prime; × 28&Prime;</td></tr>
+        <tr><td>Window</td><td>End wall, over tub</td><td class="num">1</td></tr>
+        <tr><td>Door to hallway</td><td>Near wall</td><td class="num">≈ 30&Prime;</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="mv">
+    <div class="eyebrow">From the photos</div>
+    <h2>The finishes &amp; what changes</h2>
+    <div class="detlist">
+      <div class="det"><div class="l">Walls</div><div><b>Pink 4&Prime; wall tile</b> around the tub and behind the vanity to a tile-cap rail, white paint above. Grey fish accent tiles inside the tub surround.</div></div>
+      <div class="det"><div class="l">Floor</div><div><b>White square tile</b>, grey grout. Warm wood floor in the hallway beyond the door.</div></div>
+      <div class="det"><div class="l">Tub</div><div><b>Cast-iron tub</b>, pink tile surround, <b>chrome-framed sliding glass doors</b> (one frosted panel). The reglaze star.</div></div>
+      <div class="det"><div class="l">Vanity</div><div><b>Existing:</b> white cabinet, pink tile counter and backsplash, a <b>single stainless sink</b>, chrome faucet, big mirror / medicine cabinet. <b>Going in:</b> the Domani Stella 48.5&Prime; white-washed-oak floating vanity.</div></div>
+      <div class="det"><div class="l">Toilet</div><div>Standard white two-piece in the far corner, with a towel bar above and the window beside it.</div></div>
+      <div class="det"><div class="l">The move</div><div>Keep the good bones, reglaze the tub bright white, swap in the Domani vanity, warm the light. Restore, do not replace.</div></div>
+    </div>
+    <div class="frames">
+      <figure><img src="assets/hall_vanity.jpg" alt="Pink vanity with single sink, tub opposite"><figcaption>The galley · vanity right, tub left</figcaption></figure>
+      <figure><img src="assets/hall_tub.jpg" alt="Cast-iron tub with sliding glass doors"><figcaption>Cast-iron tub · reglaze</figcaption></figure>
+      <figure><img src="assets/hall_toilet.jpg" alt="Toilet beside the pink vanity"><figcaption>Toilet, far corner</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="mv">
+    <div class="eyebrow">Into the remodel studio</div>
+    <h2>The room and the vanity are in</h2>
+    <p class="lede">The <b>new Domani Stella vanity</b> is loaded into the planner as a real 48.5&Prime; &times; 18.75&Prime; piece. Set the room to <b>~6&#39; &times; 8&#39;</b> (or type the exact inches once you confirm the width) and drag the reglazed tub, the toilet, and the new vanity into place, to scale.</p>
+    <a class="cta" href="index.html"><span class="k">The remodel studio</span><span class="t">Open Joe's room planner &rarr;</span><span class="d">Type the width when you have it and the plan, the elevation, and the 3D room all snap to the real room.</span></a>
+  </section>
+
+  <nav class="foot">
+    <a href="index.html">Remodel studio</a>
+    <a href="room3d.html">3D room</a>
+    <span style="color:var(--ink-faint)">Floor plan</span>
+  </nav>
+</main>
+<footer class="wrap">Read from 8 photos of the pink hall bath for Gordon &amp; Joe · layout confirmed · dimensions scaled off the 60&Prime; tub, width to confirm</footer>
+</body>
+</html>

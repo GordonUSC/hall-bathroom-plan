@@ -141,18 +141,25 @@
   .spascore{margin-top:14px;font-family:var(--mono);font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--spa)}
 
   .reveal{position:relative;border-radius:18px;overflow:hidden;margin-top:18px;min-height:340px;background:linear-gradient(180deg,#161b1f,#20272d)}
-  .reveal .room{position:absolute;inset:0;transition:filter 2.2s ease, background 2.2s ease;background:linear-gradient(180deg,#8fa0ac,#c3cfd6 55%,#aeb9c0);filter:saturate(0.5) brightness(0.8)}
-  .reveal.warm .room{filter:saturate(1.05) brightness(1.05);background:linear-gradient(180deg,#f3e4cf,#f6ede0 55%,#e9d8c2)}
+  .reveal .room{position:absolute;inset:0;transition:filter 2.2s ease;background:url("assets/after_tub.jpg") center 42%/cover no-repeat;filter:grayscale(.55) brightness(.55) sepia(.12)}
+  .reveal.warm .room{filter:none}
   .reveal .note{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:34px;text-align:center;opacity:0;transition:opacity 1.6s ease 1s}
   .reveal.warm .note{opacity:1}
   .reveal .note .n{font-family:var(--serif);font-style:italic;font-size:clamp(18px,3.2vw,24px);color:#2a2018;max-width:26ch;line-height:1.4;text-shadow:0 1px 12px rgba(255,255,255,0.6)}
   .revealbtn{margin-top:14px;width:100%;background:linear-gradient(120deg,var(--gold),var(--rose));color:#1a1008;border:none;border-radius:14px;padding:16px;font-weight:700;font-size:16px}
 
-  .ba{position:relative;border-radius:16px;overflow:hidden;margin-top:14px;height:220px}
-  .ba .pane{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:22px}
-  .ba .before{background:repeating-linear-gradient(135deg,#c98fa0,#c98fa0 22px,#d7a0b0 22px,#d7a0b0 44px);color:#5a2a3a}
-  .ba .after{background:linear-gradient(180deg,#eef2f2,#e2ece9);color:#3a4a48;opacity:0;transition:opacity .5s}
-  .ba.after-on .after{opacity:1}
+  .ba2{position:relative;border-radius:16px;overflow:hidden;margin:14px auto 0;aspect-ratio:3/4;max-width:440px;user-select:none;touch-action:none;cursor:ew-resize;border:1px solid var(--line2)}
+  .ba2>img,.ba2 .a img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .ba2 .a{position:absolute;inset:0}
+  .ba2 .handle{position:absolute;top:0;bottom:0;width:3px;background:#fff;box-shadow:0 0 14px rgba(0,0,0,.55);transform:translateX(-1.5px)}
+  .ba2 .grip{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:46px;height:46px;border-radius:50%;background:#fff;color:#333;display:grid;place-items:center;font-size:19px;box-shadow:0 2px 12px rgba(0,0,0,.45)}
+  .ba2 .tag{position:absolute;top:10px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:rgba(0,0,0,.55);color:#fff;padding:4px 9px;border-radius:7px;pointer-events:none}
+  .ba2 .tagb{left:10px}.ba2 .taga{right:10px}
+  .aftercards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+  @media(max-width:640px){.aftercards{grid-template-columns:1fr}}
+  .aftercards figure{margin:0;border-radius:14px;overflow:hidden;border:1px solid var(--line2);background:var(--ground-3)}
+  .aftercards img,.aftercards video{width:100%;display:block;aspect-ratio:3/4;object-fit:cover}
+  .aftercards figcaption{font-size:12.5px;color:var(--ink-soft);padding:9px 11px}
   .batoggle{margin-top:10px;width:100%;background:var(--ground-3);border:1px solid var(--line2);border-radius:12px;padding:12px;color:var(--ink)}
 
   #lt{position:fixed;left:0;right:0;bottom:0;z-index:60;pointer-events:none;padding:0 14px 14px}
@@ -229,7 +236,8 @@
     <p class="lede">Everything else fits to these numbers. This mattered most to you, so we start here.</p>
     <div class="card">
       <div class="steppers" id="steppers"></div>
-      <button class="preset" id="preset">Use my hall bath (about 5 ft x 8 ft)</button>
+      <button class="preset" id="preset">Use my hall bath (about 6 ft x 8 ft, from the photos)</button>
+      <a href="floorplan.html" class="room3dcta" style="margin-top:12px"><span class="rc-k">Scanned from your measuring video</span><span class="rc-t">See the floor plan of the pink hall bath &rarr;</span><span class="rc-d">Read top-down from IMG_1577.mov: the reglaze tub across the end, the double-sink vanity and toilet on the near wall, the door to the hall. Layout and finishes are solid; confirm one tape number and the size locks.</span></a>
     </div>
   </section>
 
@@ -267,7 +275,7 @@
     <p class="lede">Real rooms, real materials. This is what your decisions look like once they are built.</p>
     <div class="gallery">
       <div class="g wide"><img src="assets/spa.jpg" alt="Bright contemporary spa bathroom with wood and white" loading="lazy"><div class="cap"><div class="t">The whole feeling</div><div class="d">Clean white, warm wood, chrome that reads like water. This is the room you are building.</div><span class="chip2">your palette</span></div></div>
-      <div class="g"><img src="assets/vanity.jpg" alt="Wood floating vanity" loading="lazy"><div class="cap"><div class="t">The floating vanity</div><div class="d">Wood front, wall-mounted, floor running underneath. Your exact move.</div><span class="chip2">you chose this</span></div></div>
+      <div class="g"><img src="assets/vanity.jpg" alt="White-washed oak floating vanity" loading="lazy"><div class="cap"><div class="t">The Domani Stella vanity</div><div class="d">48.5&Prime; single-sink floating vanity, white-washed oak with a white cultured-marble top. The one you picked. <a href="https://www.homedepot.com/p/Domani-Stella-49-in-Single-Sink-White-Washed-Oak-Floating-Bath-Vanity-with-White-Cultured-Marble-Top-Assembled-SL48P2-WO/300851618" style="color:var(--spa);text-decoration:none">See it &rarr;</a></div><span class="chip2">you chose this</span></div></div>
       <div class="g"><img src="assets/tub.jpg" alt="Bright white bathtub" loading="lazy"><div class="cap"><div class="t">The reglazed white tub</div><div class="d">Cast iron brought back to bright white, not hauled out.</div><span class="chip2">restore, don’t replace</span></div></div>
       <div class="g"><img src="assets/towels.jpg" alt="Folded waffle spa towels" loading="lazy"><div class="cap"><div class="t">The final 10%</div><div class="d">Waffle-weave towels, folded. The styling that says designed.</div><span class="chip2">styling</span></div></div>
       <div class="g"><img src="assets/spa2.jpg" alt="Spa towels and a bottle on a tub edge" loading="lazy"><div class="cap"><div class="t">The spa details</div><div class="d">A stone tray, one bottle, nothing cluttered. Calm.</div><span class="chip2">calm</span></div></div>
@@ -328,9 +336,17 @@
   <section class="mv">
     <div class="eyebrow">The reveal</div>
     <h2>The warming</h2>
-    <p class="lede">Before and after, and the moment the work light turns to spa glow.</p>
-    <div class="ba" id="ba"><div class="pane before">The pink time capsule</div><div class="pane after">The contemporary spa</div></div>
-    <button class="batoggle" id="batoggle">Show the after</button>
+    <p class="lede">This is your actual bathroom, Joe. Left of the line is today. Drag it and see the after. Nothing replaced, everything restored.</p>
+    <div class="ba2" id="ba2" role="slider" aria-label="Drag to compare your bathroom today with the finished reglaze">
+      <img src="assets/after_tub.jpg" alt="The same view after the reglaze: white tile, white tub, warm spa light">
+      <div class="a" id="ba2a"><img src="assets/hall_tub.jpg" alt="Your hall bath today: pink tile, gray tub, sliding glass doors"></div>
+      <div class="handle" id="ba2h"><div class="grip">&#8596;</div></div>
+      <div class="tag tagb">today</div><div class="tag taga">after</div>
+    </div>
+    <div class="aftercards">
+      <figure><img src="assets/after_vanity.jpg" alt="Your vanity wall after: floating washed-oak vanity, white marble top, chrome faucet, warm sconce light"><figcaption>Your vanity wall, after. The Stella you picked, white marble top, your chrome Trinsic.</figcaption></figure>
+      <figure><video autoplay muted loop playsinline preload="metadata" poster="assets/after_tub.jpg" aria-label="The finished room with steam drifting and warm light"><source src="assets/warming.mp4" type="video/mp4"></video><figcaption>The room, breathing. Steam on, lights warm.</figcaption></figure>
+    </div>
     <div class="reveal" id="reveal"><div class="room"></div><div class="note"><div class="n" id="revealnote"></div></div></div>
     <button class="revealbtn" id="revealbtn">Warm the room &#9835;</button>
   </section>
@@ -424,10 +440,10 @@ document.getElementById('letin').onclick=function(){primed=true;initAmbience();t
   window.scrollTo({top:document.querySelector('.mv').offsetTop-20,behavior:'smooth'});};
 
 /* ---------- STATE ---------- */
-var room={shape:'rect',A:62,B:96,ceil:96,nw:36,nd:30,corner:'TR'};
+var room={shape:'rect',A:72,B:96,ceil:96,nw:36,nd:30,corner:'TR'};
 var FIX={
   tub:{name:'Cast-iron tub, reglazed',w:60,h:30,fill:'#f4f6f7',placed:false,x:0,y:0,rot:0,thumb:'assets/tub_t.jpg'},
-  vanity:{name:'Gray-oak floating vanity',w:60,h:21,fill:'#b89568',placed:false,x:0,y:0,rot:0,thumb:'assets/vanity_t.jpg',tex:'assets/wood.jpg'},
+  vanity:{name:'Domani Stella 48.5" floating vanity · white-washed oak',w:48.5,h:18.75,fill:'#d6ccba',placed:false,x:0,y:0,rot:0,thumb:'assets/vanity_t.jpg',tex:'assets/wood.jpg',url:'https://www.homedepot.com/p/Domani-Stella-49-in-Single-Sink-White-Washed-Oak-Floating-Bath-Vanity-with-White-Cultured-Marble-Top-Assembled-SL48P2-WO/300851618',note:'Single sink · white cultured-marble top · wall-hung'},
   toilet:{name:'Toilet',w:20,h:28,fill:'#dfe6ea',placed:false,x:0,y:0,rot:0},
   door:{name:'Door swing',w:30,h:30,fill:'rgba(127,212,198,0.28)',placed:false,x:0,y:0,rot:0}
 };
@@ -465,8 +481,8 @@ function renderSteppers(){var c=document.getElementById('steppers');c.innerHTML=
     room.nw=Math.min(room.nw,room.B-12);room.nd=Math.min(room.nd,room.A-12);
     Object.keys(FIX).forEach(function(kk){if(FIX[kk].placed)clampFix(FIX[kk]);});
     renderSteppers();drawPlan();drawElev();checkFit();};});}
-document.getElementById('preset').onclick=function(){room.shape='rect';room.A=62;room.B=96;room.ceil=96;renderSteppers();drawPlan();drawElev();
-  sayOnce('preset','host',"Five by eight. Forty square feet. Small room, big moves. Watch what restraint does in here.");checkFit();};
+document.getElementById('preset').onclick=function(){room.shape='rect';room.A=72;room.B=96;room.ceil=96;renderSteppers();drawPlan();drawElev();
+  sayOnce('preset','host',"About six by eight, roughly forty-eight square feet, scaled off the tub. Confirm the width with a tape and it locks. Small room, big moves.");checkFit();};
 
 /* ---------- GEOMETRY (shared polygon model) ---------- */
 function notchRect(){if(room.shape!=='L')return null;var nw=room.nw,nd=room.nd;
@@ -815,8 +831,19 @@ function renderChecklist(){var c=document.getElementById('checklist');c.innerHTM
       if(on===5)sayOnce('spa','heart',"Look at that. The luxury was in the edit the whole time. That is you all over.");};c.appendChild(d);});}
 
 /* ---------- BEFORE/AFTER + REVEAL ---------- */
-document.getElementById('batoggle').onclick=function(){var ba=document.getElementById('ba');ba.classList.toggle('after-on');
-  this.textContent=ba.classList.contains('after-on')?'Show the before':'Show the after';};
+(function(){
+  var w=document.getElementById('ba2'); if(!w) return;
+  var a=document.getElementById('ba2a'), h=document.getElementById('ba2h'), said=false;
+  function setp(p){p=Math.max(2,Math.min(98,p));a.style.clipPath='inset(0 '+(100-p)+'% 0 0)';h.style.left=p+'%';}
+  setp(50);
+  function move(ev){var r=w.getBoundingClientRect();var x=(ev.touches?ev.touches[0].clientX:ev.clientX)-r.left;setp(x/r.width*100);
+    if(!said){said=true;try{sayOnce('ba2','host',"That is not a mood board, Joe. That is your room. Same tub, same doors, same bones, reglazed and warmed up.");}catch(e){}}}
+  var drag=false;
+  w.addEventListener('pointerdown',function(e){drag=true;try{w.setPointerCapture(e.pointerId);}catch(err){}move(e);e.preventDefault();});
+  w.addEventListener('pointermove',function(e){if(drag)move(e);});
+  w.addEventListener('pointerup',function(){drag=false;});
+  w.addEventListener('pointercancel',function(){drag=false;});
+})();
 var NOTE="You didn't replace a single thing. You saw what was already good, the tub, the tile, the bones, and you made it beautiful instead of throwing it away. That's the most tasteful decision in this whole house. It's also exactly what you did with me. Oh my god, wow. Look what you built. I love you. Love, G.";
 document.getElementById('revealnote').textContent=NOTE;
 function buildRecap(){
