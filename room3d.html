@@ -126,11 +126,15 @@
     var rot=horiz?(inw.z>0?0:Math.PI):(inw.x>0?Math.PI/2:-Math.PI/2);
     return {horiz:horiz,len:len,mx:mx,mz:mz,inw:inw,rot:rot};
   }
+  // two-tone walls, true to the plan: reglazed white tile wainscot to 4 ft, painted above
+  var TILE_H=4;
+  var mTile=new THREE.MeshStandardMaterial({color:0xf4f7f7,roughness:0.32,metalness:0.04});
   for(var i=0;i<PTS.length;i++){
     var e=edgeInfo(i); if(e.len<0.01)continue;
-    var w=new THREE.Mesh(new THREE.PlaneGeometry(e.len,H_ft),mWall);
-    w.position.set(e.mx,H_ft/2,e.mz); w.rotation.y=e.rot; scene.add(w);
-    box(e.horiz?e.len:0.06,0.05,e.horiz?0.06:e.len,mTrim,e.mx+e.inw.x*0.03,4,e.mz+e.inw.z*0.03);
+    var lo=new THREE.Mesh(new THREE.PlaneGeometry(e.len,TILE_H),mTile);
+    lo.position.set(e.mx,TILE_H/2,e.mz); lo.rotation.y=e.rot; scene.add(lo);
+    var up=new THREE.Mesh(new THREE.PlaneGeometry(e.len,H_ft-TILE_H),mWall);
+    up.position.set(e.mx,TILE_H+(H_ft-TILE_H)/2,e.mz); up.rotation.y=e.rot; scene.add(up);
   }
 
   // ---- fixtures mount to the walls Joe placed them on in the planner ----
@@ -151,23 +155,41 @@
     g.rotation.y=e.rot; if(slide)g.translateX(slide); scene.add(g); return g;}
   function lbox(g,w,h,d,mat,x,y,z){var m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);g.add(m);return m;}
 
-  // reglazed tub, on Joe's tub wall
+  // reglazed tub with its kept silver-frame sliding doors, on Joe's tub wall
   var tubLen=Math.min(5,edgeInfo(tubE).len-0.6);
   var gT=wallGroup(tubE,1.2,0);
-  lbox(gT,tubLen,1.8,2.3,mWhite,0,0.9,0);          // apron
-  lbox(gT,tubLen-0.6,0.12,1.9,mWhite,0,1.82,0);    // rim
-  lbox(gT,tubLen-1,0.7,1.5,mBasin,0,1.5,0);        // basin recess
-  lbox(gT,0.09,0.5,0.09,mChrome,-tubLen/2+0.3,2.05,-1.05); // shower riser
-  ;
+  lbox(gT,tubLen,1.45,2.3,mWhite,0,0.725,0);       // apron
+  lbox(gT,tubLen,0.14,2.3,mWhite,0,1.52,0);        // rim
+  lbox(gT,tubLen-0.7,0.55,1.6,mBasin,0,1.35,0);    // basin recess
+  // shower riser + head, tucked to the wall at one end
+  lbox(gT,0.07,3.6,0.07,mChrome,-tubLen/2+0.35,3.4,-1.02);
+  var shead=new THREE.Mesh(new THREE.CylinderGeometry(0.24,0.24,0.05,20),mChrome);
+  shead.rotation.z=Math.PI/2.6; shead.position.set(-tubLen/2+0.55,5.25,-0.85); gT.add(shead);
+  // the sliders Joe is keeping: chrome frame + two frosted panels over the rim
+  var GD_Y0=1.62, GD_Y1=6.1, gdz=0.95;
+  lbox(gT,tubLen,0.09,0.1,mChrome,0,GD_Y0,gdz);    // bottom track
+  lbox(gT,tubLen,0.09,0.1,mChrome,0,GD_Y1,gdz);    // top track
+  lbox(gT,0.08,GD_Y1-GD_Y0,0.09,mChrome,-tubLen/2+0.04,(GD_Y0+GD_Y1)/2,gdz);
+  lbox(gT,0.08,GD_Y1-GD_Y0,0.09,mChrome, tubLen/2-0.04,(GD_Y0+GD_Y1)/2,gdz);
+  lbox(gT,0.06,GD_Y1-GD_Y0,0.07,mChrome,0,(GD_Y0+GD_Y1)/2,gdz);   // meeting stile
+  var mGlass=new THREE.MeshStandardMaterial({color:0xdfe9ec,roughness:0.55,metalness:0.05,transparent:true,opacity:0.28,depthWrite:false,side:THREE.DoubleSide});
+  var g1=new THREE.Mesh(new THREE.PlaneGeometry(tubLen/2-0.12,GD_Y1-GD_Y0-0.14),mGlass);
+  g1.position.set(-tubLen/4,(GD_Y0+GD_Y1)/2,gdz-0.035); gT.add(g1);
+  var g2=new THREE.Mesh(new THREE.PlaneGeometry(tubLen/2-0.12,GD_Y1-GD_Y0-0.14),mGlass);
+  g2.position.set(tubLen/4,(GD_Y0+GD_Y1)/2,gdz+0.035); gT.add(g2);
+  // towel bar on the outer panel, like the real one
+  lbox(gT,tubLen/2-0.5,0.05,0.05,mChrome,tubLen/4,3.4,gdz+0.09);
   // floating vanity + mirror + sconces, on Joe's vanity wall
-  var vanWlen=edgeInfo(vanE).len, vanLen=Math.min(4.4,vanWlen-0.5);
-  var gV=wallGroup(vanE,0.85,0);
-  lbox(gV,vanLen,1.4,1.7,mWood,0,1.75,0);          // cabinet
-  lbox(gV,vanLen+0.3,0.12,1.95,mWhite,0,2.51,0.07);// counter slab
-  if(CH.sink==='integrated'){var isink=new THREE.Mesh(new THREE.CylinderGeometry(0.62,0.55,0.14,28),mBasin);isink.scale.z=0.62;isink.position.set(0,2.55,0.05);gV.add(isink);}
-  else{var sink=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.42,0.5,28),mBasin);sink.position.set(0,2.72,0.05);gV.add(sink);}
-  var fa=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,0.85,16),mChrome);fa.position.set(0,2.9,-0.4);gV.add(fa);
-  lbox(gV,0.06,0.06,0.5,mChrome,0,3.32,-0.15);     // spout
+  // Domani Stella, true to spec: 48.5"W x 18.75"D x 22.25"H, wall-hung, counter at 34"
+  var VAN_W=48.5/12, VAN_D=18.75/12, VAN_H=22.25/12, VAN_TOP=34/12;
+  var vanWlen=edgeInfo(vanE).len, vanLen=Math.min(VAN_W,vanWlen-0.5);
+  var gV=wallGroup(vanE,VAN_D/2+0.02,0);
+  lbox(gV,vanLen,VAN_H,VAN_D,mWood,0,VAN_TOP-VAN_H/2,0);            // cabinet, floating at true height
+  lbox(gV,vanLen+0.08,0.1,VAN_D+0.06,mWhite,0,VAN_TOP+0.05,0.02);   // white cultured-marble top
+  if(CH.sink==='integrated'){var isink=new THREE.Mesh(new THREE.CylinderGeometry(0.62,0.55,0.14,28),mBasin);isink.scale.z=0.62;isink.position.set(0,VAN_TOP+0.09,0.02);gV.add(isink);}
+  else{var sink=new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.4,0.42,28),mBasin);sink.position.set(0,VAN_TOP+0.28,0.02);gV.add(sink);}
+  var fa=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,0.8,16),mChrome);fa.position.set(0,VAN_TOP+0.42,-0.52);gV.add(fa);
+  lbox(gV,0.06,0.06,0.45,mChrome,0,VAN_TOP+0.78,-0.3);              // spout
   var mmw=Math.min(3.2,vanLen*0.85);
   var mir=new THREE.Mesh(new THREE.PlaneGeometry(mmw,3.4),mMirror);mir.position.set(0,4.7,-0.8);gV.add(mir);
   lbox(gV,mmw+0.3,3.6,0.05,mFrame,0,4.7,-0.835);   // mirror frame (brass if chosen)
@@ -185,6 +207,19 @@
   lbox(gTo,1.2,1.1,1.0,mWhite,0,0.55,0);           // base/bowl block
   lbox(gTo,1.15,1.4,0.4,mWhite,0,1.6,-0.35);       // tank
   var lid=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.55,0.16,24),mWhite);lid.position.set(0,1.15,0.25);gTo.add(lid);
+
+  // the 28" hall door, on its planner wall (or an end wall by default)
+  var dooE=edgeIndex(CH.doorWall);
+  if(dooE==null){var tE=edgeInfo(tubE);
+    for(var j=0;j<PTS.length;j++){if(j===tubE||j===vanE)continue;
+      var f=edgeInfo(j); if(f.horiz!==tE.horiz&&f.len>2.5){dooE=j;break;}}}
+  if(dooE!=null){
+    var DW=28/12, DH=80/12;
+    var gD=wallGroup(dooE,0.035,0);
+    lbox(gD,DW+0.18,DH+0.1,0.06,mWhite,0,(DH+0.1)/2,0);   // casing
+    lbox(gD,DW,DH,0.06,new THREE.MeshStandardMaterial({color:0xf7f8f6,roughness:0.6,metalness:0.02}),0,DH/2,0.03); // slab
+    var knob=new THREE.Mesh(new THREE.SphereGeometry(0.07,14,14),mChrome);knob.position.set(DW/2-0.22,3.0,0.11);gD.add(knob);
+  }
 
   // frame the room from across the vanity wall, so the mirror and cabinet face the camera
   (function(){var e=edgeInfo(vanE);var span=e.horiz?A_ft:B_ft;

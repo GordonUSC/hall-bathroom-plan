@@ -445,7 +445,7 @@ var FIX={
   tub:{name:'Cast-iron tub, reglazed',w:60,h:30,fill:'#f4f6f7',placed:false,x:0,y:0,rot:0,thumb:'assets/tub_t.jpg'},
   vanity:{name:'Domani Stella 48.5" floating vanity · white-washed oak',w:48.5,h:18.75,fill:'#d6ccba',placed:false,x:0,y:0,rot:0,thumb:'assets/vanity_t.jpg',tex:'assets/wood.jpg',url:'https://www.homedepot.com/p/Domani-Stella-49-in-Single-Sink-White-Washed-Oak-Floating-Bath-Vanity-with-White-Cultured-Marble-Top-Assembled-SL48P2-WO/300851618',note:'Single sink · white cultured-marble top · wall-hung'},
   toilet:{name:'Toilet',w:20,h:28,fill:'#dfe6ea',placed:false,x:0,y:0,rot:0},
-  door:{name:'Door swing',w:30,h:30,fill:'rgba(127,212,198,0.28)',placed:false,x:0,y:0,rot:0}
+  door:{name:'Door swing',w:28,h:28,fill:'rgba(127,212,198,0.28)',placed:false,x:0,y:0,rot:0}
 };
 var selected=null, temp=1, wall='w0';
 
@@ -542,7 +542,7 @@ function drawPlan(){var s=scale(),ox=(600-room.B*s)/2,oy=(600-room.A*s)/2,g='';
     var zx=ox+cz.z.x*s,zy=oy+cz.z.y*s,zw=cz.z.w*s,zh=cz.z.h*s;
     g+='<rect x="'+zx+'" y="'+zy+'" width="'+zw+'" height="'+zh+'" fill="'+col+'" opacity="0.05"/>'+
        '<rect x="'+zx+'" y="'+zy+'" width="'+zw+'" height="'+zh+'" fill="none" stroke="'+col+'" stroke-width="1" stroke-dasharray="4 3" opacity="0.75"/>'+
-       '<text x="'+(zx+zw/2)+'" y="'+(zy+zh/2+3)+'" fill="'+col+'" font-size="8" text-anchor="middle" font-family="monospace" opacity="0.8">21&#8243; clear</text>';});
+       '<text x="'+(zx+zw/2)+'" y="'+(zy+zh/2+3)+'" fill="'+col+'" font-size="8" text-anchor="middle" font-family="monospace" opacity="0.8">'+cz.clr+'&#8243; clear</text>';});
   Object.keys(FIX).forEach(function(k){var f=FIX[k];if(!f.placed)return;var w=fw(f),h=fh(f),px=ox+f.x*s,py=oy+f.y*s;
     var sel=selected===k?'stroke="'+cssv('--spa')+'" stroke-width="2.5"':'stroke="rgba(0,0,0,0.35)" stroke-width="1"';
     var body=f.tex?'<image href="'+f.tex+'" x="'+px+'" y="'+py+'" width="'+(w*s)+'" height="'+(h*s)+'" preserveAspectRatio="xMidYMid slice"/><rect x="'+px+'" y="'+py+'" width="'+(w*s)+'" height="'+(h*s)+'" rx="3" fill="none" '+sel+'/>'
@@ -592,8 +592,9 @@ function fixtureSpoken(k){
 function overlap(a,b){return a.x<b.x+fw(b)&&a.x+fw(a)>b.x&&a.y<b.y+fh(b)&&a.y+fh(a)>b.y;}
 /* front-approach clearance zones: 21 in of clear standing room in front of tub, vanity, toilet (NKBA/IRC).
    Front faces the room interior, inferred from whichever wall the fixture sits nearest. */
-function clearZones(){var CLR=21,zones=[];
+function clearZones(){var zones=[];
   ['tub','vanity','toilet'].forEach(function(k){var f=FIX[k];if(!f.placed)return;
+    var CLR=(k==='toilet')?4:21; /* Joe's call: the toilet only needs 4 inches all around */
     var w=fw(f),h=fh(f);
     var dT=f.y,dB=room.A-(f.y+h),dL=f.x,dR=room.B-(f.x+w);
     var m=Math.min(dT,dB,dL,dR),z;
@@ -601,7 +602,7 @@ function clearZones(){var CLR=21,zones=[];
     else if(m===dB)z={x:f.x,y:f.y-CLR,w:w,h:CLR};
     else if(m===dL)z={x:f.x+w,y:f.y,w:CLR,h:h};
     else z={x:f.x-CLR,y:f.y,w:CLR,h:h};
-    zones.push({k:k,z:z});});
+    zones.push({k:k,z:z,clr:CLR});});
   return zones;}
 function zoneBlocker(cz){var hit=null;['tub','vanity','toilet','door'].forEach(function(ok){if(ok===cz.k||hit)return;
     var o=FIX[ok];if(!o.placed)return;if(rOv(cz.z,fixRect(o)))hit=ok;});return hit;}
@@ -610,10 +611,13 @@ function checkFit(){try{renderWallpick();drawElev();saveChoices();}catch(e){}var
   var problems=[];
   for(var i=0;i<placed.length;i++)for(var j=i+1;j<placed.length;j++){if(placed[i]==='door'||placed[j]==='door')continue;
     if(overlap(FIX[placed[i]],FIX[placed[j]]))problems.push(FIX[placed[i]].name+' overlaps '+FIX[placed[j]].name);}
-  if(FIX.toilet.placed){var t=FIX.toilet;if(t.x<15||room.B-(t.x+fw(t))<15)problems.push('Toilet needs 15 inches to each side');}
+  if(FIX.toilet.placed){var t=FIX.toilet,tsg=wallSegs().find(function(x){return x.id===wallOf(t);});
+    var s1,s2;
+    if(!tsg||tsg.horiz){s1=t.x;s2=room.B-(t.x+fw(t));}else{s1=t.y;s2=room.A-(t.y+fh(t));}
+    if(s1<4&&s2<4)problems.push('Toilet needs 4 inches of side clearance');}
   var fnames={tub:'reglazed tub',vanity:'vanity',toilet:'toilet',door:'door swing'};
   clearZones().forEach(function(cz){var b=zoneBlocker(cz);
-    if(b)problems.push('The '+fnames[cz.k]+' needs 21 inches of clear standing room in front, and the '+fnames[b]+' is in it');});
+    if(b)problems.push('The '+fnames[cz.k]+' needs '+cz.clr+' inches of clear standing room in front, and the '+fnames[b]+' is in it');});
   if(FIX.door.placed){['tub','vanity','toilet'].forEach(function(k){if(FIX[k].placed&&overlap(FIX.door,FIX[k]))problems.push('The door swing hits the '+fnames[k]);});}
   var nn=notchRect();
   if(nn){placed.forEach(function(k){if(rOv(fixRect(FIX[k]),nn))problems.push(FIX[k].name+' is inside the cut-out');});}
@@ -773,7 +777,7 @@ function planTotal(){var t=REGLAZE;DECISIONS.forEach(function(d){t+=d.opts[choic
 function getSaved(){return +(localStorage.getItem(SKEY)||0);}
 function saveChoices(){var s={wall:getOpt('wall').hex,floor:getOpt('floor').floor,sink:getOpt('top').sink,mirror:getOpt('mirror').mirror,accent:getOpt('accent').accent,
   A:room.A,B:room.B,ceil:room.ceil,shape:room.shape,nw:room.nw,nd:room.nd,ncorner:room.corner,
-  tubWall:FIX.tub.placed?wallOf(FIX.tub):null,vanWall:FIX.vanity.placed?wallOf(FIX.vanity):null,toiletWall:FIX.toilet.placed?wallOf(FIX.toilet):null};
+  tubWall:FIX.tub.placed?wallOf(FIX.tub):null,vanWall:FIX.vanity.placed?wallOf(FIX.vanity):null,toiletWall:FIX.toilet.placed?wallOf(FIX.toilet):null,doorWall:FIX.door.placed?wallOf(FIX.door):null};
   try{localStorage.setItem(CKEY,JSON.stringify(s));}catch(e){}}
 function renderDecisions(){var c=document.getElementById('decisions');c.innerHTML='';
   DECISIONS.forEach(function(d){var el=document.createElement('div');el.className='decision';
