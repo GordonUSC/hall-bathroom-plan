@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Build Book · Joe's Hall Bath</title>
+<style>
+  :root{
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --body:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --ground:#12161a; --ground-2:#1a2027; --ground-3:#232b34; --ink:#eef2f5; --ink-soft:#b9c4cd; --ink-faint:#8593a0;
+    --chrome:#cfe0ee; --oak:#b89568; --white:#f4f6f7; --spa:#7fd4c6; --gold:#e6b877; --rose:#e59b9b;
+    --line:rgba(238,242,245,0.12); --line2:rgba(238,242,245,0.22);
+    --good:#6bcf9b; --warn:#e6b24a; --bad:#e07a72;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  body.bigtype{font-size:21px}
+  body.bigtype .q{font-size:20px}
+  body.bigtype .ck label{font-size:20px}
+  .wrap{max-width:760px;margin:0 auto;padding:0 18px}
+  h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.1;margin:0;text-wrap:balance}
+  p{max-width:60ch}
+  button{font:inherit;cursor:pointer}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--spa);display:flex;align-items:center;gap:10px}
+  .eyebrow::after{content:"";flex:1;height:1px;background:var(--line)}
+  header.top{padding:64px 18px 8px;text-align:center}
+  header.top .kick{font-family:var(--mono);font-size:12px;letter-spacing:0.28em;text-transform:uppercase;color:var(--spa);margin-bottom:16px}
+  header.top h1{font-size:clamp(38px,9vw,64px);letter-spacing:-0.02em}
+  header.top h1 em{font-style:italic;color:var(--gold)}
+  header.top .sub{font-family:var(--serif);font-style:italic;font-size:clamp(16px,2.2vw,20px);color:var(--ink-soft);margin:18px auto 0;max-width:34ch}
+  .bigbtn{position:fixed;top:14px;right:14px;z-index:50;background:var(--ground-3);border:1px solid var(--line2);color:var(--ink);border-radius:24px;padding:8px 14px;font-family:var(--mono);font-size:13px}
+  .bigbtn b{font-size:16px}
+  section.mv{padding:52px 0;border-top:1px solid var(--line)}
+  .mv h2{font-size:clamp(24px,5vw,34px);margin-top:12px}
+  .mv .lede{color:var(--ink-soft);font-size:18px;margin-top:12px;max-width:56ch}
+  .card{background:var(--ground-2);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:18px}
+  .phase{position:relative;padding-left:16px}
+  .phase::before{content:"";position:absolute;left:0;top:22px;bottom:22px;width:3px;border-radius:3px;background:var(--line2)}
+  .phase.done::before{background:var(--good)}
+  .ph-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .ph-head h3{font-size:21px}
+  .who{font-family:var(--mono);font-size:10.5px;letter-spacing:0.14em;border-radius:20px;padding:4px 10px;border:1px solid var(--line2)}
+  .who.joe{color:#0d1114;background:var(--gold);border-color:var(--gold);font-weight:700}
+  .who.pro{color:#0d1114;background:var(--chrome);border-color:var(--chrome);font-weight:700}
+  .who.both{color:#0d1114;background:var(--spa);border-color:var(--spa);font-weight:700}
+  .who.nobody{color:var(--rose)}
+  .gate{font-family:var(--mono);font-size:12px;color:var(--ink-faint);margin-top:6px}
+  .ck{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px}
+  .ck li{display:flex;align-items:flex-start;gap:10px}
+  .ck input[type=checkbox]{width:22px;height:22px;margin-top:1px;accent-color:#7fd4c6;flex:none}
+  .ck label{color:var(--ink-soft)}
+  .ck li.checked label{color:var(--ink-faint);text-decoration:line-through}
+  .phcount{font-family:var(--mono);font-size:12px;color:var(--spa);margin-left:auto}
+  .q{background:var(--ground-3);border-left:3px solid var(--spa);border-radius:0 10px 10px 0;padding:10px 14px;margin-top:10px;color:var(--ink);font-size:17px}
+  .q small{display:block;color:var(--ink-faint);margin-top:3px}
+  .redflag{border-left-color:var(--bad)}
+  .qt{width:100%;border-collapse:collapse;margin-top:14px}
+  .qt th{font-family:var(--mono);font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-faint);text-align:left;padding:6px 8px;border-bottom:1px solid var(--line2)}
+  .qt td{padding:6px 8px;border-bottom:1px solid var(--line)}
+  .qt input{width:100%;background:var(--ground-3);border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:8px;font:inherit;min-width:60px}
+  .crown{background:none;border:1px solid var(--line2);border-radius:20px;color:var(--ink-soft);padding:6px 12px;white-space:nowrap}
+  .crown.on{background:var(--gold);border-color:var(--gold);color:#0d1114;font-weight:700}
+  .fridge{border:2px dashed var(--line2);border-radius:16px;padding:22px;margin-top:18px}
+  .fridge h3{font-size:22px;color:var(--spa)}
+  .fridge ul{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:10px;font-size:18px}
+  .fridge li b{color:var(--gold)}
+  .printbtn{margin-top:16px;background:linear-gradient(120deg,var(--spa),var(--gold));color:#0d1114;border:none;border-radius:30px;padding:12px 22px;font-weight:700}
+  .demoday{margin-top:18px;text-align:center;padding:30px 20px}
+  .demoday .big{background:linear-gradient(120deg,var(--gold),var(--rose));color:#0d1114;border:none;border-radius:40px;padding:18px 34px;font-weight:800;font-size:18px;box-shadow:0 20px 44px -18px rgba(230,184,119,0.5)}
+  .demoday .big:disabled{filter:grayscale(0.8);opacity:0.5;cursor:not-allowed}
+  .gatelist{font-family:var(--mono);font-size:12.5px;color:var(--ink-faint);margin-top:12px;display:grid;gap:5px;justify-content:center}
+  .gatelist .ok{color:var(--good)}
+  #buildbanner{display:none;margin-top:18px;border:1px solid var(--gold);border-radius:16px;padding:18px;background:linear-gradient(120deg,rgba(230,184,119,0.14),rgba(229,155,155,0.10))}
+  #buildbanner.on{display:block}
+  #buildbanner .cnt{font-family:var(--serif);font-size:30px;color:var(--gold)}
+  .backlink{display:block;text-align:center;margin:40px 0 60px;color:var(--ink-faint);font-family:var(--mono);font-size:12px;letter-spacing:0.14em;text-transform:uppercase;text-decoration:none}
+  .backlink:hover{color:var(--spa)}
+  input[type=date]{background:var(--ground-3);border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:8px;font:inherit}
+  @media(prefers-reduced-motion:no-preference){.who.joe{transition:transform .15s}.phase:hover .who.joe{transform:scale(1.06)}}
+  @media print{
+    body{background:#fff;color:#111;font-size:15pt}
+    .bigbtn,.demoday,.backlink,header.top .sub,.printbtn{display:none!important}
+    body.print-fridge section.mv{display:none}
+    body.print-fridge #aftercare{display:block;border-top:none}
+    .card,.fridge{border-color:#999;background:#fff}
+    .fridge{border:3px dashed #333}
+    .fridge h3{color:#111}
+    .fridge li b{color:#111}
+    .q{background:#f2f2f2;color:#111;border-left-color:#555}
+    .ck label,.mv .lede{color:#222}
+    .who{color:#111!important;background:#eee!important;border-color:#999!important}
+  }
+</style>
+</head><body>
+
+<button class="bigbtn" id="bigbtn" title="Bigger letters">A<b>A</b></button>
+
+<header class="top">
+  <div class="kick">Part two · after the plan</div>
+  <h1>The <em>Build</em> Book</h1>
+  <p class="sub">The plan was the dream. This is the part you run.</p>
+</header>
+
+<section class="mv wrap" id="path">
+  <div class="eyebrow">The path</div>
+  <h2>Six phases. Real order. Your clipboard.</h2>
+  <p class="lede">Each phase waits on the one before it. Checks save on this iPad. Nothing here reopens the four locked calls.</p>
+
+  <div class="card phase" data-ph="p0">
+    <div class="ph-head"><h3>0 · Measure Day</h3><span class="who joe">JOE</span><span class="phcount"></span></div>
+    <div class="gate">Blocks everything. One tape, three numbers.</div>
+    <ul class="ck">
+      <li><input type="checkbox" id="p0a"><label for="p0a">Width, wall to wall. Write the inches.</label></li>
+      <li><input type="checkbox" id="p0b"><label for="p0b">Length, door wall to window wall.</label></li>
+      <li><input type="checkbox" id="p0c"><label for="p0c">Floor to ceiling.</label></li>
+      <li><input type="checkbox" id="p0d"><label for="p0d">Type them into the <a href="index.html#tools" style="color:var(--spa)">planner</a>. Every view locks at once.</label></li>
+    </ul>
+  </div>
+
+  <div class="card phase" data-ph="p1">
+    <div class="ph-head"><h3>1 · Order and book</h3><span class="who joe">JOE</span><span class="phcount"></span></div>
+    <div class="gate">Vanity ships in 1-2 weeks. Good reglazers book 2-3 weeks out. Start both now.</div>
+    <ul class="ck">
+      <li><input type="checkbox" id="p1a"><label for="p1a">Order the Domani Stella (Home Depot SL48P2-WO). Check the box for the wall bracket.</label></li>
+      <li><input type="checkbox" id="p1b"><label for="p1b">Call three reglazers. Use the call kit below.</label></li>
+      <li><input type="checkbox" id="p1c"><label for="p1c">Crown your pick. Book the date.</label></li>
+      <li><input type="checkbox" id="p1d"><label for="p1d">Buy aftercare supplies: non-abrasive cleaner, no suction mats. That's the whole list.</label></li>
+    </ul>
+  </div>
+
+  <div class="card phase" data-ph="p2">
+    <div class="ph-head"><h3>2 · Prep weekend</h3><span class="who both">TOGETHER</span><span class="phcount"></span></div>
+    <div class="gate">The weekend before the pro comes.</div>
+    <ul class="ck">
+      <li><input type="checkbox" id="p2a"><label for="p2a">Clear the room to bare walls.</label></li>
+      <li><input type="checkbox" id="p2b"><label for="p2b">Water off at the vanity stops. Pull the old vanity. Cap the lines.</label></li>
+      <li><input type="checkbox" id="p2c"><label for="p2c">Patch and sand the wall behind it.</label></li>
+      <li><input type="checkbox" id="p2d"><label for="p2d">Window fan in, door path clear. Reglaze fumes are real.</label></li>
+    </ul>
+  </div>
+
+  <div class="card phase" data-ph="p3">
+    <div class="ph-head"><h3>3 · Reglaze day</h3><span class="who pro">PRO</span><span class="phcount"></span></div>
+    <div class="gate">Tub and wet walls. Pro only. DIY epoxy fails in wet zones.</div>
+    <ul class="ck">
+      <li><input type="checkbox" id="p3a"><label for="p3a">Your job: let them in, ventilation on, everybody out.</label></li>
+      <li><input type="checkbox" id="p3b"><label for="p3b">Before they leave: walk it in raking light. Look for runs and thin spots.</label></li>
+      <li><input type="checkbox" id="p3c"><label for="p3c">Get the warranty paper in your hand, not a promise.</label></li>
+    </ul>
+  </div>
+
+  <div class="card phase" data-ph="p4">
+    <div class="ph-head"><h3>4 · The cure</h3><span class="who nobody">NOBODY</span><span class="phcount"></span></div>
+    <div class="gate">The finish hardens for days and babies for a month. Patience is a tool.</div>
+    <ul class="ck">
+      <li><input type="checkbox" id="p4a"><label for="p4a">No water 72 hours. Tape the faucet if you have to.</label></li>
+      <li><input type="checkbox" id="p4b"><label for="p4b">Print the fridge card below. Stick it up.</label></li>
+    </ul>
+  </div>
+
+  <div class="card phase" data-ph="p5">
+    <div class="ph-head"><h3>5 · Install and finish</h3><span class="who joe">JOE</span><span class="phcount"></span></div>
+    <div class="gate">Your favorite part. Take it in order.</div>
+    <ul class="ck">
+      <li><input type="checkbox" id="p5a"><label for="p5a">Blocking in the wall, bracket level, hang the vanity. It floats.</label></li>
+      <li><input type="checkbox" id="p5b"><label for="p5b">Faucet on, lines on, check for drips at ten minutes and again at an hour.</label></li>
+      <li><input type="checkbox" id="p5c"><label for="p5c">Mirror, sconces, paint. Your Calls, as chosen.</label></li>
+      <li><input type="checkbox" id="p5d"><label for="p5d">Hang the towels. The white ones with the H+B stitch.</label></li>
+    </ul>
+  </div>
+</section>
+
+<section class="mv wrap" id="callkit">
+  <div class="eyebrow">The call kit</div>
+  <h2>Six questions. Any good reglazer answers all six easily.</h2>
+  <div class="card">
+    <div class="q">How many years on the warranty, in writing?<small>Under 5 for a tub, keep calling.</small></div>
+    <div class="q">Is it a spray coating or a poured slipcover?<small>You want sprayed. Aliphatic acrylic urethane is the good answer.</small></div>
+    <div class="q">Tub AND wall tile in one visit, one cure?<small>One mobilization saves money and mess.</small></div>
+    <div class="q">How long before light use, and before normal use?<small>Real answer: 24-72 hours light, about 30 days babied.</small></div>
+    <div class="q">Do you mask and ventilate, or do I prep?<small>Pros bring their own containment. Your fan helps anyway.</small></div>
+    <div class="q">What voids the warranty?<small>They should say suction mats and abrasives without being asked.</small></div>
+    <div class="q redflag">Red flags: cash only, no written warranty, "same day use," a price under $300 for a tub. Hang up nice.</div>
+  </div>
+
+  <div class="card">
+    <h3 style="font-size:20px">Three quotes. Crown one.</h3>
+    <div style="overflow-x:auto">
+    <table class="qt" id="qtable">
+      <thead><tr><th>Company</th><th>Price</th><th>Warranty yrs</th><th>Earliest date</th><th></th></tr></thead>
+      <tbody>
+        <tr data-i="0"><td><input placeholder="name"></td><td><input placeholder="$" inputmode="numeric"></td><td><input placeholder="yrs" inputmode="numeric"></td><td><input placeholder="date"></td><td><button class="crown">Crown</button></td></tr>
+        <tr data-i="1"><td><input placeholder="name"></td><td><input placeholder="$" inputmode="numeric"></td><td><input placeholder="yrs" inputmode="numeric"></td><td><input placeholder="date"></td><td><button class="crown">Crown</button></td></tr>
+        <tr data-i="2"><td><input placeholder="name"></td><td><input placeholder="$" inputmode="numeric"></td><td><input placeholder="yrs" inputmode="numeric"></td><td><input placeholder="date"></td><td><button class="crown">Crown</button></td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="lede" style="font-size:14px;margin-top:10px">Fair range for tub plus wet walls, both done: $1,100 to $2,300. The crown is your call, not the cheapest number.</p>
+  </div>
+</section>
+
+<section class="mv wrap" id="aftercare">
+  <div class="eyebrow">After the pro leaves</div>
+  <h2>The fridge card</h2>
+  <div class="fridge" id="fridgecard">
+    <h3>New glaze. House rules.</h3>
+    <ul>
+      <li><b>No water for 72 hours.</b> Nothing. Not once.</li>
+      <li><b>No suction mats. Ever.</b> Number one cause of peeling.</li>
+      <li><b>Non-abrasive cleaner only.</b> No scrub powder, no magic erasers.</li>
+      <li><b>Baby it 30 days.</b> Wipe, don't scour. Nothing stored on the tub edge.</li>
+      <li><b>See a chip? Call the pro.</b> Warranty covers it. Picking at it doesn't.</li>
+    </ul>
+  </div>
+  <button class="printbtn" id="printfridge">Print the fridge card</button>
+</section>
+
+<section class="mv wrap" id="demoday">
+  <div class="eyebrow">The green light</div>
+  <h2>Demo Day</h2>
+  <p class="lede">When the room is measured and a pro wears the crown, pick your date and the build is on.</p>
+  <div class="card demoday">
+    <div style="margin-bottom:14px"><input type="date" id="startdate" aria-label="Demo Day date"></div>
+    <button class="big" id="gobtn" disabled>Break ground</button>
+    <div class="gatelist">
+      <span id="g1">◻ Measure Day checked off</span>
+      <span id="g2">◻ A quote wears the crown</span>
+      <span id="g3">◻ Date picked</span>
+    </div>
+    <div id="buildbanner"><div style="font-family:var(--mono);font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink-soft)">Build mode</div>
+      <div class="cnt" id="countline">Demo Day is set.</div>
+      <div style="color:var(--ink-soft);margin-top:6px">The Build Book is live. Run it, foreman.</div>
+    </div>
+  </div>
+</section>
+
+<a class="backlink" href="index.html">&larr; Back to the Reglaze Room</a>
+
+<script>
+(function(){
+  var KEY='joe_buildbook_v1';
+  var st={checks:{},quotes:[{},{},{}],crown:-1,start:null,big:false};
+  try{var raw=localStorage.getItem(KEY);if(raw){var p=JSON.parse(raw);for(var k in st){if(p[k]!==undefined)st[k]=p[k];}}}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+
+  // big type (shared flag with the studio)
+  try{if(localStorage.getItem('joe_bigtype')==='1'){st.big=true;}}catch(e){}
+  function applyBig(){document.body.classList.toggle('bigtype',!!st.big);}
+  applyBig();
+  document.getElementById('bigbtn').onclick=function(){st.big=!st.big;try{localStorage.setItem('joe_bigtype',st.big?'1':'0')}catch(e){};applyBig();save();};
+
+  // checklists
+  var boxes=document.querySelectorAll('.ck input[type=checkbox]');
+  boxes.forEach(function(b){
+    if(st.checks[b.id]){b.checked=true;b.closest('li').classList.add('checked');}
+    b.addEventListener('change',function(){
+      st.checks[b.id]=b.checked;b.closest('li').classList.toggle('checked',b.checked);save();counts();gates();
+    });
+  });
+  function counts(){
+    document.querySelectorAll('.phase').forEach(function(ph){
+      var bs=ph.querySelectorAll('input[type=checkbox]');var n=0;bs.forEach(function(x){if(x.checked)n++;});
+      ph.querySelector('.phcount').textContent=n+' / '+bs.length;
+      ph.classList.toggle('done',n===bs.length);
+    });
+  }
+
+  // quotes
+  var rows=document.querySelectorAll('#qtable tbody tr');
+  rows.forEach(function(tr,i){
+    var ins=tr.querySelectorAll('input');
+    var q=st.quotes[i]||{};
+    ['name','price','yrs','date'].forEach(function(f,j){if(q[f])ins[j].value=q[f];
+      ins[j].addEventListener('input',function(){st.quotes[i]=st.quotes[i]||{};st.quotes[i][f]=ins[j].value;save();});
+    });
+    var c=tr.querySelector('.crown');
+    c.addEventListener('click',function(){st.crown=(st.crown===i?-1:i);save();crowns();gates();});
+  });
+  function crowns(){rows.forEach(function(tr,i){var c=tr.querySelector('.crown');var on=st.crown===i;c.classList.toggle('on',on);c.textContent=on?'Your pick':'Crown';});}
+
+  // fridge print
+  document.getElementById('printfridge').onclick=function(){
+    document.body.classList.add('print-fridge');window.print();
+    setTimeout(function(){document.body.classList.remove('print-fridge')},400);
+  };
+
+  // demo day gates
+  var dateEl=document.getElementById('startdate');
+  if(st.start)dateEl.value=st.start;
+  dateEl.addEventListener('change',function(){st.start=dateEl.value;save();gates();});
+  function measured(){return ['p0a','p0b','p0c','p0d'].every(function(id){return !!st.checks[id];});}
+  function gates(){
+    var m=measured(),c=st.crown>=0,d=!!st.start;
+    mark('g1',m,'Measure Day checked off');mark('g2',c,'A quote wears the crown');mark('g3',d,'Date picked');
+    document.getElementById('gobtn').disabled=!(m&&c&&d);
+    banner();
+  }
+  function mark(id,ok,txt){var el=document.getElementById(id);el.textContent=(ok?'✓ ':'◻ ')+txt;el.className=ok?'ok':'';}
+  document.getElementById('gobtn').onclick=function(){st.live=true;save();banner(true);};
+  function banner(fresh){
+    var b=document.getElementById('buildbanner');
+    if(st.live&&st.start){
+      b.classList.add('on');
+      var d=new Date(st.start+'T09:00:00');var now=new Date();
+      var days=Math.ceil((d-now)/86400000);
+      var line=days>1?('Demo Day in '+days+' days.'):days===1?'Demo Day is tomorrow.':days===0?'Demo Day is today. Go.':'The build is on.';
+      document.getElementById('countline').textContent=line;
+      if(fresh)b.scrollIntoView({behavior:'smooth',block:'center'});
+    }
+  }
+  counts();crowns();gates();
+})();
+</script>
+</body></html>

@@ -295,6 +295,21 @@
     <h2>The decisions still open to you</h2>
     <p class="lede">The tub, the tile, the vanity, the faucet, you nailed those. This is where you steer. Every pick changes the look and the number, live, and the ones with a swatch flow straight into your 3D room.</p>
     <div id="decisions"></div>
+    <div class="card" id="stylepreviews">
+      <h3 style="font-size:20px">See the two big directions, for real</h3>
+      <p class="lede" style="font-size:15px;margin-top:8px">Your actual vanity wall, rendered both ways. Same vanity, same chrome, same tile. Only the walls and the metal accent change, the exact fork in Your Calls.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
+        <figure style="margin:0">
+          <img src="assets/style_sage_brass.jpg" alt="Your vanity wall rendered with sage walls and brass mirror and sconces" style="width:100%;border-radius:12px;border:1px solid var(--line)" loading="lazy">
+          <figcaption style="font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--spa);margin-top:8px">Sage + brass · the warm one</figcaption>
+        </figure>
+        <figure style="margin:0">
+          <img src="assets/style_greige_chrome.jpg" alt="Your vanity wall rendered with greige walls and chrome mirror and sconces" style="width:100%;border-radius:12px;border:1px solid var(--line)" loading="lazy">
+          <figcaption style="font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--chrome);margin-top:8px">Greige + chrome · the cool one</figcaption>
+        </figure>
+      </div>
+      <p style="font-size:12.5px;color:var(--ink-faint);margin-top:10px">Renders from your real room photo. Pick either below and the 3D room follows.</p>
+    </div>
     <div class="eyebrow" style="margin-top:28px">Want to dream a little?</div>
     <p class="lede" style="font-size:16px;margin-top:10px">Optional upgrades. Flip any on and watch what it does to the plan.</p>
     <div class="card" id="upgrades"></div>
@@ -303,6 +318,7 @@
     <button class="preset" id="sharebtn" style="color:var(--spa)">Copy a link to this exact room</button>
     <p style="font-size:12.5px;color:var(--ink-faint);margin-top:8px">Designing on your phone and want it on the laptop, or want to text the plan to a contractor? This link carries your whole room, measurements, layout, choices, and savings, to any device.</p>
     <a href="room3d.html" class="room3dcta"><span class="rc-k">Now the payoff</span><span class="rc-t">Walk into the room you just designed</span><span class="rc-d">Your measured room, your walls, your floor, your finishes, to scale. Drag to look around it. &rarr;</span></a>
+    <a href="build.html" class="room3dcta" style="margin-top:12px"><span class="rc-k">New &middot; part two</span><span class="rc-t">Open The Build Book &rarr;</span><span class="rc-d">The plan was the dream. This is the part you run: six phases in real order, the reglazer call kit, three quotes and a crown, the fridge card, and the Break Ground button. Your clipboard, foreman.</span></a>
   </section>
 
   <section class="mv">
@@ -905,6 +921,17 @@ document.getElementById('specbtn').onclick=function(){var w=document.getElementB
   this.textContent=w.classList.contains('show')?'Hide the spec sheet':'Make a one-page spec sheet for your contractor';
   if(w.classList.contains('show'))w.scrollIntoView({behavior:'smooth',block:'nearest'});};
 document.getElementById('printspec').onclick=function(){buildSpecSheet();window.print();};
+
+/* ---------- BIG TYPE (shared with build.html via joe_bigtype) ---------- */
+(function(){
+  var btn=document.createElement('button');btn.id='bigbtn';btn.title='Bigger letters';btn.innerHTML='A<b>A</b>';
+  btn.style.cssText='position:fixed;top:14px;right:14px;z-index:50;background:var(--ground-3);border:1px solid var(--line2);color:var(--ink);border-radius:24px;padding:8px 14px;font-family:var(--mono);font-size:13px;cursor:pointer';
+  document.body.appendChild(btn);
+  function on(){try{return localStorage.getItem('joe_bigtype')==='1'}catch(e){return false}}
+  function apply(){document.body.style.fontSize=on()?'21px':'';}
+  btn.onclick=function(){try{localStorage.setItem('joe_bigtype',on()?'0':'1')}catch(e){};apply();};
+  apply();
+})();
 
 /* ---------- INIT ---------- */
 if(location.hash.length>2){applyState(location.hash.slice(1));}
