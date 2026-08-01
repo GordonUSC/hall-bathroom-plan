@@ -497,8 +497,15 @@ function renderSteppers(){var c=document.getElementById('steppers');c.innerHTML=
     room.nw=Math.min(room.nw,room.B-12);room.nd=Math.min(room.nd,room.A-12);
     Object.keys(FIX).forEach(function(kk){if(FIX[kk].placed)clampFix(FIX[kk]);});
     renderSteppers();drawPlan();drawElev();checkFit();};});}
-document.getElementById('preset').onclick=function(){room.shape='rect';room.A=72;room.B=96;room.ceil=96;renderSteppers();drawPlan();drawElev();
-  sayOnce('preset','host',"About six by eight, roughly forty-eight square feet, scaled off the tub. Confirm the width with a tape and it locks. Small room, big moves.");checkFit();};
+document.getElementById('preset').onclick=function(){room.shape='rect';room.A=72;room.B=96;room.ceil=96;
+  /* place the real layout, to code: tub on the long wall from the door end, vanity opposite,
+     toilet past the vanity (centerline 15+ from both neighbors), door swinging in at the top right */
+  FIX.tub.placed=true;FIX.tub.rot=0;FIX.tub.x=0;FIX.tub.y=0;
+  FIX.vanity.placed=true;FIX.vanity.rot=0;FIX.vanity.x=0;FIX.vanity.y=room.A-FIX.vanity.h;
+  FIX.toilet.placed=true;FIX.toilet.rot=0;FIX.toilet.x=62;FIX.toilet.y=room.A-FIX.toilet.h;
+  FIX.door.placed=true;FIX.door.rot=0;FIX.door.x=room.B-FIX.door.w;FIX.door.y=0;
+  renderSteppers();drawPlan();drawElev();
+  sayOnce('preset','host',"About six by eight, scaled off the tub, and I set the room the way it really is: tub down the long wall, vanity across from it, toilet past the vanity with its fifteen inches, door swinging clear. Every clearance is code. Confirm the width with a tape and it locks.");checkFit();};
 
 /* ---------- GEOMETRY (shared polygon model) ---------- */
 function notchRect(){if(room.shape!=='L')return null;var nw=room.nw,nd=room.nd;
@@ -610,7 +617,7 @@ function overlap(a,b){return a.x<b.x+fw(b)&&a.x+fw(a)>b.x&&a.y<b.y+fh(b)&&a.y+fh
    Front faces the room interior, inferred from whichever wall the fixture sits nearest. */
 function clearZones(){var zones=[];
   ['tub','vanity','toilet'].forEach(function(k){var f=FIX[k];if(!f.placed)return;
-    var CLR=(k==='toilet')?4:21; /* Joe's call: the toilet only needs 4 inches all around */
+    var CLR=21; /* IRC: 21 in of clear standing room in front of tub, vanity, AND toilet */
     var w=fw(f),h=fh(f);
     var dT=f.y,dB=room.A-(f.y+h),dL=f.x,dR=room.B-(f.x+w);
     var m=Math.min(dT,dB,dL,dR),z;
@@ -620,7 +627,8 @@ function clearZones(){var zones=[];
     else z={x:f.x-CLR,y:f.y,w:CLR,h:h};
     zones.push({k:k,z:z,clr:CLR});});
   return zones;}
-function zoneBlocker(cz){var hit=null;['tub','vanity','toilet','door'].forEach(function(ok){if(ok===cz.k||hit)return;
+function zoneBlocker(cz){var hit=null;['tub','vanity','toilet'].forEach(function(ok){if(ok===cz.k||hit)return;
+    /* door swing is allowed to pass over clear floor space (IRC); only fixtures block it */
     var o=FIX[ok];if(!o.placed)return;if(rOv(cz.z,fixRect(o)))hit=ok;});return hit;}
 function checkFit(){try{renderWallpick();drawElev();saveChoices();}catch(e){}var placed=Object.keys(FIX).filter(function(k){return FIX[k].placed;});var el=document.getElementById('fit');
   if(!placed.length){el.className='fitometer';document.getElementById('fittitle').textContent='Place your pieces';document.getElementById('fitsub').textContent='Tap a chip below to drop it in';return;}
@@ -628,9 +636,16 @@ function checkFit(){try{renderWallpick();drawElev();saveChoices();}catch(e){}var
   for(var i=0;i<placed.length;i++)for(var j=i+1;j<placed.length;j++){if(placed[i]==='door'||placed[j]==='door')continue;
     if(overlap(FIX[placed[i]],FIX[placed[j]]))problems.push(FIX[placed[i]].name+' overlaps '+FIX[placed[j]].name);}
   if(FIX.toilet.placed){var t=FIX.toilet,tsg=wallSegs().find(function(x){return x.id===wallOf(t);});
-    var s1,s2;
-    if(!tsg||tsg.horiz){s1=t.x;s2=room.B-(t.x+fw(t));}else{s1=t.y;s2=room.A-(t.y+fh(t));}
-    if(s1<4&&s2<4)problems.push('Toilet needs 4 inches of side clearance');}
+    /* IRC: 15 in from toilet centerline to each side wall or neighboring fixture */
+    var horiz=(!tsg||tsg.horiz),tr=fixRect(t);
+    var ctr=horiz?(t.x+fw(t)/2):(t.y+fh(t)/2);
+    var lo=horiz?0:0, hi=horiz?room.B:room.A;
+    ['tub','vanity'].forEach(function(nk){var o=FIX[nk];if(!o.placed)return;var r=fixRect(o);
+      var bandOv=horiz?(r.y<tr.y+tr.h&&r.y+r.h>tr.y):(r.x<tr.x+tr.w&&r.x+r.w>tr.x);
+      if(!bandOv)return;
+      var oLo=horiz?r.x:r.y, oHi=horiz?(r.x+r.w):(r.y+r.h);
+      if(oHi<=ctr)lo=Math.max(lo,oHi); else if(oLo>=ctr)hi=Math.min(hi,oLo);});
+    if(ctr-lo<15||hi-ctr<15)problems.push('Toilet centerline needs 15 inches to each side wall or neighbor (IRC), slide it over');}
   var fnames={tub:'reglazed tub',vanity:'vanity',toilet:'toilet',door:'door swing'};
   clearZones().forEach(function(cz){var b=zoneBlocker(cz);
     if(b)problems.push('The '+fnames[cz.k]+' needs '+cz.clr+' inches of clear standing room in front, and the '+fnames[b]+' is in it');});
