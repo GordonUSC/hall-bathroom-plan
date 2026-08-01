@@ -316,18 +316,12 @@
       <a href="room3d.html" class="preset" style="display:block;text-align:center;margin-top:10px;color:var(--spa);text-decoration:none">Walk into it in 3D &rarr;</a>
     </div>
     <div class="card" id="stylepreviews">
-      <h3 style="font-size:20px">See the two big directions, for real</h3>
-      <p class="lede" style="font-size:15px;margin-top:8px">Your actual vanity wall, rendered both ways. Same vanity, same chrome, same tile. Only the walls and the metal accent change, the exact fork in Your Calls.</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
-        <figure style="margin:0">
-          <img src="assets/style_sage_brass.jpg" alt="Your vanity wall rendered with sage walls and brass mirror and sconces" style="width:100%;border-radius:12px;border:1px solid var(--line)" loading="lazy">
-          <figcaption style="font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--spa);margin-top:8px">Sage + brass · the warm one</figcaption>
-        </figure>
-        <figure style="margin:0">
-          <img src="assets/style_greige_chrome.jpg" alt="Your vanity wall rendered with greige walls and chrome mirror and sconces" style="width:100%;border-radius:12px;border:1px solid var(--line)" loading="lazy">
-          <figcaption style="font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--chrome);margin-top:8px">Greige + chrome · the cool one</figcaption>
-        </figure>
-      </div>
+      <h3 style="font-size:20px">Your combo, rendered for real</h3>
+      <p class="lede" style="font-size:15px;margin-top:8px">Your actual vanity wall, re-rendered to match the wall color and metal you have picked right now. Change them above and this photo follows.</p>
+      <figure style="margin:14px 0 0">
+        <img id="dynrender" src="assets/style_greige_chrome.jpg" alt="Your vanity wall rendered with your current wall color and metal" style="width:100%;border-radius:12px;border:1px solid var(--line);aspect-ratio:4/3;object-fit:cover">
+        <figcaption id="dynrendercap" style="font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--spa);margin-top:8px">Your current combo</figcaption>
+      </figure>
       <p style="font-size:12.5px;color:var(--ink-faint);margin-top:10px">Renders from your real room photo. Pick either below and the 3D room follows.</p>
     </div>
     <div class="eyebrow" style="margin-top:28px">Want to dream a little?</div>
@@ -874,6 +868,12 @@ function drawMini(){var el=document.getElementById('minisvg');if(!el)return;
     if(li===0||li===1){s+='<circle cx="96" cy="44" r="6" fill="#ffe9c4" stroke="'+metal+'" stroke-width="2"/><circle cx="224" cy="44" r="6" fill="#ffe9c4" stroke="'+metal+'" stroke-width="2"/>';}
     if(li===1||li===2){s+='<rect x="140" y="4" width="40" height="5" rx="2.5" fill="'+metal+'"/><ellipse cx="160" cy="16" rx="26" ry="6" fill="#ffe9c4" opacity="0.5"/>';}
     el.innerHTML=s;
+    var dr=document.getElementById('dynrender');
+    if(dr){var wname=['white','greige','sage'][choice['wall']||0];var mname=(acc.accent==='chrome')?'chrome':'brass';
+      var f='assets/style_'+wname+'_'+mname+'.jpg';
+      if(dr.getAttribute('src')!==f){dr.src=f;}
+      var dc=document.getElementById('dynrendercap');
+      if(dc)dc.textContent=wall.l+' + '+(mname==='chrome'?'chrome':'brass')+' · rendered from your real wall';}
     var sum=document.getElementById('minisum');
     if(sum)sum.textContent=wall.l+' · '+floor.l.split(',')[0]+' · '+mir.l+' · '+acc.l.split(',')[0];
   }catch(e){}}

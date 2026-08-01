@@ -88,6 +88,7 @@
   var CH={};try{CH=JSON.parse(localStorage.getItem('joe_reglaze_choices_v1')||'{}');}catch(e){}
   if(CH.wall){mWall.color.set(CH.wall);}
   if(CH.floor==='stone'){mFloor=new THREE.MeshStandardMaterial({color:0xcfc9c0,roughness:0.45,metalness:0.05});}
+  else if(CH.floor==='keep'){mFloor=new THREE.MeshStandardMaterial({color:0xe9ecec,roughness:0.32,metalness:0.03});}
   if(CH.mirror==='lit'){mMirror.emissive=new THREE.Color(0xffe6c2);mMirror.emissiveIntensity=0.42;}
   var mFrame=(CH.accent==='brass')?mBrass:mTrim;
   // room dimensions from Joe's planner (feet)
