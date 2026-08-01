@@ -221,6 +221,10 @@
     .spec th{border-color:#999}
   }
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+  @media(prefers-reduced-motion:no-preference){
+    #minipreview.pulse{animation:mpulse 0.7s ease 1}
+    @keyframes mpulse{0%{box-shadow:0 0 0 0 rgba(127,212,198,0.55)}100%{box-shadow:0 0 0 16px rgba(127,212,198,0)}}
+  }
   @media(max-width:640px){body{font-size:18.5px;line-height:1.6}.wrap p,.lede{max-width:100%}}
 </style>
 </head>
@@ -303,6 +307,14 @@
     <h2>The decisions still open to you</h2>
     <p class="lede">The tub, the tile, the vanity, the faucet, you nailed those. This is where you steer. Every pick changes the look and the number, live, and the ones with a swatch flow straight into your 3D room.</p>
     <div id="decisions"></div>
+    <div class="card" id="minipreview" style="position:sticky;bottom:12px;z-index:30;box-shadow:0 -8px 30px -12px rgba(0,0,0,0.55)">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap">
+        <h3 style="font-size:18px">Your picks, live</h3>
+        <span id="minisum" style="font-family:var(--mono);font-size:11px;color:var(--ink-faint)"></span>
+      </div>
+      <svg id="minisvg" viewBox="0 0 320 150" style="width:100%;display:block;margin-top:10px;border-radius:10px" role="img" aria-label="Live preview of your wall, floor, mirror, and metal choices"></svg>
+      <a href="room3d.html" class="preset" style="display:block;text-align:center;margin-top:10px;color:var(--spa);text-decoration:none">Walk into it in 3D &rarr;</a>
+    </div>
     <div class="card" id="stylepreviews">
       <h3 style="font-size:20px">See the two big directions, for real</h3>
       <p class="lede" style="font-size:15px;margin-top:8px">Your actual vanity wall, rendered both ways. Same vanity, same chrome, same tile. Only the walls and the metal accent change, the exact fork in Your Calls.</p>
@@ -826,7 +838,46 @@ function planTotal(){var t=REGLAZE;DECISIONS.forEach(function(d){t+=d.opts[choic
 function getSaved(){return +(localStorage.getItem(SKEY)||0);}
 var _sc=document.createElement('div');_sc.className='savedchip';_sc.textContent='Saved for you, Joe ✓';document.addEventListener('DOMContentLoaded',function(){document.body.appendChild(_sc);});
 var _scT=null;function flashSaved(){if(!_sc.parentNode)document.body.appendChild(_sc);_sc.classList.add('show');clearTimeout(_scT);_scT=setTimeout(function(){_sc.classList.remove('show');},1400);}
-function saveChoices(){flashSaved();var s={wall:getOpt('wall').hex,floor:getOpt('floor').floor,sink:getOpt('top').sink,mirror:getOpt('mirror').mirror,accent:getOpt('accent').accent,
+function uiTick(){if(muted)return;try{
+  if(!window._uiac)window._uiac=new (window.AudioContext||window.webkitAudioContext)();
+  var ac=window._uiac,o=ac.createOscillator(),g=ac.createGain();
+  o.type='triangle';o.frequency.value=740;
+  g.gain.setValueAtTime(0.0001,ac.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.05,ac.currentTime+0.008);
+  g.gain.exponentialRampToValueAtTime(0.0001,ac.currentTime+0.12);
+  o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+0.14);}catch(e){}}
+function drawMini(){var el=document.getElementById('minisvg');if(!el)return;
+  try{
+    var wall=getOpt('wall'),floor=getOpt('floor'),top=getOpt('top'),mir=getOpt('mirror'),acc=getOpt('accent');
+    var li=choice['light']||0;
+    var metal=(acc.accent==='chrome')?'#cfe0ee':'#e6b877';
+    var floorCol=floor.floor==='oak'?'#b89568':(floor.floor==='stone'?'#cfc9c0':'#e8eaea');
+    var s='';
+    s+='<rect x="0" y="0" width="320" height="150" fill="'+wall.hex+'"/>';
+    // wainscot tile
+    s+='<rect x="0" y="86" width="320" height="44" fill="#f4f6f7"/>';
+    for(var gx=0;gx<320;gx+=24)s+='<line x1="'+gx+'" y1="86" x2="'+gx+'" y2="130" stroke="#dde3e5" stroke-width="1"/>';
+    s+='<line x1="0" y1="108" x2="320" y2="108" stroke="#dde3e5" stroke-width="1"/>';
+    // floor
+    s+='<rect x="0" y="130" width="320" height="20" fill="'+floorCol+'"/>';
+    if(floor.floor==='oak')for(var fx=0;fx<320;fx+=40)s+='<line x1="'+fx+'" y1="130" x2="'+fx+'" y2="150" stroke="rgba(0,0,0,0.12)" stroke-width="1"/>';
+    // vanity (floating)
+    s+='<rect x="104" y="96" width="112" height="26" rx="3" fill="#d6ccba"/>';
+    s+='<rect x="100" y="90" width="120" height="8" rx="2" fill="#fdfdfd" stroke="#d8dcde" stroke-width="0.6"/>';
+    if(top.sink==='vessel')s+='<ellipse cx="160" cy="88" rx="17" ry="5.5" fill="#ffffff" stroke="#cfd6d9" stroke-width="1"/>';
+    s+='<rect x="152" y="76" width="3" height="12" fill="'+'#cfe0ee'+'"/>';
+    // mirror
+    if(mir.mirror==='cabinet'){s+='<rect x="132" y="26" width="56" height="44" rx="4" fill="#eaf1f5" stroke="'+metal+'" stroke-width="2.5"/>';}
+    else if(mir.mirror==='lit'){s+='<circle cx="160" cy="47" r="26" fill="#eaf1f5"/><circle cx="160" cy="47" r="26" fill="none" stroke="#ffe9c4" stroke-width="5" opacity="0.85"/>';}
+    else{s+='<circle cx="160" cy="47" r="24" fill="#eaf1f5" stroke="'+metal+'" stroke-width="3"/>';}
+    // lighting
+    if(li===0||li===1){s+='<circle cx="96" cy="44" r="6" fill="#ffe9c4" stroke="'+metal+'" stroke-width="2"/><circle cx="224" cy="44" r="6" fill="#ffe9c4" stroke="'+metal+'" stroke-width="2"/>';}
+    if(li===1||li===2){s+='<rect x="140" y="4" width="40" height="5" rx="2.5" fill="'+metal+'"/><ellipse cx="160" cy="16" rx="26" ry="6" fill="#ffe9c4" opacity="0.5"/>';}
+    el.innerHTML=s;
+    var sum=document.getElementById('minisum');
+    if(sum)sum.textContent=wall.l+' · '+floor.l.split(',')[0]+' · '+mir.l+' · '+acc.l.split(',')[0];
+  }catch(e){}}
+function saveChoices(){flashSaved();drawMini();var s={wall:getOpt('wall').hex,floor:getOpt('floor').floor,sink:getOpt('top').sink,mirror:getOpt('mirror').mirror,accent:getOpt('accent').accent,
   A:room.A,B:room.B,ceil:room.ceil,shape:room.shape,nw:room.nw,nd:room.nd,ncorner:room.corner,
   tubWall:FIX.tub.placed?wallOf(FIX.tub):null,vanWall:FIX.vanity.placed?wallOf(FIX.vanity):null,toiletWall:FIX.toilet.placed?wallOf(FIX.toilet):null,doorWall:FIX.door.placed?wallOf(FIX.door):null};
   try{localStorage.setItem(CKEY,JSON.stringify(s));}catch(e){}}
@@ -840,11 +891,11 @@ function renderDecisions(){var c=document.getElementById('decisions');c.innerHTM
     h+='</div>';el.innerHTML=h;c.appendChild(el);});
   c.querySelectorAll('.opt').forEach(function(o){o.onclick=function(){var id=o.dataset.d,i=+o.dataset.i;if(choice[id]===i)return;var before=planTotal();choice[id]=i;
     c.querySelectorAll('.opt[data-d="'+id+'"]').forEach(function(x){x.dataset.on=(+x.dataset.i===i)?1:0;});
-    recompute(before);var op=getOpt(id);if(op.v==='green')sayOnce('call_'+id+'_'+i,'host',"Good call, Joe. "+op.d);};});}
+    recompute(before);uiTick();drawMini();var mp=document.getElementById('minipreview');if(mp){mp.classList.remove('pulse');void mp.offsetWidth;mp.classList.add('pulse');}var op=getOpt(id);if(op.v==='green')sayOnce('call_'+id+'_'+i,'host',"Good call, Joe. "+op.d);};});}
 function renderUpgrades(){var c=document.getElementById('upgrades');c.innerHTML='';
   UPGRADES.forEach(function(u){var d=document.createElement('div');d.className='upg';
     d.innerHTML='<div class="toggle" data-u="'+u.id+'" data-on="'+(upgOn[u.id]?1:0)+'"></div><div class="name">'+u.l+'<small>'+u.d+'</small></div><div class="price">$'+u.p+'</div>';c.appendChild(d);});
-  c.querySelectorAll('.toggle').forEach(function(t){t.onclick=function(){var id=t.dataset.u;var before=planTotal();upgOn[id]=!upgOn[id];t.dataset.on=upgOn[id]?1:0;recompute(before);};});}
+  c.querySelectorAll('.toggle').forEach(function(t){t.onclick=function(){uiTick();var id=t.dataset.u;var before=planTotal();upgOn[id]=!upgOn[id];t.dataset.on=upgOn[id]?1:0;recompute(before);};});}
 function recompute(before){var now=planTotal();updatePlan();
   var imp=document.getElementById('impact');var mo=+document.getElementById('permo').value||300;var d=now-before;var wk=Math.max(1,Math.round(Math.abs(d)/(mo/4.345)));
   if(d>0)imp.textContent='That adds $'+d+' to your plan. About '+wk+' more '+(wk===1?'week':'weeks')+' of saving at your pace.';
@@ -973,7 +1024,7 @@ try{if(localStorage.getItem('joe_reglaze_choices_v1')){setTimeout(function(){cap
 /* ---------- INIT ---------- */
 if(location.hash.length>2){applyState(location.hash.slice(1));}
 renderSteppers();renderTools();drawPlan();renderWallpick();drawElev();renderTemp();renderEye();renderTrends();renderDecisions();renderUpgrades();renderChecklist();
-document.documentElement.style.setProperty('--amb',temp);updatePlan();
+document.documentElement.style.setProperty('--amb',temp);updatePlan();try{drawMini()}catch(e){}
 window.addEventListener('resize',function(){drawPlan();drawElev();});
 </script>
 </body></html>
