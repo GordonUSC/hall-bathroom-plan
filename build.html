@@ -2,6 +2,7 @@
 <html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12161a">
 <title>The Build Book · Joe's Hall Bath</title>
 <style>
   :root{
@@ -12,6 +13,16 @@
     --chrome:#cfe0ee; --oak:#b89568; --white:#f4f6f7; --spa:#7fd4c6; --gold:#e6b877; --rose:#e59b9b;
     --line:rgba(238,242,245,0.12); --line2:rgba(238,242,245,0.22);
     --good:#6bcf9b; --warn:#e6b24a; --bad:#e07a72;
+  }
+  @media(max-width:640px){body{font-size:18.5px;line-height:1.6}}
+  input,button{font-size:16px}
+  .ck input[type=checkbox]{min-width:26px;min-height:26px}
+  #allprog{max-width:760px;margin:18px auto 0;padding:0 18px;font-family:var(--mono);font-size:12.5px;color:var(--ink-soft)}
+  #allprog .bar{height:8px;border-radius:6px;background:var(--ground-3);margin-top:6px;overflow:hidden}
+  #allprog .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--spa),var(--gold));width:0;transition:width .5s ease}
+  @media(prefers-reduced-motion:no-preference){
+    .confetti{position:fixed;top:-12px;width:9px;height:14px;z-index:80;animation:cfall 1.7s ease-in forwards}
+    @keyframes cfall{to{transform:translateY(105vh) rotate(540deg);opacity:0.1}}
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
@@ -92,17 +103,25 @@
     .ck label,.mv .lede{color:#222}
     .who{color:#111!important;background:#eee!important;border-color:#999!important}
   }
+  @media(max-width:640px){body{font-size:18.5px;line-height:1.6}.wrap p,.lede{max-width:100%}}
 </style>
 </head><body>
 
 <button class="bigbtn" id="bigbtn" title="Bigger letters">A<b>A</b></button>
+<button class="bigbtn" id="sndbtn" style="right:96px" title="Sound">Sound: off</button>
+<div id="cap" style="display:none;position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:60;background:var(--ground-3);border:1px solid var(--line2);border-radius:14px;padding:12px 16px;font-size:16px;color:var(--ink)"><b id="capwho" style="color:var(--gold)"></b> <span id="captxt"></span></div>
 
 <header class="top">
   <div class="kick">Part two · after the plan</div>
   <h1>The <em>Build</em> Book</h1>
   <p class="sub">The plan was the dream. This is the part you run.</p>
+  <figure style="max-width:760px;margin:26px auto 0;padding:0 18px">
+    <img src="assets/buildbook_hero.jpg" alt="A brass level, a worn tape measure, and folded white towels with the H+B monogram on the new oak vanity, in golden evening light" style="width:100%;border-radius:16px;border:1px solid var(--line);aspect-ratio:1600/893" loading="eager">
+    <figcaption style="font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-faint);margin-top:8px">Your tools. Your towels. Your room, waiting.</figcaption>
+  </figure>
 </header>
 
+<div id="allprog"><span id="progtxt">Your build, at a glance</span><div class="bar"><i id="progfill"></i></div></div>
 <section class="mv wrap" id="path">
   <div class="eyebrow">The path</div>
   <h2>Six phases. Real order. Your clipboard.</h2>
@@ -259,7 +278,15 @@
       st.checks[b.id]=b.checked;b.closest('li').classList.toggle('checked',b.checked);save();counts();gates();
     });
   });
-  function counts(){
+  function progress(){var all=document.querySelectorAll('.ck input[type=checkbox]');var n=0;all.forEach(function(x){if(x.checked)n++;});
+    var f=document.getElementById('progfill');if(f)f.style.width=Math.round(100*n/all.length)+'%';
+    var t=document.getElementById('progtxt');if(t)t.textContent=n===0?'Your build, at a glance':(n+' of '+all.length+' checks done. Foreman on the job.');}
+  function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    var cols=['#7fd4c6','#e6b877','#e59b9b','#cfe0ee'];
+    for(var i=0;i<36;i++){var d=document.createElement('div');d.className='confetti';d.style.left=(Math.random()*100)+'vw';
+      d.style.background=cols[i%4];d.style.animationDelay=(Math.random()*0.5)+'s';document.body.appendChild(d);
+      (function(el){setTimeout(function(){el.remove();},2600);})(d);}}
+  function counts(){progress();
     document.querySelectorAll('.phase').forEach(function(ph){
       var bs=ph.querySelectorAll('input[type=checkbox]');var n=0;bs.forEach(function(x){if(x.checked)n++;});
       ph.querySelector('.phcount').textContent=n+' / '+bs.length;
@@ -298,7 +325,21 @@
     banner();
   }
   function mark(id,ok,txt){var el=document.getElementById(id);el.textContent=(ok?'✓ ':'◻ ')+txt;el.className=ok?'ok':'';}
-  document.getElementById('gobtn').onclick=function(){st.live=true;save();banner(true);};
+  // real voices (pre-rendered ElevenLabs), captions always
+  var snd=false,vp=null,welcomed=false;
+  function speak(key,who,txt){
+    document.getElementById('capwho').textContent=who;document.getElementById('captxt').textContent=txt;
+    var c=document.getElementById('cap');c.style.display='block';
+    clearTimeout(c._t);c._t=setTimeout(function(){c.style.display='none';},Math.max(4500,txt.length*60));
+    if(!snd)return;
+    if(!vp){vp=new Audio();vp.preload='none';}
+    try{vp.pause();vp.src='assets/audio/'+key+'.mp3';var p=vp.play();if(p&&p.catch)p.catch(function(){});}catch(e){}
+  }
+  document.getElementById('sndbtn').onclick=function(){snd=!snd;this.textContent='Sound: '+(snd?'on':'off');
+    if(snd&&!welcomed){welcomed=true;speak('bb_welcome','Your Host','Welcome to the Build Book, Joe. Six phases, real order. You run this part.');}
+    if(!snd&&vp)try{vp.pause()}catch(e){}};
+  document.getElementById('gobtn').onclick=function(){st.live=true;save();banner(true);confetti();
+    speak('bb_go','Gordon','Break ground, baby. Twelve years you have made everything around us better. Now go make your room.');};
   function banner(fresh){
     var b=document.getElementById('buildbanner');
     if(st.live&&st.start){

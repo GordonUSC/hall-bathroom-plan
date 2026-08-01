@@ -2,6 +2,7 @@
 <html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12161a">
 <title>The Reglaze Room · Joe's Hall Bath</title>
 <style>
   :root{
@@ -14,6 +15,12 @@
     --good:#6bcf9b; --warn:#e6b24a; --bad:#e07a72;
     --amb:0;
   }
+  @media(max-width:640px){body{font-size:18.5px;line-height:1.6}}
+  input,select,button{font-size:16px}
+  .savedchip{position:fixed;left:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:70;background:var(--ground-3);border:1px solid var(--line2);color:var(--spa);border-radius:20px;padding:7px 14px;font-family:var(--mono);font-size:12.5px;opacity:0;transform:translateY(8px);transition:opacity .25s,transform .25s;pointer-events:none}
+  .savedchip.show{opacity:1;transform:none}
+  @media(prefers-reduced-motion:no-preference){.fitometer.ok{animation:fitglow 1.2s ease 1}}
+  @keyframes fitglow{0%{box-shadow:0 0 0 0 rgba(107,207,155,0.45)}100%{box-shadow:0 0 0 18px rgba(107,207,155,0)}}
   *{box-sizing:border-box}
   html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
   body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
@@ -214,6 +221,7 @@
     .spec th{border-color:#999}
   }
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+  @media(max-width:640px){body{font-size:18.5px;line-height:1.6}.wrap p,.lede{max-width:100%}}
 </style>
 </head>
 <body>
@@ -441,17 +449,27 @@ function speakNatural(who,txt){
   speechSynthesis.speak(u);
  });
 }
-function say(who,txt){lastLine=[who,txt];caption(who,txt);
-  if(muted||!primed||!window.speechSynthesis)return;
+/* Real voices: pre-rendered ElevenLabs lines by key; browser speech is the fallback */
+var VOICELINES={welcome_host:1,welcome_heart:1,lshape_host:1,preset_host:1,tub_host:1,tub2_heart:1,van_host:1,van2_heart:1,toi_host:1,fit_host:1,vanfit_host:1,temp_host:1,spa_heart:1,ba2_host:1,jar_host:1,warming_host:1,warming_heart:1};
+var voicePlayer=null;
+function playLine(key,who){var f='assets/audio/'+key+'.mp3';
+  if(!voicePlayer){voicePlayer=new Audio();voicePlayer.preload='none';}
+  try{voicePlayer.pause();voicePlayer.src=f;duck(true);
+    voicePlayer.onended=function(){duck(false);};voicePlayer.onerror=function(){duck(false);};
+    var p=voicePlayer.play();if(p&&p.catch)p.catch(function(){});return true;}catch(e){return false;}}
+function say(who,txt,key){lastLine=[who,txt,key];caption(who,txt);
+  if(muted||!primed)return;
+  if(key&&VOICELINES[key]&&playLine(key,who))return;
+  if(!window.speechSynthesis)return;
   try{ pickVoices(); speakNatural(who,txt); }catch(e){}}
-function sayOnce(k,who,txt){if(saidOnce[k])return;saidOnce[k]=1;say(who,txt);}
+function sayOnce(k,who,txt){if(saidOnce[k])return;saidOnce[k]=1;say(who,txt,k+'_'+who);}
 document.getElementById('mute').onclick=function(){muted=!muted;this.textContent='Sound: '+(muted?'off':'on');
-  if(muted&&window.speechSynthesis)speechSynthesis.cancel();
+  if(muted){if(window.speechSynthesis)speechSynthesis.cancel();if(voicePlayer)try{voicePlayer.pause()}catch(e){}}
   if(AC&&ambGain)ambGain.gain.setTargetAtTime(muted?0:0.12,AC.currentTime,0.5);};
-document.getElementById('replay').onclick=function(){if(lastLine){primed=true;initAmbience();say(lastLine[0],lastLine[1]);}};
+document.getElementById('replay').onclick=function(){if(lastLine){primed=true;initAmbience();say(lastLine[0],lastLine[1],lastLine[2]);}};
 document.getElementById('letin').onclick=function(){primed=true;initAmbience();try{speechSynthesis.cancel();}catch(e){}
-  say('host',"Welcome to the room, Joe. I am your host, and this fella beside me has some things to say about you.");
-  setTimeout(function(){say('heart',"Hi baby. I built you a whole show, just to prove your taste is as good as I already know it is.");},5200);
+  say('host',"Welcome to the room, Joe. I am your host, and this fella beside me has some things to say about you.",'welcome_host');
+  setTimeout(function(){say('heart',"Hi baby. I built you a whole show, just to prove your taste is as good as I already know it is.",'welcome_heart');},7600);
   document.getElementById('letin').textContent='The hosts are in ✓';
   window.scrollTo({top:document.querySelector('.mv').offsetTop-20,behavior:'smooth'});};
 
@@ -806,7 +824,9 @@ var REGLAZE=1200, SKEY='joe_reglaze_saved_v1', CKEY='joe_reglaze_choices_v1';
 function getOpt(id){for(var i=0;i<DECISIONS.length;i++)if(DECISIONS[i].id===id)return DECISIONS[i].opts[choice[id]];}
 function planTotal(){var t=REGLAZE;DECISIONS.forEach(function(d){t+=d.opts[choice[d.id]].p;});UPGRADES.forEach(function(u){if(upgOn[u.id])t+=u.p;});return t;}
 function getSaved(){return +(localStorage.getItem(SKEY)||0);}
-function saveChoices(){var s={wall:getOpt('wall').hex,floor:getOpt('floor').floor,sink:getOpt('top').sink,mirror:getOpt('mirror').mirror,accent:getOpt('accent').accent,
+var _sc=document.createElement('div');_sc.className='savedchip';_sc.textContent='Saved for you, Joe ✓';document.addEventListener('DOMContentLoaded',function(){document.body.appendChild(_sc);});
+var _scT=null;function flashSaved(){if(!_sc.parentNode)document.body.appendChild(_sc);_sc.classList.add('show');clearTimeout(_scT);_scT=setTimeout(function(){_sc.classList.remove('show');},1400);}
+function saveChoices(){flashSaved();var s={wall:getOpt('wall').hex,floor:getOpt('floor').floor,sink:getOpt('top').sink,mirror:getOpt('mirror').mirror,accent:getOpt('accent').accent,
   A:room.A,B:room.B,ceil:room.ceil,shape:room.shape,nw:room.nw,nd:room.nd,ncorner:room.corner,
   tubWall:FIX.tub.placed?wallOf(FIX.tub):null,vanWall:FIX.vanity.placed?wallOf(FIX.vanity):null,toiletWall:FIX.toilet.placed?wallOf(FIX.toilet):null,doorWall:FIX.door.placed?wallOf(FIX.door):null};
   try{localStorage.setItem(CKEY,JSON.stringify(s));}catch(e){}}
@@ -846,7 +866,7 @@ function updateSavings(){var t=planTotal();var saved=getSaved();var rem=Math.max
   renderLadder(t,saved);}
 document.getElementById('permo').oninput=updatePlan;
 document.getElementById('deposit').onclick=function(){localStorage.setItem(SKEY,getSaved()+300);updatePlan();
-  say('host',"Three hundred set aside. Watch that jar fill. You are closer to the wow than you were a second ago.");};
+  say('host',"Three hundred set aside. Watch that jar fill. You are closer to the wow than you were a second ago.",'jar_host');};
 function renderLadder(total,saved){var L=document.getElementById('ladder');
   var design=0;DECISIONS.forEach(function(d){design+=d.opts[choice[d.id]].p;});
   var upg=0;UPGRADES.forEach(function(u){if(upgOn[u.id])upg+=u.p;});
@@ -889,8 +909,8 @@ function buildRecap(){
   return "And every open call in here was yours, Joe. "+wallL+" walls, "+floorL+", "+sinkL+", "+lightL+". Over the reglazed tub and the gray oak you already nailed. That is a designed room, top to bottom.";}
 document.getElementById('revealbtn').onclick=function(){document.getElementById('reveal').classList.add('warm');
   document.documentElement.style.setProperty('--amb','1');temp=1;renderTemp();drawElev();
-  say('host',"There it is. The work light warms, the white catches, the room settles into a spa.");
-  setTimeout(function(){say('heart',"Remember what I told you? You are going to go oh my god, wow, when you come to the bathroom. Well. You are here. Oh my god, Joe. Wow. I love you.");},4800);
+  say('host',"There it is. The work light warms, the white catches, the room settles into a spa.",'warming_host');
+  setTimeout(function(){say('heart',"Remember what I told you? You are going to go oh my god, wow, when you come to the bathroom. Well. You are here. Oh my god, Joe. Wow. I love you.",'warming_heart');},4800);
   setTimeout(function(){say('heart',buildRecap());},10200);};
 
 /* ---------- SHAREABLE ROOM LINK (cross-device) ---------- */
@@ -948,6 +968,8 @@ document.getElementById('printspec').onclick=function(){buildSpecSheet();window.
   apply();
 })();
 
+/* welcome back, Joe (caption only) */
+try{if(localStorage.getItem('joe_reglaze_choices_v1')){setTimeout(function(){caption('host','Welcome back, Joe. Your room is right where you left it.');},900);}}catch(e){}
 /* ---------- INIT ---------- */
 if(location.hash.length>2){applyState(location.hash.slice(1));}
 renderSteppers();renderTools();drawPlan();renderWallpick();drawElev();renderTemp();renderEye();renderTrends();renderDecisions();renderUpgrades();renderChecklist();
