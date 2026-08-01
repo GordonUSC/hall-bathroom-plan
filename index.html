@@ -469,7 +469,7 @@ document.getElementById('mute').onclick=function(){muted=!muted;this.textContent
 document.getElementById('replay').onclick=function(){if(lastLine){primed=true;initAmbience();say(lastLine[0],lastLine[1],lastLine[2]);}};
 document.getElementById('letin').onclick=function(){primed=true;initAmbience();try{speechSynthesis.cancel();}catch(e){}
   say('host',"Welcome to the room, Joe. I am your host, and this fella beside me has some things to say about you.",'welcome_host');
-  setTimeout(function(){say('heart',"Hi baby. I built you a whole show, just to prove your taste is as good as I already know it is.",'welcome_heart');},7600);
+  setTimeout(function(){say('heart',"Hi handsome. I built you a whole show, just to prove your taste is as good as I already know it is.",'welcome_heart');},7600);
   document.getElementById('letin').textContent='The hosts are in ✓';
   window.scrollTo({top:document.querySelector('.mv').offsetTop-20,behavior:'smooth'});};
 
