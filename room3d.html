@@ -28,9 +28,9 @@
 </style>
 </head>
 <body>
-<div class="load" id="load"><div class="s"></div><div class="r">Building your room, to the inch...</div></div>
+<div class="load" id="load"><div class="s"></div><div class="r">Building your L-shaped room…</div></div>
 <canvas id="c"></canvas>
-<div class="ov"><div class="kick">Walk into it</div><h1>Your room, in 3D</h1><div class="sub">Your 5 by 8, to scale. The oak floor, the floating vanity, your reglazed white tub.</div></div>
+<div class="ov"><div class="kick">Walk into it</div><h1>Your L-shaped room, in 3D</h1><div class="sub">Illustrative room model. Confirm measurements and fixture positions before building.</div></div>
 <a class="back" href="index.html">&larr; Back to studio</a>
 <div class="tempbar" id="tempbar"><button data-t="warm" class="on">2700K spa</button><button data-t="neutral">3000K</button><button data-t="work">4000K work</button></div>
 <div class="hint">Drag to look around &middot; pinch to zoom</div>
@@ -86,6 +86,7 @@
   var mBrass=new THREE.MeshStandardMaterial({color:0xc69a5a,roughness:0.3,metalness:0.85});
   // reflect Joe's choices from the studio
   var CH={};try{CH=JSON.parse(localStorage.getItem('joe_reglaze_choices_v1')||'{}');}catch(e){}
+  CH.shape='L';CH.ncorner='TR';CH.tubLength=CH.tubLength||60;CH.tubDepth=CH.tubDepth||30;CH.nw=(CH.B||96)-CH.tubLength;CH.nd=CH.tubDepth;CH.tubWall='w0';CH.vanWall='w4';CH.toiletWall='w4';CH.doorWall='w3';CH.sink='integrated';
   if(CH.wall){mWall.color.set(CH.wall);}
   if(CH.floor==='stone'){mFloor=new THREE.MeshStandardMaterial({color:0xcfc9c0,roughness:0.45,metalness:0.05});}
   else if(CH.floor==='keep'){mFloor=new THREE.MeshStandardMaterial({color:0xe9ecec,roughness:0.32,metalness:0.03});}
@@ -96,12 +97,12 @@
   camera.position.set(hx*1.15,H_ft*0.6,hz+Math.max(3.2,B_ft*0.62));
   controls.target.set(-hx*0.08,H_ft*0.26,0);
   controls.maxDistance=Math.max(12,B_ft*2.4);
-  try{document.querySelector('.ov .sub').textContent='Your '+(Math.round(B_ft*10)/10)+' by '+(Math.round(A_ft*10)/10)+' feet, to scale. Your walls, your floor, your finishes, exactly as you set them.';}catch(e){}
+  try{document.querySelector('.ov .sub').textContent='Your '+(Math.round(B_ft*10)/10)+' by '+(Math.round(A_ft*10)/10)+' feet outer envelope. Hall closet excluded; verify all dimensions.';}catch(e){}
 
   function box(w,h,d,mat,x,y,z){var m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);scene.add(m);return m;}
 
   // ---- room to Joe's measured size (supports rectangle or L) ----
-  function polyPts(){var B=CH.B||96,A=CH.A||62,nw=CH.nw||36,nd=CH.nd||30,c=CH.ncorner||'TR';
+  function polyPts(){var B=CH.B||96,A=CH.A||72,nw=CH.nw||36,nd=CH.nd||30,c=CH.ncorner||'TR';
    if(CH.shape!=='L')return [[0,0],[B,0],[B,A],[0,A]];
    if(c==='TR')return [[0,0],[B-nw,0],[B-nw,nd],[B,nd],[B,A],[0,A]];
    if(c==='TL')return [[nw,0],[B,0],[B,A],[0,A],[0,nd],[nw,nd]];
@@ -159,17 +160,17 @@
   function lbox(g,w,h,d,mat,x,y,z){var m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);g.add(m);return m;}
 
   // reglazed tub with its kept silver-frame sliding doors, on Joe's tub wall
-  var tubLen=Math.min(5,edgeInfo(tubE).len-0.6);
-  var gT=wallGroup(tubE,1.2,0);
-  lbox(gT,tubLen,1.45,2.3,mWhite,0,0.725,0);       // apron
-  lbox(gT,tubLen,0.14,2.3,mWhite,0,1.52,0);        // rim
-  lbox(gT,tubLen-0.7,0.55,1.6,mBasin,0,1.35,0);    // basin recess
+  var tubLen=CH.tubLength/12, tubDep=CH.tubDepth/12;
+  var gT=wallGroup(tubE,tubDep/2,0);
+  lbox(gT,tubLen,1.45,tubDep,mWhite,0,0.725,0);       // apron
+  lbox(gT,tubLen,0.14,tubDep,mWhite,0,1.52,0);        // rim
+  lbox(gT,tubLen-0.7,0.55,tubDep-0.7,mBasin,0,1.35,0);    // basin recess
   // shower riser + head, tucked to the wall at one end
   lbox(gT,0.07,3.6,0.07,mChrome,-tubLen/2+0.35,3.4,-1.02);
   var shead=new THREE.Mesh(new THREE.CylinderGeometry(0.24,0.24,0.05,20),mChrome);
   shead.rotation.z=Math.PI/2.6; shead.position.set(-tubLen/2+0.55,5.25,-0.85); gT.add(shead);
   // the sliders Joe is keeping: chrome frame + two frosted panels over the rim
-  var GD_Y0=1.62, GD_Y1=6.1, gdz=0.95;
+  var GD_Y0=1.62, GD_Y1=6.1, gdz=tubDep/2-0.05;
   lbox(gT,tubLen,0.09,0.1,mChrome,0,GD_Y0,gdz);    // bottom track
   lbox(gT,tubLen,0.09,0.1,mChrome,0,GD_Y1,gdz);    // top track
   lbox(gT,0.08,GD_Y1-GD_Y0,0.09,mChrome,-tubLen/2+0.04,(GD_Y0+GD_Y1)/2,gdz);
@@ -186,7 +187,7 @@
   // Domani Stella, true to spec: 48.5"W x 18.75"D x 22.25"H, wall-hung, counter at 34"
   var VAN_W=48.5/12, VAN_D=18.75/12, VAN_H=22.25/12, VAN_TOP=34/12;
   var vanWlen=edgeInfo(vanE).len, vanLen=Math.min(VAN_W,vanWlen-0.5);
-  var gV=wallGroup(vanE,VAN_D/2+0.02,0);
+  var gV=wallGroup(vanE,VAN_D/2+0.02,-(vanWlen/2-vanLen/2-8/12));
   lbox(gV,vanLen,VAN_H,VAN_D,mWood,0,VAN_TOP-VAN_H/2,0);            // cabinet, floating at true height
   lbox(gV,vanLen+0.08,0.1,VAN_D+0.06,mWhite,0,VAN_TOP+0.05,0.02);   // white cultured-marble top
   if(CH.sink==='integrated'){var isink=new THREE.Mesh(new THREE.CylinderGeometry(0.62,0.55,0.14,28),mBasin);isink.scale.z=0.62;isink.position.set(0,VAN_TOP+0.09,0.02);gV.add(isink);}
@@ -204,8 +205,8 @@
 
   // toilet, on its own wall, tucked to the corner clear of the vanity
   var toiWlen=edgeInfo(toiE).len;
-  var tslide=toiWlen/2-0.85;
-  if(toiE===vanE) tslide=Math.min(toiWlen/2-0.7, Math.max(vanLen/2+0.8, tslide));
+  var tslide=toiWlen/2-1.25;
+  // Toilet stays in the back corner, directly across from the tub corner.
   var gTo=wallGroup(toiE,0.6,tslide);
   lbox(gTo,1.2,1.1,1.0,mWhite,0,0.55,0);           // base/bowl block
   lbox(gTo,1.15,1.4,0.4,mWhite,0,1.6,-0.35);       // tank
@@ -218,7 +219,8 @@
       var f=edgeInfo(j); if(f.horiz!==tE.horiz&&f.len>2.5){dooE=j;break;}}}
   if(dooE!=null){
     var DW=28/12, DH=80/12;
-    var gD=wallGroup(dooE,0.035,0);
+    var doorEdge=edgeInfo(dooE);var retainedDoorCenter=(CH.tubDepth+2+14)/12-A_ft/2;
+    var gD=wallGroup(dooE,0.035,doorEdge.mz-retainedDoorCenter);
     lbox(gD,DW+0.18,DH+0.1,0.06,mWhite,0,(DH+0.1)/2,0);   // casing
     lbox(gD,DW,DH,0.06,new THREE.MeshStandardMaterial({color:0xf7f8f6,roughness:0.6,metalness:0.02}),0,DH/2,0.03); // slab
     var knob=new THREE.Mesh(new THREE.SphereGeometry(0.07,14,14),mChrome);knob.position.set(DW/2-0.22,3.0,0.11);gD.add(knob);
