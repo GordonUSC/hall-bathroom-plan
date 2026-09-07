@@ -3,16 +3,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#12161a">
-<title>Your Room in 3D · The Reglaze Room</title>
+<title>Joe’s Room · 3D</title>
 <style>
-  :root{--serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;--body:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;--mono:ui-monospace,"SF Mono",Menlo,monospace;--spa:#7fd4c6;--gold:#e6b877;--ink:#eef2f5}
+  :root{--serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;--body:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;--mono:ui-monospace,"SF Mono",Menlo,monospace;--spa:#b4d597;--gold:#9cc6e5;--ink:#eef2f5}
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;background:#12161a;color:var(--ink);font-family:var(--body);overflow:hidden}
   #c{position:fixed;inset:0;display:block;touch-action:none}
   .ov{position:fixed;left:0;right:0;top:0;padding:16px 18px;pointer-events:none;z-index:5;
     background:linear-gradient(180deg,rgba(10,13,16,0.7),transparent)}
   .ov .kick{font-family:var(--mono);font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--spa)}
-  .ov h1{font-family:var(--serif);font-size:26px;margin:6px 0 2px}
+  .ov h1{font-family:var(--body);font-weight:750;font-size:26px;margin:6px 0 2px}
   .ov .sub{font-size:13.5px;color:#c4ced6}
   .back{position:fixed;top:14px;right:14px;z-index:6;pointer-events:auto;background:rgba(15,20,24,0.85);border:1px solid rgba(238,242,245,0.22);border-radius:22px;padding:9px 15px;color:var(--ink);font:inherit;font-size:14px;text-decoration:none}
   .hint{position:fixed;left:0;right:0;bottom:20px;text-align:center;z-index:5;pointer-events:none;font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(238,242,245,0.6)}
@@ -71,7 +71,7 @@
   // ---- textures ----
   var loader=new THREE.TextureLoader();
   function wood(file,rx,ry){var t=loader.load(file);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(rx,ry);t.encoding=THREE.sRGBEncoding;return t;}
-  var floorTex=wood('assets/floor.jpg',3,3);
+  var floorTex=wood('assets/oak.jpg',0.7,0.28);
   var vanTex=wood('assets/oak.jpg',2,1);
 
   // ---- materials ----
@@ -81,15 +81,15 @@
   var mWood=new THREE.MeshStandardMaterial({map:vanTex,color:0xefe7db,roughness:0.72,metalness:0.05});
   var mFloor=new THREE.MeshStandardMaterial({map:floorTex,color:0xf0e6d6,roughness:0.84,metalness:0.04});
   var mChrome=new THREE.MeshStandardMaterial({color:0xdfeaf2,roughness:0.16,metalness:0.92});
-  var mMirror=new THREE.MeshStandardMaterial({color:0xcde0ee,roughness:0.06,metalness:0.6});
+  var mMirror=new THREE.MeshStandardMaterial({color:0x7695a6,roughness:0.24,metalness:0.18});
   var mTrim=new THREE.MeshStandardMaterial({color:0xd7e4ee,roughness:0.25,metalness:0.7});
   var mBrass=new THREE.MeshStandardMaterial({color:0xc69a5a,roughness:0.3,metalness:0.85});
   // reflect Joe's choices from the studio
   var CH={};try{CH=JSON.parse(localStorage.getItem('joe_reglaze_choices_v1')||'{}');}catch(e){}
   CH.shape='L';CH.ncorner='TR';CH.tubLength=CH.tubLength||60;CH.tubDepth=CH.tubDepth||30;CH.nw=(CH.B||96)-CH.tubLength;CH.nd=CH.tubDepth;CH.tubWall='w0';CH.vanWall='w4';CH.toiletWall='w4';CH.doorWall='w3';CH.sink='integrated';
   if(CH.wall){mWall.color.set(CH.wall);}
-  if(CH.floor==='stone'){mFloor=new THREE.MeshStandardMaterial({color:0xcfc9c0,roughness:0.45,metalness:0.05});}
-  else if(CH.floor==='keep'){mFloor=new THREE.MeshStandardMaterial({color:0xe9ecec,roughness:0.32,metalness:0.03});}
+  function tileTexture(stone){var c=document.createElement('canvas');c.width=512;c.height=512;var ctx=c.getContext('2d');ctx.fillStyle=stone?'#817e75':'#f1f2ed';ctx.fillRect(0,0,512,512);ctx.strokeStyle=stone?'#bab6aa':'#bcc1ba';ctx.lineWidth=stone?3:5;var step=stone?256:128;for(var x=0;x<=512;x+=step){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,512);ctx.stroke();}for(var y=0;y<=512;y+=step){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(512,y);ctx.stroke();}if(stone){ctx.strokeStyle='#a4a094';ctx.lineWidth=1;for(var i=0;i<18;i++){ctx.beginPath();ctx.moveTo(i*31,0);ctx.bezierCurveTo(i*31-60,190,i*31+90,320,i*31-40,512);ctx.stroke();}}var tex=new THREE.CanvasTexture(c);tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(0.45,0.45);return tex;}
+  if(CH.floor==='stone'||CH.floor==='keep'){mFloor=new THREE.MeshStandardMaterial({map:tileTexture(CH.floor==='stone'),roughness:CH.floor==='stone'?0.83:0.32,metalness:0.02});}
   if(CH.mirror==='lit'){mMirror.emissive=new THREE.Color(0xffe6c2);mMirror.emissiveIntensity=0.42;}
   var mFrame=(CH.accent==='brass')?mBrass:mTrim;
   // room dimensions from Joe's planner (feet)
@@ -117,7 +117,7 @@
    return !(xx>n[0]&&xx<n[0]+n[2]&&yy>n[1]&&yy<n[1]+n[3]);}
   var shp=new THREE.Shape(); PTS.forEach(function(p,i){ i?shp.lineTo(p[0],p[1]):shp.moveTo(p[0],p[1]); });
   var fl=new THREE.Mesh(new THREE.ShapeGeometry(shp),mFloor);
-  fl.rotation.x=-Math.PI/2; fl.position.y=0; scene.add(fl);
+  mFloor.side=THREE.DoubleSide;fl.rotation.x=Math.PI/2; fl.position.y=0; scene.add(fl);
   // walls on EVERY interior edge, single-sided facing IN: whichever side the camera
   // orbits to, the near walls cull away and the room stays open
   function edgeInfo(i){
@@ -195,9 +195,22 @@
   var fa=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,0.8,16),mChrome);fa.position.set(0,VAN_TOP+0.42,-0.52);gV.add(fa);
   lbox(gV,0.06,0.06,0.45,mChrome,0,VAN_TOP+0.78,-0.3);              // spout
   var mmw=Math.min(3.2,vanLen*0.85);
-  var mir=new THREE.Mesh(new THREE.PlaneGeometry(mmw,3.4),mMirror);mir.position.set(0,4.7,-0.8);gV.add(mir);
-  lbox(gV,mmw+0.3,3.6,0.05,mFrame,0,4.7,-0.835);   // mirror frame (brass if chosen)
-  if(CH.mirror==='lit'){var halo=new THREE.PointLight(0xffe6c2,0.5,10,2);halo.position.set(0,4.7,-0.45);gV.add(halo);}
+  if(CH.mirror==='cabinet'){
+    lbox(gV,mmw,3.05,0.44,mWhite,0,4.7,-0.62);
+    lbox(gV,mmw-0.13,2.88,0.02,new THREE.MeshStandardMaterial({color:0x586875}),0,4.7,-0.38);
+    [3.95,4.65,5.35].forEach(function(y){lbox(gV,mmw-0.15,0.055,0.4,mWhite,0,y,-0.55);});
+    var closed=new THREE.Mesh(new THREE.PlaneGeometry(mmw/2-0.04,2.91),mMirror);closed.position.set(-mmw/4,4.7,-0.365);gV.add(closed);
+    var door=new THREE.Group();door.position.set(mmw/2,4.7,-0.36);door.rotation.y=0.85;gV.add(door);
+    lbox(door,mmw/2,2.96,0.06,mFrame,-mmw/4,0,0);
+    var dm=new THREE.Mesh(new THREE.PlaneGeometry(mmw/2-0.08,2.86),mMirror);dm.position.set(-mmw/4,0,0.035);door.add(dm);
+  }else if(CH.mirror==='lit'){
+    var rim=new THREE.Mesh(new THREE.CircleGeometry(mmw/2+0.09,64),new THREE.MeshBasicMaterial({color:0xffebc9}));rim.position.set(0,4.7,-0.69);gV.add(rim);
+    var mir=new THREE.Mesh(new THREE.CircleGeometry(mmw/2,64),mMirror);mir.position.set(0,4.7,-0.66);gV.add(mir);
+    var halo=new THREE.PointLight(0xffe6c2,0.5,10,2);halo.position.set(0,4.7,-0.45);gV.add(halo);
+  }else{
+    var mir=new THREE.Mesh(new THREE.PlaneGeometry(mmw,3.4),mMirror);mir.position.set(0,4.7,-0.66);gV.add(mir);
+    lbox(gV,mmw+0.3,3.6,0.05,mFrame,0,4.7,-0.70);
+  }
   if(CH.accent==='brass'){var hook=new THREE.Mesh(new THREE.TorusGeometry(0.2,0.045,10,24),mBrass);hook.position.set(Math.min(vanLen/2+0.6,vanWlen/2-0.3),3.1,-0.75);gV.add(hook);}
   function sconce(sx){var s=new THREE.Mesh(new THREE.SphereGeometry(0.13,18,18),new THREE.MeshStandardMaterial({color:0xfff2df,emissive:0xffcf9a,emissiveIntensity:1.2,roughness:0.4}));s.position.set(sx,5.3,-0.7);gV.add(s);
     var pl=new THREE.PointLight(0xffcf9a,0.6,14,2);pl.position.set(sx,5.3,-0.55);gV.add(pl);return s;}
@@ -212,25 +225,28 @@
   lbox(gTo,1.15,1.4,0.4,mWhite,0,1.6,-0.35);       // tank
   var lid=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.55,0.16,24),mWhite);lid.position.set(0,1.15,0.25);gTo.add(lid);
 
-  // the 28" hall door, on its planner wall (or an end wall by default)
+  // the provisional 22" hall door, on its planner wall (or an end wall by default)
   var dooE=edgeIndex(CH.doorWall);
   if(dooE==null){var tE=edgeInfo(tubE);
     for(var j=0;j<PTS.length;j++){if(j===tubE||j===vanE)continue;
       var f=edgeInfo(j); if(f.horiz!==tE.horiz&&f.len>2.5){dooE=j;break;}}}
   if(dooE!=null){
-    var DW=28/12, DH=80/12;
-    var doorEdge=edgeInfo(dooE);var retainedDoorCenter=(CH.tubDepth+2+14)/12-A_ft/2;
-    var gD=wallGroup(dooE,0.035,doorEdge.mz-retainedDoorCenter);
-    lbox(gD,DW+0.18,DH+0.1,0.06,mWhite,0,(DH+0.1)/2,0);   // casing
-    lbox(gD,DW,DH,0.06,new THREE.MeshStandardMaterial({color:0xf7f8f6,roughness:0.6,metalness:0.02}),0,DH/2,0.03); // slab
-    var knob=new THREE.Mesh(new THREE.SphereGeometry(0.07,14,14),mChrome);knob.position.set(DW/2-0.22,3.0,0.11);gD.add(knob);
+    var DW=(CH.doorWidth||22)/12, DH=80/12;
+    var doorEdge=edgeInfo(dooE);var retainedDoorCenter=(CH.tubDepth+2+(CH.doorWidth||22)/2)/12-A_ft/2;
+    var gD=wallGroup(dooE,0.035,retainedDoorCenter-doorEdge.mz);
+    lbox(gD,DW+0.18,DH+0.1,0.06,mWhite,0,(DH+0.1)/2,0);
+    lbox(gD,DW,DH,0.025,new THREE.MeshStandardMaterial({color:0xaaa99d,roughness:1}),0,DH/2,0.045);
+    // Hinge on the closet/tub jamb; leaf opens inward along that return.
+    var leaf=new THREE.Group();leaf.position.set(-DW/2,0,0.09);leaf.rotation.y=-Math.PI*0.43;gD.add(leaf);
+    lbox(leaf,DW,DH,0.065,new THREE.MeshStandardMaterial({color:0xf7f8f6,roughness:0.6}),DW/2,DH/2,0);
+    var knob=new THREE.Mesh(new THREE.SphereGeometry(0.07,14,14),mChrome);knob.position.set(DW-0.22,3.0,0.075);leaf.add(knob);
   }
 
   // frame the room from across the vanity wall, so the mirror and cabinet face the camera
   (function(){var e=edgeInfo(vanE);var span=e.horiz?A_ft:B_ft;
     var d=span*1.15+3.2;
-    camera.position.set(e.mx+e.inw.x*d+(e.horiz?B_ft*0.22:0), H_ft*0.62, e.mz+e.inw.z*d+(e.horiz?0:A_ft*0.22));
-    controls.target.set(e.mx*0.35, H_ft*0.28, e.mz*0.35);
+    camera.position.set(hx+5.8,H_ft+3.6,-hz-5.8);
+    controls.target.set(0,H_ft*0.3,0);
   })();
 
   // ---- lighting (2700K warm base) ----
@@ -263,8 +279,8 @@
 (function(){var b=document.createElement('button');b.textContent='AA';b.title='Bigger letters';
 b.style.cssText='position:fixed;top:14px;right:14px;z-index:90;background:rgba(35,43,52,0.95);border:1px solid rgba(238,242,245,0.22);color:#eef2f5;border-radius:24px;padding:8px 14px;font-size:14px;cursor:pointer';
 document.body.appendChild(b);
-function on(){try{return localStorage.getItem('joe_bigtype')==='1'}catch(e){return false}}
+function on(){try{return localStorage.getItem('joe_bigtype_v2')!=='0'}catch(e){return false}}
 function ap(){document.body.style.fontSize=on()?'20px':'';}
-b.onclick=function(){try{localStorage.setItem('joe_bigtype',on()?'0':'1')}catch(e){};ap();};ap();})();
+b.onclick=function(){try{localStorage.setItem('joe_bigtype_v2',on()?'0':'1')}catch(e){};ap();};ap();})();
 </script>
 </body></html>
